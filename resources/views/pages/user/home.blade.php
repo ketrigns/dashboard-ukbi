@@ -1,74 +1,144 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-</head>
-<body>
-<nav class="bg-white shadow-md">
-  <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-    <div class="relative flex h-16 items-center justify-between">
-      <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-        <!-- Mobile menu button-->
-        <button type="button" class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-inset" aria-controls="mobile-menu" aria-expanded="false">
-          <span class="absolute -inset-0.5"></span>
-          <span class="sr-only">Open main menu</span>
-          <!--
-            Icon when menu is closed.
+@extends('layouts.app')
 
-            Menu open: "hidden", Menu closed: "block"
-          -->
-          <svg class="block size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-          </svg>
-          <!--
-            Icon when menu is open.
+@section('title', 'Dashboard UKBI')
 
-            Menu open: "block", Menu closed: "hidden"
-          -->
-          <svg class="hidden size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-      <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-        <div class="flex shrink-0 items-center">
-          <img class="h-8 w-auto" src="{{asset('assets/images/ukbi_adaptif1.png') }}" alt="Your Company">
-        </div>
-        <div class="hidden sm:ml-6 sm:block">
-          <div class="flex space-x-4">
-            <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-            <a href="#" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">Dashboard</a>
-            <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Team</a>
-            <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Projects</a>
-            <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Calendar</a>
-          </div>
-        </div>
-      </div>
-      <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-        
+@section('content')
+  <div>
+    <h1 class="text-2xl text-[45px] font-bold">Apa itu UKBI Adaptif?</h1>
+    <p class="text-[20px] font-regular">
+      UKBI adalah sarana uji untuk mengukur tingkat kemahiran seseorang dalam berbahasa Indonesia, baik lisan maupun
+      tulis. UKBI terdiri atas lima seksi, yaitu Seksi I Mendengarkan, Seksi II Merespons Kaidah, Seksi III Membaca,
+      Seksi IV Menulis, dan Seksi V Berbicara yang dilaksanakan secara daring.
+    </p>
+  </div>
 
-        <!-- Profile dropdown -->
-        
-      </div>
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
+    <div class="bg-white p-4 rounded">
+      <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji</h1>
+      <p class="text-[32px] font-regular leading-tight">9.453</p>
+    </div>
+    <div class="bg-white p-4 rounded">
+      <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Pelajar</h1>
+      <p class="text-[32px] font-regular leading-tight">7.207</p>
+    </div>
+    <div class="bg-white p-4 rounded">
+      <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Mahasiswa</h1>
+      <p class="text-[32px] font-regular leading-tight">1.108</p>
+    </div>
+    <div class="bg-white p-4 rounded">
+      <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Umum</h1>
+      <p class="text-[32px] font-regular leading-tight">1.228</p>
     </div>
   </div>
 
-  <!-- Mobile menu, show/hide based on menu state. -->
-  <div class="sm:hidden" id="mobile-menu">
-    <div class="space-y-1 px-2 pt-2 pb-3">
-      <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-      <a href="#" class="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white" aria-current="page">Dashboard</a>
-      <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Team</a>
-      <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Projects</a>
-      <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Calendar</a>
+  {{-- Map --}}
+  <div id="map" class="rounded" style="height: 400px; overflow: hidden;"></div>
+
+  <div class="grid grid-cols-3 gap-4 my-4">
+    <div class="bg-white p-4 rounded">
+      <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Predikat</h1>
+      <div id="chart"></div>
+    </div>
+    <div class="bg-white p-4 rounded">
+      <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Kategori</h1>
+      <div id="chartKategori"></div>
+    </div>
+    <div class="bg-white p-4 rounded">
+      <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Wilayah</h1>
+      <div id="chartWilayah"></div>
     </div>
   </div>
-</nav>
 
-    <h1 class="text-3xl font-bold underline">Dashboard UKBI</h1>
-    <h1 class="text-3xl font-bold underline">HALOOOO HALO HALOOO</h1>
-</body>
-</html>
+  <script>
+    // Inisialisasi peta di pusat Provinsi Jambi
+    const map = L.map('map').setView([-1.6116, 103.6157], 8);
+
+    // Tambahkan layer peta dari OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // Daftar lokasi di Provinsi Jambi
+    const locations = [
+      { name: "Kota Jambi", coords: [-1.6101, 103.6131] },
+      { name: "Muaro Jambi", coords: [-1.5565, 103.7264] },
+      { name: "Sungai Penuh", coords: [-2.0631, 101.3843] },
+      { name: "Kerinci", coords: [-2.1333, 101.6167] },
+      { name: "Tebo", coords: [-1.4897, 102.3329] },
+      { name: "Sarolangun", coords: [-2.3059, 102.6906] },
+      { name: "Batanghari", coords: [-1.7089, 103.0826] },
+      { name: "Bungo", coords: [-1.4867, 101.9014] },
+      { name: "Tanjung Jabung Timur", coords: [-1.1352, 103.9322] },
+      { name: "Tanjung Jabung Barat", coords: [-0.8119, 103.4613] },
+    ];
+
+    // Tambahkan marker untuk setiap lokasi
+    locations.forEach(loc => {
+      L.marker(loc.coords)
+        .addTo(map);
+    });
+
+    var options = {
+      chart: {
+        type: 'bar',
+        height: '300px',
+        toolbar: {
+          show: false // 🔹 Hilangkan tombol download / export
+        }
+      },
+      series: [{
+        name: 'sales',
+        data: [280, 320, 300, 280, 50, 120]
+      }],
+      xaxis: {
+        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Semenjana']
+      },
+      colors: ['#1F2859'],
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+
+    // === DONUT CHART ===
+    var optionsKategori = {
+      chart: {
+        type: 'donut',
+        toolbar: {
+          show: false // 🔹 Hilangkan tombol download juga di donut
+        }
+      },
+      series: [44, 55, 13],
+      labels: ['Pelajar', 'Mahasiswa', 'Umum'],
+      colors: ['#1F2859', '#547792', '#94B4C1'], // 🔹 Warna berbeda tiap data
+      legend: {
+        position: 'right'
+      },
+    };
+
+    var chartKategori = new ApexCharts(document.querySelector("#chartKategori"), optionsKategori);
+    chartKategori.render();
+
+    var optionsWilayah = {
+      chart: {
+        type: 'bar',
+        height: '300px',
+        toolbar: {
+          show: false // 🔹 Hilangkan tombol download / export
+        }
+      },
+      series: [{
+        name: 'sales',
+        data: [280, 320, 300, 280, 50, 120]
+      }],
+      xaxis: {
+        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Semenjana']
+      },
+      colors: ['#1F2859'],
+    };
+
+    var chartWilayah = new ApexCharts(document.querySelector("#chartWilayah"), optionsWilayah);
+    chartWilayah.render();
+
+  </script>
+@endsection
