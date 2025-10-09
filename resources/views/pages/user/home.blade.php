@@ -88,10 +88,11 @@
         }
       },
       series: [{
+        name: 'Jumlah Peuji',
         data: [280, 320, 300, 280, 50, 120]
       }],
       xaxis: {
-        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Semenjana']
+        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal']
       },
       colors: ['#1F2859'],
     };
@@ -127,10 +128,11 @@
         }
       },
       series: [{
+        name: 'Jumlah Peuji',
         data: [280, 320, 300, 280, 50, 120]
       }],
       xaxis: {
-        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Semenjana']
+        categories: ['Jambi', 'Kerinci', 'Merangin', 'Batanghari', 'Sarolangun', 'Tebo']
       },
       colors: ['#1F2859'],
     };

@@ -20,3 +20,7 @@ Route::get('/', function () {
 Route::get('/kategori', function () {
     return view('pages.user.kategori');
 });
+
+Route::get('/predikat', function () {
+    return view('pages.user.predikat');
+});
