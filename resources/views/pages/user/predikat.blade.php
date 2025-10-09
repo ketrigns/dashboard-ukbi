@@ -55,7 +55,7 @@
       <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Umum berdasarkan Predikat</h1>
       <div id="chartUmumPredikat"></div>
     </div>
-    
+
   </div>
 
   <script>
@@ -83,6 +83,16 @@
       ],
       xaxis: {
         categories: ['2021', '2022', '2023', '2024']
+      },
+      yaxis: {
+        title: {
+          text: 'Peuji', // 🔹 Judul Y-axis
+          style: {
+            color: '#1F2859',
+            fontSize: '14px',
+            fontWeight: 'bold'
+          }
+        }
       },
       colors: ['#94B4C1', '#547792', '#1F2859'], // warna unik tiap legend
       stroke: {
@@ -148,7 +158,7 @@
       },
       yaxis: {
         title: {
-          text: 'Peuji', 
+          text: 'Peuji',
           style: {
             fontSize: '14px',
             fontWeight: 'bold',
@@ -198,7 +208,7 @@
       },
       yaxis: {
         title: {
-          text: 'Skor', 
+          text: 'Skor',
           style: {
             fontSize: '14px',
             fontWeight: 'bold',
@@ -248,7 +258,7 @@
       },
       yaxis: {
         title: {
-          text: 'Skor', 
+          text: 'Skor',
           style: {
             fontSize: '14px',
             fontWeight: 'bold',
@@ -298,7 +308,7 @@
       },
       yaxis: {
         title: {
-          text: 'Skor', 
+          text: 'Skor',
           style: {
             fontSize: '14px',
             fontWeight: 'bold',
@@ -348,7 +358,7 @@
       },
       yaxis: {
         title: {
-          text: 'Skor', 
+          text: 'Skor',
           style: {
             fontSize: '14px',
             fontWeight: 'bold',
@@ -374,6 +384,6 @@
     var chartUmumPredikat = new ApexCharts(document.querySelector("#chartUmumPredikat"), optionsUmumPredikat);
     chartUmumPredikat.render();
 
-    
+
   </script>
 @endsection

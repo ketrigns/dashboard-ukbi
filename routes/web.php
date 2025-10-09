@@ -24,3 +24,7 @@ Route::get('/kategori', function () {
 Route::get('/predikat', function () {
     return view('pages.user.predikat');
 });
+
+Route::get('/wilayah', function () {
+    return view('pages.user.wilayah');
+});
