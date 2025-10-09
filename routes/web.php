@@ -28,3 +28,7 @@ Route::get('/predikat', function () {
 Route::get('/wilayah', function () {
     return view('pages.user.wilayah');
 });
+
+Route::get('/tahun', function () {
+    return view('pages.user.tahun');
+});
