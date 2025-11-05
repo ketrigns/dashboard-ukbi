@@ -31,7 +31,7 @@
   </div>
 
   <div class="grid md:grid-cols-2 grid-cols-1 gap-4 my-4">
-    <div class="bg-white p-4 rounded">
+    <div class="bg-white p-4 rounded col-span-2">
       <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Predikat per Tahun</h1>
       <div id="chart"></div>
     </div>
@@ -44,16 +44,28 @@
       <div id="chartSkorPredikat"></div>
     </div>
     <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Pelajar berdasarkan Predikat</h1>
-      <div id="chartPelajarPredikat"></div>
-    </div>
-    <div class="bg-white p-4 rounded">
       <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Mahasiswa berdasarkan Predikat</h1>
       <div id="chartMahasiswaPredikat"></div>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Umum berdasarkan Predikat</h1>
       <div id="chartUmumPredikat"></div>
+    </div>
+    <div class="bg-white p-4 rounded">
+      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Pelajar berdasarkan Predikat</h1>
+      <div id="chartPelajarPredikat"></div>
+    </div>
+    <div class="bg-white p-4 rounded">
+      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Pelajar SD berdasarkan Predikat</h1>
+      <div id="chartPelajarSDPredikat"></div>
+    </div>
+    <div class="bg-white p-4 rounded">
+      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Pelajar SMP berdasarkan Predikat</h1>
+      <div id="chartPelajarSMPPredikat"></div>
+    </div>
+    <div class="bg-white p-4 rounded">
+      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Pelajar SMA berdasarkan Predikat</h1>
+      <div id="chartPelajarSMAPredikat"></div>
     </div>
 
   </div>
@@ -234,56 +246,6 @@
     var chartSkorPredikat = new ApexCharts(document.querySelector("#chartSkorPredikat"), optionsSkorPredikat);
     chartSkorPredikat.render();
 
-    var optionsPelajarPredikat = {
-      chart: {
-        type: 'bar',
-        height: '300px',
-        toolbar: {
-          show: false // 🔹 Hilangkan tombol download / export
-        }
-      },
-      series: [{
-        name: 'Jumlah Peuji',
-        data: [280, 320, 300, 280, 50, 120]
-      }],
-      xaxis: {
-        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'],
-        title: {
-          style: {
-            fontSize: '14px',
-            fontWeight: 'bold',
-            color: '#1F2859'
-          }
-        }
-      },
-      yaxis: {
-        title: {
-          text: 'Skor',
-          style: {
-            fontSize: '14px',
-            fontWeight: 'bold',
-            color: '#1F2859'
-          }
-        },
-        labels: {
-          style: {
-            colors: '#374151'
-          }
-        }
-      },
-      colors: ['#1F2859'],
-      grid: {
-        borderColor: '#e5e7eb',
-        strokeDashArray: 4
-      },
-      dataLabels: {
-        enabled: true // 🔹 Tampilkan angka di atas setiap batang (opsional)
-      }
-    };
-
-    var chartPelajarPredikat = new ApexCharts(document.querySelector("#chartPelajarPredikat"), optionsPelajarPredikat);
-    chartPelajarPredikat.render();
-
     var optionsMahasiswaPredikat = {
       chart: {
         type: 'bar',
@@ -383,6 +345,206 @@
 
     var chartUmumPredikat = new ApexCharts(document.querySelector("#chartUmumPredikat"), optionsUmumPredikat);
     chartUmumPredikat.render();
+
+    var optionsPelajarPredikat = {
+      chart: {
+        type: 'bar',
+        height: '300px',
+        toolbar: {
+          show: false // 🔹 Hilangkan tombol download / export
+        }
+      },
+      series: [{
+        name: 'Jumlah Peuji',
+        data: [280, 320, 300, 280, 50, 120]
+      }],
+      xaxis: {
+        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'],
+        title: {
+          style: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#1F2859'
+          }
+        }
+      },
+      yaxis: {
+        title: {
+          text: 'Skor',
+          style: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#1F2859'
+          }
+        },
+        labels: {
+          style: {
+            colors: '#374151'
+          }
+        }
+      },
+      colors: ['#1F2859'],
+      grid: {
+        borderColor: '#e5e7eb',
+        strokeDashArray: 4
+      },
+      dataLabels: {
+        enabled: true // 🔹 Tampilkan angka di atas setiap batang (opsional)
+      }
+    };
+
+    var chartPelajarPredikat = new ApexCharts(document.querySelector("#chartPelajarPredikat"), optionsPelajarPredikat);
+    chartPelajarPredikat.render();
+
+    var optionsPelajarSDPredikat = {
+      chart: {
+        type: 'bar',
+        height: '300px',
+        toolbar: {
+          show: false // 🔹 Hilangkan tombol download / export
+        }
+      },
+      series: [{
+        name: 'Jumlah Peuji',
+        data: [280, 320, 300, 280, 50, 120]
+      }],
+      xaxis: {
+        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'],
+        title: {
+          style: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#1F2859'
+          }
+        }
+      },
+      yaxis: {
+        title: {
+          text: 'Skor',
+          style: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#1F2859'
+          }
+        },
+        labels: {
+          style: {
+            colors: '#374151'
+          }
+        }
+      },
+      colors: ['#1F2859'],
+      grid: {
+        borderColor: '#e5e7eb',
+        strokeDashArray: 4
+      },
+      dataLabels: {
+        enabled: true // 🔹 Tampilkan angka di atas setiap batang (opsional)
+      }
+    };
+
+    var chartPelajarSDPredikat = new ApexCharts(document.querySelector("#chartPelajarSDPredikat"), optionsPelajarSDPredikat);
+    chartPelajarSDPredikat.render();
+
+    var optionsPelajarSMPPredikat = {
+      chart: {
+        type: 'bar',
+        height: '300px',
+        toolbar: {
+          show: false // 🔹 Hilangkan tombol download / export
+        }
+      },
+      series: [{
+        name: 'Jumlah Peuji',
+        data: [280, 320, 300, 280, 50, 120]
+      }],
+      xaxis: {
+        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'],
+        title: {
+          style: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#1F2859'
+          }
+        }
+      },
+      yaxis: {
+        title: {
+          text: 'Skor',
+          style: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#1F2859'
+          }
+        },
+        labels: {
+          style: {
+            colors: '#374151'
+          }
+        }
+      },
+      colors: ['#1F2859'],
+      grid: {
+        borderColor: '#e5e7eb',
+        strokeDashArray: 4
+      },
+      dataLabels: {
+        enabled: true // 🔹 Tampilkan angka di atas setiap batang (opsional)
+      }
+    };
+
+    var chartPelajarSMPPredikat = new ApexCharts(document.querySelector("#chartPelajarSMPPredikat"), optionsPelajarSMPPredikat);
+    chartPelajarSMPPredikat.render();
+
+    var optionsPelajarSMAPredikat = {
+      chart: {
+        type: 'bar',
+        height: '300px',
+        toolbar: {
+          show: false // 🔹 Hilangkan tombol download / export
+        }
+      },
+      series: [{
+        name: 'Jumlah Peuji',
+        data: [280, 320, 300, 280, 50, 120]
+      }],
+      xaxis: {
+        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'],
+        title: {
+          style: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#1F2859'
+          }
+        }
+      },
+      yaxis: {
+        title: {
+          text: 'Skor',
+          style: {
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#1F2859'
+          }
+        },
+        labels: {
+          style: {
+            colors: '#374151'
+          }
+        }
+      },
+      colors: ['#1F2859'],
+      grid: {
+        borderColor: '#e5e7eb',
+        strokeDashArray: 4
+      },
+      dataLabels: {
+        enabled: true // 🔹 Tampilkan angka di atas setiap batang (opsional)
+      }
+    };
+
+    var chartPelajarSMAPredikat = new ApexCharts(document.querySelector("#chartPelajarSMAPredikat"), optionsPelajarSMAPredikat);
+    chartPelajarSMAPredikat.render();
 
 
   </script>

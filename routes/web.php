@@ -1,5 +1,9 @@
 <?php
 
+
+use App\Http\Controllers\DataUkbiController;
+use App\Http\Controllers\HasilDataMiningController;
+use App\Models\HasilDataMining;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,7 +19,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('pages.user.home');
-});
+})->name('home');
+
+Route::get('/data-mining', function () {
+    $data = HasilDataMining::latest()->first(); // ✅ hanya ambil satu
+    return view('pages.user.data-mining', compact('data'));
+})->name('data-mining');
+
 
 Route::get('/kategori', function () {
     return view('pages.user.kategori');
@@ -32,3 +42,8 @@ Route::get('/wilayah', function () {
 Route::get('/tahun', function () {
     return view('pages.user.tahun');
 });
+
+Route::resource('/admin/data-ukbi', DataUkbiController::class);
+Route::resource('/admin/hasil-data-mining', HasilDataMiningController::class);
+Route::post('/admin/dashboard/import-data-ukbi', [DataUkbiController::class, 'handleImport'])
+     ->name('data-ukbi.import.handle');
