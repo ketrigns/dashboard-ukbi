@@ -82,8 +82,6 @@
     </style>
 
 
-
-
     <div class="mt-8">
         {{-- Tombol Tambah Data (opsional) --}}
         <div class="flex justify-end">
@@ -170,10 +168,31 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+
+        // --- LOADING SAAT IMPORT FILE ---
+        const importForm = document.querySelector('form[action="{{ route('data-ukbi.import.handle') }}"]');
+
+        if (importForm) {
+            importForm.addEventListener('submit', function (e) {
+                // Tampilkan SweetAlert Loading
+                Swal.fire({
+                    title: 'Mengupload...',
+                    text: 'Mohon tunggu, file sedang diproses.',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    allowEnterKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+            });
+        }
+
+        // --- KONFIRMASI DELETE ---
         const deleteButtons = document.querySelectorAll('.delete-btn');
 
         deleteButtons.forEach(button => {
-            button.addEventListener('click', function (e) {
+            button.addEventListener('click', function () {
                 const form = this.closest('.delete-form');
 
                 Swal.fire({

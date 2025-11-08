@@ -15,19 +15,19 @@
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji</h1>
-      <p class="text-[32px] font-regular leading-tight">9.453</p>
+      <p class="text-[32px] font-regular leading-tight">{{ $total }}</p>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Pelajar</h1>
-      <p class="text-[32px] font-regular leading-tight">7.207</p>
+      <p class="text-[32px] font-regular leading-tight">{{ $pelajar }}</p>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Mahasiswa</h1>
-      <p class="text-[32px] font-regular leading-tight">1.108</p>
+      <p class="text-[32px] font-regular leading-tight">{{ $mahasiswa }}</p>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Umum</h1>
-      <p class="text-[32px] font-regular leading-tight">1.228</p>
+      <p class="text-[32px] font-regular leading-tight">{{ $umum }}</p>
     </div>
   </div>
 
@@ -49,47 +49,73 @@
     </div>
   </div>
 
+  {{-- <div class="grid grid-cols-2 gap-4 my-4">
+    <div class="bg-white p-4 rounded">
+      <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Predikat</h1>
+      <div id="chart"></div>
+    </div>
+    <div class="bg-white p-4 rounded">
+      <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Kategori</h1>
+      <div id="chartKategori"></div>
+    </div>
+
+  </div>
+  <div class="bg-white p-4 rounded">
+    <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Wilayah</h1>
+    <div id="chartWilayah"></div>
+  </div> --}}
+
+
   <script>
     // Inisialisasi peta di pusat Provinsi Jambi
     const map = L.map('map').setView([-1.6116, 103.6157], 8);
 
-    // Tambahkan layer peta dari OpenStreetMap
+    // Tambahkan layer peta
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
-    // Daftar lokasi di Provinsi Jambi
-    const locations = [
-      { name: "Kota Jambi", coords: [-1.6101, 103.6131] },
-      { name: "Muaro Jambi", coords: [-1.5565, 103.7264] },
-      { name: "Sungai Penuh", coords: [-2.0631, 101.3843] },
-      { name: "Kerinci", coords: [-2.1333, 101.6167] },
-      { name: "Tebo", coords: [-1.4897, 102.3329] },
-      { name: "Sarolangun", coords: [-2.3059, 102.6906] },
-      { name: "Batanghari", coords: [-1.7089, 103.0826] },
-      { name: "Bungo", coords: [-1.4867, 101.9014] },
-      { name: "Tanjung Jabung Timur", coords: [-1.1352, 103.9322] },
-      { name: "Tanjung Jabung Barat", coords: [-0.8119, 103.4613] },
-    ];
+    // Data dari PHP → JS
+    const locations = @json($locations);
 
-    // Tambahkan marker untuk setiap lokasi
-    locations.forEach(loc => {
-      L.marker(loc.coords)
-        .addTo(map);
-    });
+    locations.forEach(item => {
+      if (item.titik_koordinat_peta) {
+        const parts = item.titik_koordinat_peta.split(',').map(Number);
+
+        if (parts.length === 2) {
+          L.marker(parts)
+            .addTo(map)
+            .bindPopup(`
+                        <b>${item.kota}</b><br>
+                        Jumlah Peserta: ${item.total_peserta}
+                      `);
+        }
+      }
+    })
+
+    const predikatData = @json($predikatCounts);
+    const orederedPredikat = ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'];
+    const predikatValues = orederedPredikat.map(p => predikatData[p] ?? 0);
 
     var options = {
       chart: {
         type: 'bar',
-        height: '300px',
         toolbar: {
           show: false // 🔹 Hilangkan tombol download / export
-        }
+        },
+
+      },
+      dataLabels: {
+        enabled: true,
+        style: {
+          fontSize: '12px',
+          colors: ['#000']
+        },
       },
       series: [{
         name: 'Jumlah Peuji',
-        data: [280, 320, 300, 280, 50, 120]
+        data: predikatValues
       }],
       xaxis: {
         categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal']
@@ -100,6 +126,7 @@
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
 
+
     // === DONUT CHART ===
     var optionsKategori = {
       chart: {
@@ -108,7 +135,7 @@
           show: false // 🔹 Hilangkan tombol download juga di donut
         }
       },
-      series: [44, 55, 13],
+      series: [{{ $pelajar }}, {{ $mahasiswa }}, {{ $umum }}],
       labels: ['Pelajar', 'Mahasiswa', 'Umum'],
       colors: ['#1F2859', '#547792', '#94B4C1'], // 🔹 Warna berbeda tiap data
       legend: {
@@ -119,26 +146,56 @@
     var chartKategori = new ApexCharts(document.querySelector("#chartKategori"), optionsKategori);
     chartKategori.render();
 
+    const wilayahCounts = @json($wilayahCounts);
+
+    const wilayahCategories = Object.keys(wilayahCounts);
+
+    const wilayahValues = Object.values(wilayahCounts);
+
     var optionsWilayah = {
       chart: {
         type: 'bar',
-        height: '300px',
         toolbar: {
-          show: false // 🔹 Hilangkan tombol download / export
+          show: true
+        },
+        zoom: {
+          enabled: true
         }
       },
+
+      dataLabels: {
+        enabled: true,
+        style: {
+          fontSize: '12px',
+          colors: ['#000']
+        },
+      },
+
       series: [{
         name: 'Jumlah Peuji',
-        data: [280, 320, 300, 280, 50, 120]
+        data: wilayahValues
       }],
+
+      // grid: {
+      //   padding: {
+      //     bottom: 100,   
+      //     left: 20
+      //   }
+      // },
+
       xaxis: {
-        categories: ['Jambi', 'Kerinci', 'Merangin', 'Batanghari', 'Sarolangun', 'Tebo']
+        categories: wilayahCategories,
       },
+
       colors: ['#1F2859'],
     };
 
-    var chartWilayah = new ApexCharts(document.querySelector("#chartWilayah"), optionsWilayah);
+    var chartWilayah = new ApexCharts(
+      document.querySelector("#chartWilayah"),
+      optionsWilayah
+    );
     chartWilayah.render();
+
 
   </script>
 @endsection

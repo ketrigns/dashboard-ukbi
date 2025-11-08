@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\DataUkbiController;
 use App\Http\Controllers\HasilDataMiningController;
 use App\Models\HasilDataMining;
@@ -17,9 +17,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('pages.user.home');
-})->name('home');
+Route::get('/', [DashboardUserController::class, 'index'])->name('home');
 
 Route::get('/data-mining', function () {
     $data = HasilDataMining::latest()->first(); // ✅ hanya ambil satu
