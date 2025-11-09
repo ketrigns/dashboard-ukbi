@@ -45,6 +45,29 @@ class DataUkbiImport implements ToModel, WithHeadingRow, WithValidation
                 'predikat'              => $row['predikat'] ?? null,
             ]
         );
+
+        // return DataUkbi::create(
+        //     [
+        //         'no_pendaftaran' => $row['no_pendaftaran'] ?? null,
+        //         'tanggal_ujian'         => $row['tanggal_ujian'] ?? null,
+        //         'nama_peserta'          => $row['nama_peserta'] ?? null,
+        //         'terdaftar_sbg'         => $row['terdaftar_sebagai'] ?? null,
+        //         'jenis_kelamin'         => $row['jenis_kelamin'] ?? null,
+        //         'tempat_lahir'          => $row['tempat_lahir'] ?? null,
+        //         'tanggal_lahir'         => $row['tanggal_lahir'] ?? null,
+        //         'kota'                  => $row['kota'] ?? null,
+        //         'titik_koordinat_peta'  => $row['titik_koordinat_kota'] ?? null,
+        //         'kelas'                 => $row['kelas'] ?? null,
+        //         'instansi'              => $row['instansi'] ?? null,
+        //         'seksi_1'               => $row['seksi_i'] ?? null,
+        //         'seksi_2'               => $row['seksi_ii'] ?? null,
+        //         'seksi_3'               => $row['seksi_iii'] ?? null,
+        //         'seksi_4'               => $row['seksi_iv'] ?? null,
+        //         'seksi_5'               => $row['seksi_v'] ?? null,
+        //         'skor'                  => $row['skor'] ?? null,
+        //         'predikat'              => $row['predikat'] ?? null,
+        //     ]
+        // );
     }
 
     /**
@@ -73,5 +96,4 @@ class DataUkbiImport implements ToModel, WithHeadingRow, WithValidation
             'predikat'           => 'nullable',
         ];
     }
-    
 }

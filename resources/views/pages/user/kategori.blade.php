@@ -6,31 +6,45 @@
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji</h1>
-      <p class="text-[32px] font-regular leading-tight">9.453</p>
+      <p class="text-[32px] font-regular leading-tight">{{ number_format($total, 0, ',', '.') }}</p>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Pelajar</h1>
-      <p class="text-[32px] font-regular leading-tight">7.207</p>
+      <p class="text-[32px] font-regular leading-tight">{{ number_format($pelajar, 0, ',', '.') }}</p>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Mahasiswa</h1>
-      <p class="text-[32px] font-regular leading-tight">1.108</p>
+      <p class="text-[32px] font-regular leading-tight">{{ number_format($mahasiswa, 0, ',', '.') }}</p>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Umum</h1>
-      <p class="text-[32px] font-regular leading-tight">1.228</p>
+      <p class="text-[32px] font-regular leading-tight">{{ number_format($umum, 0, ',', '.') }}</p>
     </div>
   </div>
 
   <div class="relative w-full">
-    <select
-      class="w-full appearance-none border border-black rounded px-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:border-[#1F2859]">
-      <option>Semua Wilayah</option>
-      <option>Jambi</option>
-      <option>Muaro Jambi</option>
-      <option>Kota Sungai Penuh</option>
-      <option>Batanghari</option>
-    </select>
+    <form action="" method="GET">
+      <select
+        name="wilayah"
+        onchange="this.form.submit()"
+        class="w-full appearance-none border border-black rounded px-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:border-[#1F2859]">
+        <option value="" {{ request('wilayah') == "" ? 'selected' : '' }} >Semua Wilayah</option>
+        <option value="KABUPATEN BUNGO" {{ request('wilayah') == 'KABUPATEN BUNGO' ? 'selected' : '' }} >KABUPATEN BUNGO</option>
+        <option value="KABUPATEN KERINCI" {{ request('wilayah') == 'KABUPATEN KERINCI' ? 'selected' : '' }} >KABUPATEN KERINCI</option>
+        <option value="KABUPATEN MERANGIN" {{ request('wilayah') == 'KABUPATEN MERANGIN' ? 'selected' : '' }} >KABUPATEN MERANGIN</option>
+        <option value="KABUPATEN TANJUNG JABUNG BARAT" {{ request('wilayah') == 'KABUPATEN TANJUNG JABUNG BARAT' ? 'selected' : '' }} >KABUPATEN TANJUNG JABUNG BARAT</option>
+        <option value="KOTA JAMBI" {{ request('wilayah') == 'KOTA JAMBI' ? 'selected' : '' }} >KOTA JAMBI</option>
+        <option value="KABUPATEN BATANG HARI" {{ request('wilayah') == 'KABUPATEN BATANG HARI' ? 'selected' : '' }} >KABUPATEN BATANG HARI</option>
+        <option value="KABUPATEN TEBO" {{ request('wilayah') == 'KABUPATEN TEBO' ? 'selected' : '' }} >KABUPATEN TEBO</option>
+        <option value="KABUPATEN MUARO JAMBI" {{ request('wilayah') == 'KABUPATEN MUARO JAMBI' ? 'selected' : '' }} >KABUPATEN MUARO JAMBI</option>
+        <option value="KABUPATEN SAROLANGUN" {{ request('wilayah') == 'KABUPATEN SAROLANGUN' ? 'selected' : '' }} >KABUPATEN SAROLANGUN</option>
+        <option value="KABUPATEN TANJUNG JABUNG TIMUR" {{ request('wilayah') == 'KABUPATEN TANJUNG JABUNG TIMUR' ? 'selected' : '' }} >KABUPATEN TANJUNG JABUNG TIMUR</option>
+        <option value="KOTA SUNGAI PENUH" {{ request('wilayah') == 'KOTA SUNGAI PENUH' ? 'selected' : '' }} >KOTA SUNGAI PENUH</option>
+        <option value="KABUPATEN BATANGHARI" {{ request('wilayah') == 'KABUPATEN BATANGHARI' ? 'selected' : '' }} >KABUPATEN BATANGHARI</option>
+        
+      </select>
+
+    </form>
 
     <!-- Icon kiri -->
     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-black">
@@ -52,27 +66,46 @@
   <div class="grid md:grid-cols-2 grid-cols-1 gap-4 my-4">
     <div class="bg-white p-4 rounded">
       <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Kategori</h1>
-      <h1 class="text-[40px] font-regular leading-tight text-[#1F2859]">9.453</h1>
+      <h1 class="text-[40px] font-regular leading-tight text-[#1F2859]">{{ number_format($total, 0, ',', '.') }}</h1>
       <div id="chart"></div>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Kategori Pelajar</h1>
-      <h1 class="text-[40px] font-regular leading-tight text-[#1F2859]">7.207</h1>
+      <h1 class="text-[40px] font-regular leading-tight text-[#1F2859]">{{ number_format($pelajar, 0, ',', '.') }}</h1>
       <div id="chartPelajar"></div>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Kategori Mahasiswa</h1>
-      <h1 class="text-[40px] font-regular leading-tight text-[#1F2859]">1.108</h1>
+      <h1 class="text-[40px] font-regular leading-tight text-[#1F2859]">{{ number_format($mahasiswa, 0, ',', '.') }}</h1>
       <div id="chartMahasiswa"></div>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Kategori Umum</h1>
-      <h1 class="text-[40px] font-regular leading-tight text-[#1F2859]">1.228</h1>
+      <h1 class="text-[40px] font-regular leading-tight text-[#1F2859]">{{ number_format($umum, 0, ',', '.') }}</h1>
       <div id="chartUmum"></div>
     </div>
   </div>
 
   <script>
+    const rawKategori = @json($kategoriPerTahun);
+    const uniqueYears = [...new Set(rawKategori.map(item => item.tahun))].sort((a, b) => a - b);
+    const uniquePeuji = [...new Set(rawKategori.map(item => item.kategori))].sort();
+
+    const seriesDataKategoriPerTahun = uniquePeuji.map(peuji => {
+      // Untuk setiap peuji, cari totalnya di setiap tahun
+      const data = uniqueYears.map(tahun => {
+        // Cari data yang cocok
+        const entry = rawKategori.find(item => item.tahun === tahun && item.kategori === peuji);
+        // Jika ditemukan, kembalikan totalnya. Jika tidak, kembalikan 0.
+        return entry ? entry.total : 0;
+      });
+
+      return {
+        name: peuji,
+        data: data
+      };
+    });
+
     var options = {
       chart: {
         type: 'line',
@@ -81,22 +114,9 @@
           show: false
         }
       },
-      series: [
-        {
-          name: 'Pelajar',
-          data: [120, 150, 180, 200]
-        },
-        {
-          name: 'Mahasiswa',
-          data: [100, 130, 160, 190]
-        },
-        {
-          name: 'Umum',
-          data: [80, 110, 140, 170]
-        }
-      ],
+      series: seriesDataKategoriPerTahun,
       xaxis: {
-        categories: ['2021', '2022', '2023', '2024']
+        categories: uniqueYears
       },
       colors: ['#94B4C1', '#547792', '#1F2859'], // warna unik tiap legend
       stroke: {
@@ -138,6 +158,10 @@
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
 
+    const pelajarData = @json($pelajarCounts);
+    const pelajarCategories = Object.keys(pelajarData);
+    const pelajarValues = Object.values(pelajarData);
+
     var optionsPelajar = {
       chart: {
         type: 'pie',
@@ -146,8 +170,8 @@
           show: false
         }
       },
-      series: [200, 190, 170],
-      labels: ['Pelajar SMA', 'Pelajar SMK', 'Pelajar SMP'],
+      series: pelajarValues,
+      labels: pelajarCategories,
       colors: ['#1F2859', '#547792', '#94B4C1'],
       legend: {
         position: 'right',
@@ -262,6 +286,10 @@
     var chartMahasiswa = new ApexCharts(document.querySelector("#chartMahasiswa"), optionsMahasiswa);
     chartMahasiswa.render();
 
+    const umumData = @json($umumCounts);
+    const umumCategories = Object.keys(umumData);
+    const umumValues = Object.values(umumData);
+
     var optionsUmum = {
       chart: {
         type: 'pie',
@@ -270,8 +298,8 @@
           show: false
         }
       },
-      series: [200, 190, 170],
-      labels: ['ASN', 'Guru', 'Dosen'],
+      series: umumValues,
+      labels: umumCategories,
       colors: ['#1F2859', '#547792', '#94B4C1'],
       legend: {
         position: 'right',

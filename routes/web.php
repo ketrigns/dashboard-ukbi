@@ -3,6 +3,8 @@
 use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\DataUkbiController;
 use App\Http\Controllers\HasilDataMiningController;
+use App\Http\Controllers\KategoriUserController;
+use App\Http\Controllers\PredikatUserController;
 use App\Models\HasilDataMining;
 use Illuminate\Support\Facades\Route;
 
@@ -17,21 +19,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [DashboardUserController::class, 'index'])->name('home');
-
 Route::get('/data-mining', function () {
     $data = HasilDataMining::latest()->first(); // ✅ hanya ambil satu
     return view('pages.user.data-mining', compact('data'));
 })->name('data-mining');
 
+Route::get('/', [DashboardUserController::class, 'index'])->name('home');
 
-Route::get('/kategori', function () {
-    return view('pages.user.kategori');
-});
+Route::get('/kategori', [KategoriUserController::class, 'index']);
 
-Route::get('/predikat', function () {
-    return view('pages.user.predikat');
-});
+Route::get('/predikat', [PredikatUserController::class, 'index']);
 
 Route::get('/wilayah', function () {
     return view('pages.user.wilayah');

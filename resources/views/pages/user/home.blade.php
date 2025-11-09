@@ -15,19 +15,19 @@
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji</h1>
-      <p class="text-[32px] font-regular leading-tight">{{ $total }}</p>
+      <p class="text-[32px] font-regular leading-tight">{{ number_format($total, 0, ',', '.') }}</p>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Pelajar</h1>
-      <p class="text-[32px] font-regular leading-tight">{{ $pelajar }}</p>
+      <p class="text-[32px] font-regular leading-tight">{{ number_format($pelajar, 0, ',', '.') }}</p>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Mahasiswa</h1>
-      <p class="text-[32px] font-regular leading-tight">{{ $mahasiswa }}</p>
+      <p class="text-[32px] font-regular leading-tight">{{ number_format($mahasiswa, 0, ',', '.') }}</p>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Umum</h1>
-      <p class="text-[32px] font-regular leading-tight">{{ $umum }}</p>
+      <p class="text-[32px] font-regular leading-tight">{{ number_format($umum, 0, ',', '.') }}</p>
     </div>
   </div>
 
@@ -95,8 +95,8 @@
     })
 
     const predikatData = @json($predikatCounts);
-    const orederedPredikat = ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'];
-    const predikatValues = orederedPredikat.map(p => predikatData[p] ?? 0);
+    const predikatCategories = Object.keys(predikatData);
+    const predikatValues = Object.values(predikatData);
 
     var options = {
       chart: {
@@ -118,7 +118,7 @@
         data: predikatValues
       }],
       xaxis: {
-        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal']
+        categories: predikatCategories
       },
       colors: ['#1F2859'],
     };

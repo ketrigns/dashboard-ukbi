@@ -4,14 +4,35 @@
 
 @section('content')
   <div class="relative w-full">
-    <select
-      class="w-full appearance-none border border-black rounded px-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:border-[#1F2859]">
-      <option>Semua Wilayah</option>
-      <option>Jambi</option>
-      <option>Muaro Jambi</option>
-      <option>Kota Sungai Penuh</option>
-      <option>Batanghari</option>
-    </select>
+    <form action="" method="GET">
+      <select name="wilayah" onchange="this.form.submit()"
+        class="w-full appearance-none border border-black rounded px-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:border-[#1F2859]">
+        <option value="" {{ request('wilayah') == "" ? 'selected' : '' }}>Semua Wilayah</option>
+        <option value="KABUPATEN BUNGO" {{ request('wilayah') == 'KABUPATEN BUNGO' ? 'selected' : '' }}>KABUPATEN BUNGO
+        </option>
+        <option value="KABUPATEN KERINCI" {{ request('wilayah') == 'KABUPATEN KERINCI' ? 'selected' : '' }}>KABUPATEN
+          KERINCI</option>
+        <option value="KABUPATEN MERANGIN" {{ request('wilayah') == 'KABUPATEN MERANGIN' ? 'selected' : '' }}>KABUPATEN
+          MERANGIN</option>
+        <option value="KABUPATEN TANJUNG JABUNG BARAT" {{ request('wilayah') == 'KABUPATEN TANJUNG JABUNG BARAT' ? 'selected' : '' }}>KABUPATEN TANJUNG JABUNG BARAT</option>
+        <option value="KOTA JAMBI" {{ request('wilayah') == 'KOTA JAMBI' ? 'selected' : '' }}>KOTA JAMBI</option>
+        <option value="KABUPATEN BATANG HARI" {{ request('wilayah') == 'KABUPATEN BATANG HARI' ? 'selected' : '' }}>
+          KABUPATEN BATANG HARI</option>
+        <option value="KABUPATEN TEBO" {{ request('wilayah') == 'KABUPATEN TEBO' ? 'selected' : '' }}>KABUPATEN TEBO
+        </option>
+        <option value="KABUPATEN MUARO JAMBI" {{ request('wilayah') == 'KABUPATEN MUARO JAMBI' ? 'selected' : '' }}>
+          KABUPATEN MUARO JAMBI</option>
+        <option value="KABUPATEN SAROLANGUN" {{ request('wilayah') == 'KABUPATEN SAROLANGUN' ? 'selected' : '' }}>KABUPATEN
+          SAROLANGUN</option>
+        <option value="KABUPATEN TANJUNG JABUNG TIMUR" {{ request('wilayah') == 'KABUPATEN TANJUNG JABUNG TIMUR' ? 'selected' : '' }}>KABUPATEN TANJUNG JABUNG TIMUR</option>
+        <option value="KOTA SUNGAI PENUH" {{ request('wilayah') == 'KOTA SUNGAI PENUH' ? 'selected' : '' }}>KOTA SUNGAI
+          PENUH</option>
+        <option value="KABUPATEN BATANGHARI" {{ request('wilayah') == 'KABUPATEN BATANGHARI' ? 'selected' : '' }}>KABUPATEN
+          BATANGHARI</option>
+
+      </select>
+
+    </form>
 
     <!-- Icon kiri -->
     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-black">
@@ -71,6 +92,28 @@
   </div>
 
   <script>
+    const rawPredikat = @json($predikatPerTahun);
+    const uniqueYears = [...new Set(rawPredikat.map(item => item.tahun))].sort((a, b) => a - b);
+
+    // 2. Dapatkan semua predikat unik dan urutkan
+    const uniquePredikats = [...new Set(rawPredikat.map(item => item.predikat))].sort();
+
+    // 3. Buat struktur data 'series' yang dibutuhkan ApexCharts
+    const seriesData = uniquePredikats.map(predikat => {
+      // Untuk setiap predikat, cari totalnya di setiap tahun
+      const data = uniqueYears.map(tahun => {
+        // Cari data yang cocok
+        const entry = rawPredikat.find(item => item.tahun === tahun && item.predikat === predikat);
+        // Jika ditemukan, kembalikan totalnya. Jika tidak, kembalikan 0.
+        return entry ? entry.total : 0;
+      });
+
+      return {
+        name: predikat,
+        data: data
+      };
+    });
+
     var options = {
       chart: {
         type: 'line',
@@ -79,22 +122,9 @@
           show: false
         }
       },
-      series: [
-        {
-          name: 'Istimewa',
-          data: [120, 150, 180, 200]
-        },
-        {
-          name: 'Sangat Unggul',
-          data: [100, 130, 160, 190]
-        },
-        {
-          name: 'Unggul',
-          data: [80, 110, 140, 170]
-        }
-      ],
+      series: seriesData,
       xaxis: {
-        categories: ['2021', '2022', '2023', '2024']
+        categories: uniqueYears
       },
       yaxis: {
         title: {
@@ -156,10 +186,10 @@
       },
       series: [{
         name: 'Jumlah Peuji',
-        data: [280, 320, 300, 280, 50, 120]
+        data: @json($jmlPeujiPredikat->pluck('total'))
       }],
       xaxis: {
-        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'],
+        categories: @json($jmlPeujiPredikat->pluck('predikat')),
         title: {
           style: {
             fontSize: '14px',
@@ -189,7 +219,10 @@
         strokeDashArray: 4
       },
       dataLabels: {
-        enabled: true // 🔹 Tampilkan angka di atas setiap batang (opsional)
+        enabled: true,
+        style: {
+          colors: ['#000000']
+        }
       }
     };
 

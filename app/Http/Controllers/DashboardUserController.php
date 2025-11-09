@@ -28,15 +28,12 @@ class DashboardUserController extends Controller
             ->get();
 
         $predikatCounts = DataUkbi::select('predikat', DB::raw('COUNT(*) as total'))
-            ->whereIn('predikat', ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'])
             ->groupBy('predikat')
             ->pluck('total', 'predikat');
 
         $wilayahCounts = DataUkbi::select('kota', DB::raw('COUNT(*) as total'))
             ->groupBy('kota')
             ->pluck('total', 'kota');
-
-
 
         return view('pages.user.home', compact('pelajar', 'mahasiswa', 'umum', 'total', 'locations', 'predikatCounts', 'wilayahCounts'));
     }
