@@ -55,25 +55,14 @@
     </span>
   </div>
 
+  <div class="bg-white p-4 rounded">
+    <div id="chart"></div>
+  </div>
   <div class="grid md:grid-cols-2 grid-cols-1 gap-4 my-4">
     <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Kategori</h1>
-      <h1 class="text-[40px] font-regular leading-tight text-[#1F2859]">{{ number_format($total, 0, ',', '.') }}</h1>
-      <div id="chart"></div>
-    </div>
-    <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Kategori Pelajar</h1>
-      <h1 class="text-[40px] font-regular leading-tight text-[#1F2859]">{{ number_format($pelajar, 0, ',', '.') }}</h1>
       <div id="chartPelajar"></div>
     </div>
     <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Kategori Mahasiswa</h1>
-      <h1 class="text-[40px] font-regular leading-tight text-[#1F2859]">{{ number_format($mahasiswa, 0, ',', '.') }}</h1>
-      <div id="chartMahasiswa"></div>
-    </div>
-    <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Kategori Umum</h1>
-      <h1 class="text-[40px] font-regular leading-tight text-[#1F2859]">{{ number_format($umum, 0, ',', '.') }}</h1>
       <div id="chartUmum"></div>
     </div>
   </div>
@@ -101,9 +90,26 @@
     var options = {
       chart: {
         type: 'line',
-        height: '300px',
+        height: '400px',
         toolbar: {
-          show: false
+          show: true
+        }
+      },
+      title: {
+        text: 'Jumlah Peuji berdasarkan Kategori', // 🟢 Judul chart
+        align: 'left', // bisa 'left', 'left', atau 'right'
+        style: {
+          fontSize: '25px',
+          fontWeight: 'bold',
+          color: '#000'
+        }
+      },
+      subtitle: {
+        text: {{ number_format($total, 0, ',', '.') }}, // 🟢 tampil di bawah title
+        align: 'left',
+        style: {
+          fontSize: '20px',
+          color: '#000'
         }
       },
       series: seriesDataKategoriPerTahun,
@@ -153,13 +159,29 @@
     const pelajarData = @json($pelajarCounts);
     const pelajarCategories = Object.keys(pelajarData);
     const pelajarValues = Object.values(pelajarData);
-
     var optionsPelajar = {
       chart: {
         type: 'pie',
-        height: '300px',
+        height: '500px',
         toolbar: {
-          show: false
+          show: true
+        }
+      },
+      title: {
+        text: 'Jumlah Peuji berdasarkan Kategori Pelajar', // 🟢 Judul chart
+        align: 'left', // bisa 'left', 'left', atau 'right'
+        style: {
+          fontSize: '25px',
+          fontWeight: 'bold',
+          color: '#000'
+        }
+      },
+      subtitle: {
+        text: {{ number_format($pelajar, 0, ',', '.') }}, // 🟢 tampil di bawah title
+        align: 'left',
+        style: {
+          fontSize: '20px',
+          color: '#000'
         }
       },
       series: pelajarValues,
@@ -216,68 +238,6 @@
     var chartPelajar = new ApexCharts(document.querySelector("#chartPelajar"), optionsPelajar);
     chartPelajar.render();
 
-    var optionsMahasiswa = {
-      chart: {
-        type: 'pie',
-        height: '300px',
-        toolbar: {
-          show: false
-        }
-      },
-      series: [200, 190],
-      labels: ['Mahasiswa WNI', 'Mahasiswa WNA'],
-      colors: ['#1F2859', '#547792'],
-      legend: {
-        position: 'right',
-        fontSize: '14px',
-        labels: {
-          colors: '#1f2937'
-        },
-        markers: {
-          radius: 12
-        }
-      },
-      plotOptions: {
-        pie: {
-          dataLabels: {
-            offset: -20, // 🔹 geser ke tengah
-            minAngleToShowLabel: 10 // biar gak numpuk di slice kecil
-          }
-        }
-      },
-      dataLabels: {
-        enabled: true,
-        style: {
-          fontSize: '13px',
-          fontWeight: 'bold',
-          colors: ['#fff']
-        },
-        dropShadow: {
-          enabled: true,
-          top: 1,
-          left: 1,
-          blur: 2,
-          opacity: 0.8
-        },
-        formatter: function (val) {
-          return val.toFixed(1) + '%';
-        }
-      },
-      tooltip: {
-        y: {
-          formatter: function (val) {
-            return val + " peserta";
-          }
-        }
-      },
-      stroke: {
-        colors: ['#fff']
-      }
-    };
-
-    var chartMahasiswa = new ApexCharts(document.querySelector("#chartMahasiswa"), optionsMahasiswa);
-    chartMahasiswa.render();
-
     const umumData = @json($umumCounts);
     const umumCategories = Object.keys(umumData);
     const umumValues = Object.values(umumData);
@@ -285,9 +245,26 @@
     var optionsUmum = {
       chart: {
         type: 'pie',
-        height: '300px',
+        height: '500px',
         toolbar: {
-          show: false
+          show: true
+        }
+      },
+      title: {
+        text: 'Jumlah Peuji berdasarkan Kategori Umum', // 🟢 Judul chart
+        align: 'left', // bisa 'left', 'left', atau 'right'
+        style: {
+          fontSize: '25px',
+          fontWeight: 'bold',
+          color: '#000'
+        }
+      },
+      subtitle: {
+        text: {{ number_format($umum, 0, ',', '.') }}, // 🟢 tampil di bawah title
+        align: 'left',
+        style: {
+          fontSize: '20px',
+          color: '#000'
         }
       },
       series: umumValues,

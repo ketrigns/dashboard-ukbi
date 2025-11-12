@@ -29,13 +29,7 @@ class KategoriUserController extends Controller
 
         $kategoriPerTahun = DataUkbi::select(
             DB::raw("YEAR(tanggal_ujian) AS tahun"),
-            DB::raw("
-            CASE
-                WHEN terdaftar_sbg LIKE '%mahasiswa%' THEN 'Mahasiswa'
-                WHEN terdaftar_sbg LIKE '%pelajar%' THEN 'Pelajar'
-                ELSE 'Umum'
-            END AS kategori
-        "),
+            DB::raw("terdaftar_sbg as kategori"),
             DB::raw("COUNT(*) AS total")
         )
             ->when($wilayah, fn($q) => $q->where('kota', $wilayah))
@@ -45,31 +39,25 @@ class KategoriUserController extends Controller
             ->get();
 
         $pelajarCounts = DataUkbi::when($wilayah, fn($q) => $q->where('kota', $wilayah))
-            ->whereIn('terdaftar_sbg', [
-                'Pelajar SMA',
-                'Pelajar SMK',
-                'Pelajar SMP'
-            ])
+            ->where('terdaftar_sbg', 'like', '%pelajar%')
+            ->orWhere('terdaftar_sbg', 'like', '%mahasiswa%')
             ->select('terdaftar_sbg', DB::raw('COUNT(*) as total'))
             ->groupBy('terdaftar_sbg')
             ->pluck('total', 'terdaftar_sbg');
 
         $mahasiswaCounts = DataUkbi::when($wilayah, fn($q) => $q->where('kota', $wilayah))
             ->select(
-                'terdaftar_sbg', 
+                'terdaftar_sbg',
                 DB::raw('COUNT(*) as total')
             )
             ->groupBy('terdaftar_sbg')
             ->pluck('total', 'terdaftar_sbg');
-        
+
         // dd($mahasiswaCounts);
 
         $umumCounts = DataUkbi::when($wilayah, fn($q) => $q->where('kota', $wilayah))
-            ->whereIn('terdaftar_sbg', [
-                'ASN',
-                'Guru',
-                'Dosen'
-            ])
+            ->where('terdaftar_sbg', 'not like', '%pelajar%')
+            ->where('terdaftar_sbg', 'not like', '%mahasiswa%')
             ->select(
                 'terdaftar_sbg',
                 DB::raw('COUNT(*) as total')

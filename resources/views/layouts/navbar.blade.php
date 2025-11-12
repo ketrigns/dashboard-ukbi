@@ -1,12 +1,12 @@
 <header class="shadow-lg pb-2 bg-white">
-  <div class="flex items-center justify-between px-5 py-3">
+  <div class="px-5 py-3">
     <!-- Logo -->
-    <div class="flex gap-2">
+    <div class="flex justify-between gap-2">
       <img src="{{ asset('assets/images/logo-web.png') }}" alt="Logo" class="h-10">
 
       <a href="{{ route('data-ukbi.index') }}"
         class="inline-flex items-center px-3 py-1 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-all duration-200">
-        Dashboard Admin
+        Login
       </a>
 
     </div>

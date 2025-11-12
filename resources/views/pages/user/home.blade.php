@@ -34,7 +34,7 @@
   {{-- Map --}}
   <div id="map" class="rounded" style="height: 400px; overflow: hidden;"></div>
 
-  <div class="grid grid-cols-3 gap-4 my-4">
+  {{-- <div class="grid grid-cols-3 gap-4 my-4">
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Predikat</h1>
       <div id="chart"></div>
@@ -47,23 +47,20 @@
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Wilayah</h1>
       <div id="chartWilayah"></div>
     </div>
-  </div>
+  </div> --}}
 
-  {{-- <div class="grid grid-cols-2 gap-4 my-4">
+  <div class="grid grid-cols-2 gap-4 my-4">
     <div class="bg-white p-4 rounded">
-      <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Predikat</h1>
       <div id="chart"></div>
     </div>
     <div class="bg-white p-4 rounded">
-      <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Kategori</h1>
       <div id="chartKategori"></div>
     </div>
 
   </div>
   <div class="bg-white p-4 rounded">
-    <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Wilayah</h1>
     <div id="chartWilayah"></div>
-  </div> --}}
+  </div>
 
 
   <script>
@@ -87,9 +84,9 @@
           L.marker(parts)
             .addTo(map)
             .bindPopup(`
-                        <b>${item.kota}</b><br>
-                        Jumlah Peserta: ${item.total_peserta}
-                      `);
+                          <b>${item.kota}</b><br>
+                          Jumlah Peserta: ${item.total_peserta}
+                        `);
         }
       }
     })
@@ -101,10 +98,15 @@
     var options = {
       chart: {
         type: 'bar',
-        toolbar: {
-          show: false // 🔹 Hilangkan tombol download / export
-        },
-
+      },
+      title: {
+        text: 'Jumlah Peuji Berdasarkan Predikat', // 🟢 Judul chart
+        align: 'center', // bisa 'left', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
+        }
       },
       dataLabels: {
         enabled: true,
@@ -123,16 +125,25 @@
       colors: ['#1F2859'],
     };
 
+
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
-
 
     // === DONUT CHART ===
     var optionsKategori = {
       chart: {
         type: 'donut',
         toolbar: {
-          show: false // 🔹 Hilangkan tombol download juga di donut
+          show: true 
+        }
+      },
+      title: {
+        text: 'Jumlah Peuji Berdasarkan Kategori', // 🟢 Judul chart
+        align: 'center', // bisa 'left', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
         }
       },
       series: [{{ $pelajar }}, {{ $mahasiswa }}, {{ $umum }}],
@@ -162,7 +173,15 @@
           enabled: true
         }
       },
-
+      title: {
+        text: 'Jumlah Peuji Berdasarkan Wilayah', // 🟢 Judul chart
+        align: 'center', // bisa 'left', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
+        }
+      },
       dataLabels: {
         enabled: true,
         style: {
@@ -176,12 +195,12 @@
         data: wilayahValues
       }],
 
-      // grid: {
-      //   padding: {
-      //     bottom: 100,   
-      //     left: 20
-      //   }
-      // },
+      grid: {
+        padding: {
+          bottom: 100,
+          left: 20
+        }
+      },
 
       xaxis: {
         categories: wilayahCategories,
