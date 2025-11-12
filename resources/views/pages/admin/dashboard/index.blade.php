@@ -109,22 +109,50 @@
                 <table class="min-w-full divide-y divide-default-200">
                     <thead>
                         <tr>
-                            <th class="px-6 py-3 text-start text-sm text-default-500">No</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500">No Pendaftaran</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500">Nama Peserta</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500">Tanggal Ujian</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500">Skor</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">No</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">No Pendaftaran</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Tanggal Ujian</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Nama Peserta</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">ٌTerdaftar Sebagai</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Jenis Kelamin</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Tempat Lahir</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Tanggal Lahir</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Kota</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Titik Koordinat</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Kelas</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Instansi</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Seksi 1</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Seksi 2</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Seksi 3</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Seksi 4</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Seksi 5</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Skor</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Predikat</th>
                             <th class="px-6 py-3 text-end text-sm text-default-500">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($data as $index => $item)
                             <tr class="odd:bg-white even:bg-default-100 hover:bg-default-100">
-                                <td class="px-6 py-4 text-sm text-default-800">{{ $data->firstItem() + $index }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800">{{ $item->no_pendaftaran ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800">{{ $item->nama_peserta ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800">{{ $item->tanggal_ujian ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800">{{ $item->skor ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $data->firstItem() + $index }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->no_pendaftaran ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->tanggal_ujian ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->nama_peserta ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->terdaftar_sbg ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->jenis_kelamin ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->tempat_lahir ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->tanggal_lahir ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->kota ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->titik_koordinat_peta ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->kelas ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->instansi ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->seksi_1 ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->seksi_2 ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->seksi_3 ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->seksi_4 ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->seksi_5 ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->skor ?? '-' }}</td>
+                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->predikat ?? '-' }}</td>
                                 <td class="px-6 py-4 text-end text-sm">
                                     <div class="flex justify-end mt-2">
                                         <a href="{{ route('data-ukbi.edit', $item) }}">

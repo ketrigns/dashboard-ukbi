@@ -24,26 +24,18 @@
 
   <div class="relative w-full">
     <form action="" method="GET">
-      <select
-        name="wilayah"
-        onchange="this.form.submit()"
+      <select name="wilayah" onchange="this.form.submit()"
         class="w-full appearance-none border border-black rounded px-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:border-[#1F2859]">
-        <option value="" {{ request('wilayah') == "" ? 'selected' : '' }} >Semua Wilayah</option>
-        <option value="KABUPATEN BUNGO" {{ request('wilayah') == 'KABUPATEN BUNGO' ? 'selected' : '' }} >KABUPATEN BUNGO</option>
-        <option value="KABUPATEN KERINCI" {{ request('wilayah') == 'KABUPATEN KERINCI' ? 'selected' : '' }} >KABUPATEN KERINCI</option>
-        <option value="KABUPATEN MERANGIN" {{ request('wilayah') == 'KABUPATEN MERANGIN' ? 'selected' : '' }} >KABUPATEN MERANGIN</option>
-        <option value="KABUPATEN TANJUNG JABUNG BARAT" {{ request('wilayah') == 'KABUPATEN TANJUNG JABUNG BARAT' ? 'selected' : '' }} >KABUPATEN TANJUNG JABUNG BARAT</option>
-        <option value="KOTA JAMBI" {{ request('wilayah') == 'KOTA JAMBI' ? 'selected' : '' }} >KOTA JAMBI</option>
-        <option value="KABUPATEN BATANG HARI" {{ request('wilayah') == 'KABUPATEN BATANG HARI' ? 'selected' : '' }} >KABUPATEN BATANG HARI</option>
-        <option value="KABUPATEN TEBO" {{ request('wilayah') == 'KABUPATEN TEBO' ? 'selected' : '' }} >KABUPATEN TEBO</option>
-        <option value="KABUPATEN MUARO JAMBI" {{ request('wilayah') == 'KABUPATEN MUARO JAMBI' ? 'selected' : '' }} >KABUPATEN MUARO JAMBI</option>
-        <option value="KABUPATEN SAROLANGUN" {{ request('wilayah') == 'KABUPATEN SAROLANGUN' ? 'selected' : '' }} >KABUPATEN SAROLANGUN</option>
-        <option value="KABUPATEN TANJUNG JABUNG TIMUR" {{ request('wilayah') == 'KABUPATEN TANJUNG JABUNG TIMUR' ? 'selected' : '' }} >KABUPATEN TANJUNG JABUNG TIMUR</option>
-        <option value="KOTA SUNGAI PENUH" {{ request('wilayah') == 'KOTA SUNGAI PENUH' ? 'selected' : '' }} >KOTA SUNGAI PENUH</option>
-        <option value="KABUPATEN BATANGHARI" {{ request('wilayah') == 'KABUPATEN BATANGHARI' ? 'selected' : '' }} >KABUPATEN BATANGHARI</option>
-        
-      </select>
 
+        <option value="" {{ request('wilayah') == "" ? 'selected' : '' }}>Semua Wilayah</option>
+
+        @foreach ($allWilayah as $item)
+          <option value="{{ $item }}" {{ request('wilayah') == $item ? 'selected' : '' }}>
+            {{ strtoupper($item) }}
+          </option>
+        @endforeach
+
+      </select>
     </form>
 
     <!-- Icon kiri -->

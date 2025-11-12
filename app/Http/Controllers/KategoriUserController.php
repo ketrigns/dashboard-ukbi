@@ -79,12 +79,12 @@ class KategoriUserController extends Controller
 
         // dd($umumCounts);
 
-        // $wilayah = DataUkbi::select(
-        //     'kota'
-        // )->distinct()->pluck('kota');
+        $allWilayah = DataUkbi::select(
+            'kota'
+        )->distinct()->pluck('kota');
 
         // dd($wilayah);
 
-        return view('pages.user.kategori', compact('total', 'pelajar', 'mahasiswa', 'umum', 'kategoriPerTahun', 'pelajarCounts', 'umumCounts'));
+        return view('pages.user.kategori', compact('total', 'pelajar', 'mahasiswa', 'umum', 'kategoriPerTahun', 'pelajarCounts', 'umumCounts', 'allWilayah'));
     }
 }

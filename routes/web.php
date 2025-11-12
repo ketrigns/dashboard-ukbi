@@ -5,6 +5,8 @@ use App\Http\Controllers\DataUkbiController;
 use App\Http\Controllers\HasilDataMiningController;
 use App\Http\Controllers\KategoriUserController;
 use App\Http\Controllers\PredikatUserController;
+use App\Http\Controllers\TahunUserController;
+use App\Http\Controllers\WilayahUserController;
 use App\Models\HasilDataMining;
 use Illuminate\Support\Facades\Route;
 
@@ -30,13 +32,9 @@ Route::get('/kategori', [KategoriUserController::class, 'index']);
 
 Route::get('/predikat', [PredikatUserController::class, 'index']);
 
-Route::get('/wilayah', function () {
-    return view('pages.user.wilayah');
-});
+Route::get('/wilayah', [WilayahUserController::class, 'index']);
 
-Route::get('/tahun', function () {
-    return view('pages.user.tahun');
-});
+Route::get('/tahun', [TahunUserController::class, 'index']);
 
 Route::resource('/admin/data-ukbi', DataUkbiController::class);
 Route::resource('/admin/hasil-data-mining', HasilDataMiningController::class);

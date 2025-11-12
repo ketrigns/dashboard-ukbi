@@ -7,31 +7,16 @@
     <form action="" method="GET">
       <select name="wilayah" onchange="this.form.submit()"
         class="w-full appearance-none border border-black rounded px-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:border-[#1F2859]">
+
         <option value="" {{ request('wilayah') == "" ? 'selected' : '' }}>Semua Wilayah</option>
-        <option value="KABUPATEN BUNGO" {{ request('wilayah') == 'KABUPATEN BUNGO' ? 'selected' : '' }}>KABUPATEN BUNGO
-        </option>
-        <option value="KABUPATEN KERINCI" {{ request('wilayah') == 'KABUPATEN KERINCI' ? 'selected' : '' }}>KABUPATEN
-          KERINCI</option>
-        <option value="KABUPATEN MERANGIN" {{ request('wilayah') == 'KABUPATEN MERANGIN' ? 'selected' : '' }}>KABUPATEN
-          MERANGIN</option>
-        <option value="KABUPATEN TANJUNG JABUNG BARAT" {{ request('wilayah') == 'KABUPATEN TANJUNG JABUNG BARAT' ? 'selected' : '' }}>KABUPATEN TANJUNG JABUNG BARAT</option>
-        <option value="KOTA JAMBI" {{ request('wilayah') == 'KOTA JAMBI' ? 'selected' : '' }}>KOTA JAMBI</option>
-        <option value="KABUPATEN BATANG HARI" {{ request('wilayah') == 'KABUPATEN BATANG HARI' ? 'selected' : '' }}>
-          KABUPATEN BATANG HARI</option>
-        <option value="KABUPATEN TEBO" {{ request('wilayah') == 'KABUPATEN TEBO' ? 'selected' : '' }}>KABUPATEN TEBO
-        </option>
-        <option value="KABUPATEN MUARO JAMBI" {{ request('wilayah') == 'KABUPATEN MUARO JAMBI' ? 'selected' : '' }}>
-          KABUPATEN MUARO JAMBI</option>
-        <option value="KABUPATEN SAROLANGUN" {{ request('wilayah') == 'KABUPATEN SAROLANGUN' ? 'selected' : '' }}>KABUPATEN
-          SAROLANGUN</option>
-        <option value="KABUPATEN TANJUNG JABUNG TIMUR" {{ request('wilayah') == 'KABUPATEN TANJUNG JABUNG TIMUR' ? 'selected' : '' }}>KABUPATEN TANJUNG JABUNG TIMUR</option>
-        <option value="KOTA SUNGAI PENUH" {{ request('wilayah') == 'KOTA SUNGAI PENUH' ? 'selected' : '' }}>KOTA SUNGAI
-          PENUH</option>
-        <option value="KABUPATEN BATANGHARI" {{ request('wilayah') == 'KABUPATEN BATANGHARI' ? 'selected' : '' }}>KABUPATEN
-          BATANGHARI</option>
+
+        @foreach ($allWilayah as $item)
+          <option value="{{ $item }}" {{ request('wilayah') == $item ? 'selected' : '' }}>
+            {{ strtoupper($item) }}
+          </option>
+        @endforeach
 
       </select>
-
     </form>
 
     <!-- Icon kiri -->
@@ -76,19 +61,20 @@
       <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Pelajar berdasarkan Predikat</h1>
       <div id="chartPelajarPredikat"></div>
     </div>
-    <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Pelajar SD berdasarkan Predikat</h1>
-      <div id="chartPelajarSDPredikat"></div>
-    </div>
-    <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Pelajar SMP berdasarkan Predikat</h1>
-      <div id="chartPelajarSMPPredikat"></div>
-    </div>
-    <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Pelajar SMA berdasarkan Predikat</h1>
-      <div id="chartPelajarSMAPredikat"></div>
-    </div>
 
+    @foreach($groupedData as $jenisPelajar => $dataPelajar)
+      @php
+        $chartId = 'chart-' . \Illuminate\Support\Str::slug($jenisPelajar);
+      @endphp
+
+      <div class="bg-white p-4 rounded">
+        <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori {{ $jenisPelajar }} berdasarkan Predikat
+        </h1>
+        <div id="{{ $chartId }}" class="chart-container" data-chart-data="{{ json_encode($dataPelajar) }}"
+          data-chart-id="{{ $chartId }}">
+        </div>
+      </div>
+    @endforeach
   </div>
 
   <script>
@@ -238,11 +224,11 @@
         }
       },
       series: [{
-        name: 'Jumlah Peuji',
-        data: [280, 320, 300, 280, 50, 120]
+        name: 'Rata-rata Skor',
+        data: @json($rerataSkorPredikat->pluck('rerata'))
       }],
       xaxis: {
-        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'],
+        categories: @json($rerataSkorPredikat->pluck('predikat')),
         title: {
           style: {
             fontSize: '14px',
@@ -272,7 +258,10 @@
         strokeDashArray: 4
       },
       dataLabels: {
-        enabled: true // 🔹 Tampilkan angka di atas setiap batang (opsional)
+        enabled: true,
+        style: {
+          colors: ['#000000']
+        }
       }
     };
 
@@ -289,10 +278,10 @@
       },
       series: [{
         name: 'Jumlah Peuji',
-        data: [280, 320, 300, 280, 50, 120]
+        data: @json($jmlPeujiMhs->pluck('total'))
       }],
       xaxis: {
-        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'],
+        categories: @json($jmlPeujiMhs->pluck('predikat')),
         title: {
           style: {
             fontSize: '14px',
@@ -322,7 +311,10 @@
         strokeDashArray: 4
       },
       dataLabels: {
-        enabled: true // 🔹 Tampilkan angka di atas setiap batang (opsional)
+        enabled: true,
+        style: {
+          colors: ['#000000']
+        }
       }
     };
 
@@ -339,10 +331,10 @@
       },
       series: [{
         name: 'Jumlah Peuji',
-        data: [280, 320, 300, 280, 50, 120]
+        data: @json($jmlPeujiUmum->pluck('total'))
       }],
       xaxis: {
-        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'],
+        categories: @json($jmlPeujiUmum->pluck('predikat')),
         title: {
           style: {
             fontSize: '14px',
@@ -372,7 +364,10 @@
         strokeDashArray: 4
       },
       dataLabels: {
-        enabled: true // 🔹 Tampilkan angka di atas setiap batang (opsional)
+        enabled: true,
+        style: {
+          colors: ['#000000']
+        }
       }
     };
 
@@ -389,10 +384,10 @@
       },
       series: [{
         name: 'Jumlah Peuji',
-        data: [280, 320, 300, 280, 50, 120]
+        data: @json($jmlPeujiPelajar->pluck('total'))
       }],
       xaxis: {
-        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'],
+        categories: @json($jmlPeujiPelajar->pluck('predikat')),
         title: {
           style: {
             fontSize: '14px',
@@ -422,163 +417,90 @@
         strokeDashArray: 4
       },
       dataLabels: {
-        enabled: true // 🔹 Tampilkan angka di atas setiap batang (opsional)
+        enabled: true,
+        style: {
+          colors: ['#000']
+        }
       }
     };
 
     var chartPelajarPredikat = new ApexCharts(document.querySelector("#chartPelajarPredikat"), optionsPelajarPredikat);
     chartPelajarPredikat.render();
 
-    var optionsPelajarSDPredikat = {
-      chart: {
-        type: 'bar',
-        height: '300px',
-        toolbar: {
-          show: false // 🔹 Hilangkan tombol download / export
-        }
-      },
-      series: [{
-        name: 'Jumlah Peuji',
-        data: [280, 320, 300, 280, 50, 120]
-      }],
-      xaxis: {
-        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'],
-        title: {
-          style: {
-            fontSize: '14px',
-            fontWeight: 'bold',
-            color: '#1F2859'
-          }
-        }
-      },
-      yaxis: {
-        title: {
-          text: 'Skor',
-          style: {
-            fontSize: '14px',
-            fontWeight: 'bold',
-            color: '#1F2859'
+    const chartContainers = document.querySelectorAll('.chart-container');
+
+    // Loop setiap div container
+    chartContainers.forEach(container => {
+
+      // Ambil ID dan data dari data-attribute
+      const chartId = container.dataset.chartId;
+      const chartData = JSON.parse(container.dataset.chartData);
+
+      // --- Transformasi Data (untuk chart ini saja) ---
+      // Kita pisahkan antara 'predikat' (untuk label) dan 'total' (untuk data)
+
+      // Urutkan data berdasarkan predikat (opsional, tapi rapi)
+      chartData.sort((a, b) => a.predikat.localeCompare(b.predikat));
+
+      const categories = chartData.map(item => item.predikat);
+      const seriesData = chartData.map(item => item.total);
+
+      // --- Konfigurasi ApexCharts ---
+      var options = {
+        chart: {
+          type: 'bar',
+          height: '300px',
+          toolbar: {
+            show: false // 🔹 Hilangkan tombol download / export
           }
         },
-        labels: {
-          style: {
-            colors: '#374151'
-          }
-        }
-      },
-      colors: ['#1F2859'],
-      grid: {
-        borderColor: '#e5e7eb',
-        strokeDashArray: 4
-      },
-      dataLabels: {
-        enabled: true // 🔹 Tampilkan angka di atas setiap batang (opsional)
-      }
-    };
-
-    var chartPelajarSDPredikat = new ApexCharts(document.querySelector("#chartPelajarSDPredikat"), optionsPelajarSDPredikat);
-    chartPelajarSDPredikat.render();
-
-    var optionsPelajarSMPPredikat = {
-      chart: {
-        type: 'bar',
-        height: '300px',
-        toolbar: {
-          show: false // 🔹 Hilangkan tombol download / export
-        }
-      },
-      series: [{
-        name: 'Jumlah Peuji',
-        data: [280, 320, 300, 280, 50, 120]
-      }],
-      xaxis: {
-        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'],
-        title: {
-          style: {
-            fontSize: '14px',
-            fontWeight: 'bold',
-            color: '#1F2859'
-          }
-        }
-      },
-      yaxis: {
-        title: {
-          text: 'Skor',
-          style: {
-            fontSize: '14px',
-            fontWeight: 'bold',
-            color: '#1F2859'
+        series: [{
+          name: 'Jumlah Peuji',
+          data: seriesData
+        }],
+        xaxis: {
+          categories: categories,
+          title: {
+            style: {
+              fontSize: '14px',
+              fontWeight: 'bold',
+              color: '#1F2859'
+            }
           }
         },
-        labels: {
-          style: {
-            colors: '#374151'
-          }
-        }
-      },
-      colors: ['#1F2859'],
-      grid: {
-        borderColor: '#e5e7eb',
-        strokeDashArray: 4
-      },
-      dataLabels: {
-        enabled: true // 🔹 Tampilkan angka di atas setiap batang (opsional)
-      }
-    };
-
-    var chartPelajarSMPPredikat = new ApexCharts(document.querySelector("#chartPelajarSMPPredikat"), optionsPelajarSMPPredikat);
-    chartPelajarSMPPredikat.render();
-
-    var optionsPelajarSMAPredikat = {
-      chart: {
-        type: 'bar',
-        height: '300px',
-        toolbar: {
-          show: false // 🔹 Hilangkan tombol download / export
-        }
-      },
-      series: [{
-        name: 'Jumlah Peuji',
-        data: [280, 320, 300, 280, 50, 120]
-      }],
-      xaxis: {
-        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal'],
-        title: {
-          style: {
-            fontSize: '14px',
-            fontWeight: 'bold',
-            color: '#1F2859'
-          }
-        }
-      },
-      yaxis: {
-        title: {
-          text: 'Skor',
-          style: {
-            fontSize: '14px',
-            fontWeight: 'bold',
-            color: '#1F2859'
+        yaxis: {
+          title: {
+            text: 'Skor',
+            style: {
+              fontSize: '14px',
+              fontWeight: 'bold',
+              color: '#1F2859'
+            }
+          },
+          labels: {
+            style: {
+              colors: '#374151'
+            }
           }
         },
-        labels: {
+        colors: ['#1F2859'],
+        grid: {
+          borderColor: '#e5e7eb',
+          strokeDashArray: 4
+        },
+        dataLabels: {
+          enabled: true,
           style: {
-            colors: '#374151'
+            colors: ['#000']
           }
         }
-      },
-      colors: ['#1F2859'],
-      grid: {
-        borderColor: '#e5e7eb',
-        strokeDashArray: 4
-      },
-      dataLabels: {
-        enabled: true // 🔹 Tampilkan angka di atas setiap batang (opsional)
-      }
-    };
+      };
 
-    var chartPelajarSMAPredikat = new ApexCharts(document.querySelector("#chartPelajarSMAPredikat"), optionsPelajarSMAPredikat);
-    chartPelajarSMAPredikat.render();
-
+      // --- Render Chart ---
+      // Buat instance chart baru dan render ke div yang sesuai
+      var chart = new ApexCharts(document.querySelector("#" + chartId), options);
+      chart.render();
+    });
 
   </script>
 @endsection

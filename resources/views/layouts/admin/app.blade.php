@@ -17,6 +17,47 @@
     <!-- App css  (Mandatory in All Pages) -->
     <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+
+        .combobox-container {
+            position: relative;
+            margin: auto;
+        }
+        /* Stylilng untuk list dropdown */
+        .options-list {
+            /* Sembunyikan dropdown secara default */
+            display: none;
+
+            /* Posisi absolute agar "melayang" di bawah input */
+            position: absolute;
+            width: 100%;
+            border: 1px solid #ddd;
+            background: #fff;
+            border-top: none;
+            /* Hapus border atas krn sudah nempel input */
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 0 0 4px 4px;
+        }
+
+        /* Class 'show' ini akan kita tambahkan/hapus via JavaScript */
+        .options-list.show {
+            display: block;
+        }
+
+        /* Styling untuk tiap item di dropdown */
+        .option-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        /* Efek hover saat mouse di atas item */
+        .option-item:hover {
+            background-color: #e9e9e9;
+        }
+    </style>
 </head>
 
 <body>

@@ -4,51 +4,75 @@
 
 @section('content')
 
-  <div class="flex flex-col md:flex-row md:gap-4 w-full">
+  <div class="w-full mx-auto p-6 bg-white rounded-xl shadow-lg">
 
-    <div class="w-full md:w-1/2 mb-4 md:mb-0">
-      <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">
-        Dari Tanggal
-      </label>
-      <input type="date" id="start_date" name="start_date"
-        class="w-full border border-black rounded px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:border-[#1F2859]"
-        value="{{ now()->startOfYear()->format('Y-m-d') }}">
-    </div>
+    <form method="GET">
+      <div>
+        <label for="rangePicker" class="block text-sm font-medium">
+          Pilih Rentang Tanggal:
+        </label>
 
-    <div class="w-full md:w-1/2">
-      <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">
-        Sampai Tanggal
-      </label>
-      <input type="date" id="end_date" name="end_date"
-        class="w-full border border-black rounded px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:border-[#1F2859]"
-        value="{{ now()->endOfYear()->format('Y-m-d') }}">
-    </div>
+        <div class="mt-1 flex items-start gap-2">
 
+          <div class="relative flex-grow rounded-md shadow-sm">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd"
+                  d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002 2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1 1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                  clip-rule="evenodd" />
+              </svg>
+            </div>
+
+            <input type="text" id="rangePicker" class="block w-full appearance-none rounded-md border border-gray-300 
+                                        px-3 py-2 pl-10 
+                                        text-gray-900 placeholder-gray-400 
+                                        focus:border-[#1F2859] focus:outline-none focus:ring-[#1F2859] 
+                                        sm:text-sm cursor-pointer" placeholder="Pilih rentang..."
+              value="{{ $startDate }} - {{ $endDate }}">
+          </div>
+
+          <div class="flex-shrink-0">
+            <button type="submit" class="rounded-md cursor-pointer border border-transparent 
+                                         bg-[#1F2859] px-4 py-2 
+                                         text-sm font-medium text-white shadow-sm 
+                                         hover:bg-[#3c4dac] 
+                                         focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:ring-offset-2">
+              Terapkan
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <input type="hidden" name="tanggal_mulai" id="hidden_tanggal_mulai" value="{{ $startDate }}">
+      <input type="hidden" name="tanggal_selesai" id="hidden_tanggal_selesai" value="{{ $endDate }}">
+    </form>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji</h1>
-      <p class="text-[32px] font-regular leading-tight">9.453</p>
+      <p class="text-[32px] font-regular leading-tight">{{ number_format($total, 0, ',', '.') }}</p>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Pelajar</h1>
-      <p class="text-[32px] font-regular leading-tight">7.207</p>
+      <p class="text-[32px] font-regular leading-tight">{{ number_format($pelajar, 0, ',', '.') }}</p>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Mahasiswa</h1>
-      <p class="text-[32px] font-regular leading-tight">1.108</p>
+      <p class="text-[32px] font-regular leading-tight">{{ number_format($mahasiswa, 0, ',', '.') }}</p>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Umum</h1>
-      <p class="text-[32px] font-regular leading-tight">1.228</p>
+      <p class="text-[32px] font-regular leading-tight">{{ number_format($umum, 0, ',', '.') }}</p>
     </div>
   </div>
 
   {{-- Map --}}
   <div id="map" class="rounded" style="height: 400px; overflow: hidden;"></div>
 
-  <div class="grid grid-cols-3 gap-4 my-4">
+  <div class="grid grid-cols-2 gap-4 my-4">
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Predikat</h1>
       <div id="chart"></div>
@@ -57,11 +81,12 @@
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Kategori</h1>
       <div id="chartKategori"></div>
     </div>
-    <div class="bg-white p-4 rounded">
+  </div>
+
+  <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Wilayah</h1>
       <div id="chartWilayah"></div>
     </div>
-  </div>
 
   <script>
     // Inisialisasi peta di pusat Provinsi Jambi
@@ -74,24 +99,22 @@
     }).addTo(map);
 
     // Daftar lokasi di Provinsi Jambi
-    const locations = [
-      { name: "Kota Jambi", coords: [-1.6101, 103.6131] },
-      { name: "Muaro Jambi", coords: [-1.5565, 103.7264] },
-      { name: "Sungai Penuh", coords: [-2.0631, 101.3843] },
-      { name: "Kerinci", coords: [-2.1333, 101.6167] },
-      { name: "Tebo", coords: [-1.4897, 102.3329] },
-      { name: "Sarolangun", coords: [-2.3059, 102.6906] },
-      { name: "Batanghari", coords: [-1.7089, 103.0826] },
-      { name: "Bungo", coords: [-1.4867, 101.9014] },
-      { name: "Tanjung Jabung Timur", coords: [-1.1352, 103.9322] },
-      { name: "Tanjung Jabung Barat", coords: [-0.8119, 103.4613] },
-    ];
+    const locations = @json($locations);
 
-    // Tambahkan marker untuk setiap lokasi
-    locations.forEach(loc => {
-      L.marker(loc.coords)
-        .addTo(map);
-    });
+    locations.forEach(item => {
+      if (item.titik_koordinat_peta) {
+        const parts = item.titik_koordinat_peta.split(',').map(Number);
+
+        if (parts.length === 2) {
+          L.marker(parts)
+            .addTo(map)
+            .bindPopup(`
+                            <b>${item.kota}</b><br>
+                            Jumlah Peserta: ${item.total_peserta}
+                          `);
+        }
+      }
+    })
 
     var options = {
       chart: {
@@ -103,12 +126,18 @@
       },
       series: [{
         name: 'Jumlah Peuji',
-        data: [280, 320, 300, 280, 50, 120]
+        data: @json($jmlPeujiPredikat->pluck('total'))
       }],
       xaxis: {
-        categories: ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal']
+        categories: @json($jmlPeujiPredikat->pluck('predikat'))
       },
       colors: ['#1F2859'],
+      dataLabels: {
+        enabled: true,
+        style: {
+          colors: ['#000']
+        }
+      },
     };
 
     var chart = new ApexCharts(document.querySelector("#chart"), options);
@@ -122,7 +151,7 @@
           show: false // 🔹 Hilangkan tombol download juga di donut
         }
       },
-      series: [44, 55, 13],
+      series: [{{ $pelajar }}, {{ $mahasiswa }}, {{ $umum }}],
       labels: ['Pelajar', 'Mahasiswa', 'Umum'],
       colors: ['#1F2859', '#547792', '#94B4C1'], // 🔹 Warna berbeda tiap data
       legend: {
@@ -136,23 +165,54 @@
     var optionsWilayah = {
       chart: {
         type: 'bar',
-        height: '300px',
+        height: '500px',
         toolbar: {
           show: false // 🔹 Hilangkan tombol download / export
         }
       },
       series: [{
         name: 'Jumlah Peuji',
-        data: [280, 320, 300, 280, 50, 120]
+        data: @json($jmlPeujiWilayah->pluck('total'))
       }],
       xaxis: {
-        categories: ['Jambi', 'Kerinci', 'Merangin', 'Batanghari', 'Sarolangun', 'Tebo']
+        categories: @json($jmlPeujiWilayah->pluck('kota'))
       },
       colors: ['#1F2859'],
+      grid: {
+        padding: {
+          bottom: 100,
+          left: 20
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        style: {
+          colors: ['#000']
+        }
+      },
     };
 
     var chartWilayah = new ApexCharts(document.querySelector("#chartWilayah"), optionsWilayah);
     chartWilayah.render();
+
+    flatpickr("#rangePicker", {
+      "locale": "id", // "id" adalah kode untuk Bahasa Indonesia
+
+      mode: "range",
+      dateFormat: "Y-m-d",
+      altInput: true,
+      altFormat: "j F Y", // "F" sekarang akan menjadi "Oktober", "November", dll.
+
+      onClose: function (selectedDates) {
+        if (selectedDates.length === 2) {
+          const startDateInput = document.getElementById('hidden_tanggal_mulai');
+          const endDateInput = document.getElementById('hidden_tanggal_selesai');
+
+          startDateInput.value = flatpickr.formatDate(selectedDates[0], "Y-m-d");
+          endDateInput.value = flatpickr.formatDate(selectedDates[1], "Y-m-d");
+        }
+      }
+    });
 
   </script>
 @endsection

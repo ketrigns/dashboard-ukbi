@@ -62,7 +62,12 @@ class DataUkbiController extends Controller
      */
     public function create()
     {
-        return view('pages.admin.dashboard.create');
+        $kota = DataUkbi::select('kota', 'titik_koordinat_peta')->distinct()->get();
+        $terdaftarSbg = DataUkbi::select('terdaftar_sbg')->distinct()->get();
+        $instansi = DataUkbi::select('instansi')->distinct()->get();
+        $predikat = DataUkbi::select('predikat')->distinct()->get();
+
+        return view('pages.admin.dashboard.create', compact('kota', 'terdaftarSbg', 'instansi', 'predikat'));
     }
 
     /**
@@ -87,7 +92,12 @@ class DataUkbiController extends Controller
      */
     public function edit(DataUkbi $dataUkbi)
     {
-        return view('pages.admin.dashboard.edit', compact('dataUkbi'));
+        $kota = DataUkbi::select('kota', 'titik_koordinat_peta')->distinct()->get();
+        $terdaftarSbg = DataUkbi::select('terdaftar_sbg')->distinct()->get();
+        $instansi = DataUkbi::select('instansi')->distinct()->get();
+        $predikat = DataUkbi::select('predikat')->distinct()->get();
+
+        return view('pages.admin.dashboard.edit', compact('dataUkbi', 'kota', 'terdaftarSbg', 'instansi', 'predikat'));
     }
 
     /**

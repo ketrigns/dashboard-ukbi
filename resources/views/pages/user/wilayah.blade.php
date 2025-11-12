@@ -3,73 +3,81 @@
 @section('title', 'Dashboard UKBI')
 
 @section('content')
-  <div class="grid md:grid-cols-2 grid-cols-1 gap-4 my-4">
+  <div class="grid grid-cols-1 gap-4 my-4">
     <div class="bg-white p-4 rounded">
       <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Wilayah per Tahun</h1>
-      <div id="chart"></div>
+      <div id="chartWilayahPerTahun"></div>
     </div>
     <div class="bg-white p-4 rounded">
       <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Wilayah</h1>
-      <div id="chartPeujiPredikat"></div>
+      <div id="chartPeujiWilayah"></div>
     </div>
-    <div id="map" class="rounded col-span-2" style="height: 400px; overflow: hidden;"></div>
-
+    <div id="map" class="rounded" style="height: 400px; overflow: hidden;"></div>
   </div>
 
   <script>
     // Inisialisasi peta di pusat Provinsi Jambi
     const map = L.map('map').setView([-1.6116, 103.6157], 8);
 
-    // Tambahkan layer peta dari OpenStreetMap
+    // Tambahkan layer peta
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
-    // Daftar lokasi di Provinsi Jambi
-    const locations = [
-      { name: "Kota Jambi", coords: [-1.6101, 103.6131] },
-      { name: "Muaro Jambi", coords: [-1.5565, 103.7264] },
-      { name: "Sungai Penuh", coords: [-2.0631, 101.3843] },
-      { name: "Kerinci", coords: [-2.1333, 101.6167] },
-      { name: "Tebo", coords: [-1.4897, 102.3329] },
-      { name: "Sarolangun", coords: [-2.3059, 102.6906] },
-      { name: "Batanghari", coords: [-1.7089, 103.0826] },
-      { name: "Bungo", coords: [-1.4867, 101.9014] },
-      { name: "Tanjung Jabung Timur", coords: [-1.1352, 103.9322] },
-      { name: "Tanjung Jabung Barat", coords: [-0.8119, 103.4613] },
-    ];
+    // Data dari PHP → JS
+    const locations = @json($locations);
 
-    // Tambahkan marker untuk setiap lokasi
-    locations.forEach(loc => {
-      L.marker(loc.coords)
-        .addTo(map);
+    locations.forEach(item => {
+      if (item.titik_koordinat_peta) {
+        const parts = item.titik_koordinat_peta.split(',').map(Number);
+
+        if (parts.length === 2) {
+          L.marker(parts)
+            .addTo(map)
+            .bindPopup(`
+                          <b>${item.kota}</b><br>
+                          Jumlah Peserta: ${item.total_peserta}
+                        `);
+        }
+      }
+    })
+
+    const rawWilayah = @json($wilayahPerTahun);
+    const uniqueYears = [...new Set(rawWilayah.map(item => item.tahun))].sort((a, b) => a - b);
+
+    // 2. Dapatkan semua predikat unik dan urutkan
+    const uniqueWilayahs = [...new Set(rawWilayah.map(item => item.kota))].sort();
+
+    // 3. Buat struktur data 'series' yang dibutuhkan ApexCharts
+    const seriesData = uniqueWilayahs.map(kota => {
+      // Untuk setiap kota, cari totalnya di setiap tahun
+      const data = uniqueYears.map(tahun => {
+        // Cari data yang cocok
+        const entry = rawWilayah.find(item => item.tahun === tahun && item.kota === kota);
+        // Jika ditemukan, kembalikan totalnya. Jika tidak, kembalikan 0.
+        return entry ? entry.total : 0;
+      });
+
+      return {
+        name: kota,
+        data: data
+      };
     });
-    
-    var options = {
+
+    console.log(seriesData)
+
+    var optionsWilayahPerTahun = {
       chart: {
         type: 'line',
-        height: '300px',
+        height: '500px',
         toolbar: {
           show: false
         }
       },
-      series: [
-        {
-          name: 'Jambi',
-          data: [120, 150, 180, 200]
-        },
-        {
-          name: 'Muaro Jambi',
-          data: [100, 130, 160, 190]
-        },
-        {
-          name: 'Batanghari',
-          data: [80, 110, 140, 170]
-        }
-      ],
+      series: seriesData,
       xaxis: {
-        categories: ['2021', '2022', '2023', '2024']
+        categories: uniqueYears
       },
       yaxis: {
         title: {
@@ -118,23 +126,23 @@
       }
     };
 
-    var chart = new ApexCharts(document.querySelector("#chart"), options);
-    chart.render();
+    var chartWilayahPerTahun = new ApexCharts(document.querySelector("#chartWilayahPerTahun"), optionsWilayahPerTahun);
+    chartWilayahPerTahun.render();
 
-    var optionsPeujiPredikat = {
+    var optionsPeujiWilayah = {
       chart: {
         type: 'bar',
-        height: '300px',
+        height: '500px',
         toolbar: {
           show: false // 🔹 Hilangkan tombol download / export
         }
       },
       series: [{
         name: 'Jumlah Peuji',
-        data: [280, 320, 300, 280, 50, 120]
+        data: @json($jmlPeujiWilayah->pluck('total'))
       }],
       xaxis: {
-        categories: ['Jambi', 'Muaro Jambi', 'Batanghari', 'Tanjung Jabung Barat', 'Tanjung Jabung Timur', 'Sarolangun'],
+        categories: @json($jmlPeujiWilayah->pluck('kota')),
         title: {
           style: {
             fontSize: '14px',
@@ -145,7 +153,7 @@
       },
       yaxis: {
         title: {
-          text: 'Peuji', 
+          text: 'Peuji',
           style: {
             fontSize: '14px',
             fontWeight: 'bold',
@@ -164,12 +172,21 @@
         strokeDashArray: 4
       },
       dataLabels: {
-        enabled: true // 🔹 Tampilkan angka di atas setiap batang (opsional)
-      }
+        enabled: true,
+        style: {
+          colors: ['#000']
+        }
+      },
+      grid: {
+        padding: {
+          bottom: 100,
+          left: 20
+        }
+      },
     };
 
-    var chartPeujiPredikat = new ApexCharts(document.querySelector("#chartPeujiPredikat"), optionsPeujiPredikat);
-    chartPeujiPredikat.render();
+    var chartPeujiWilayah = new ApexCharts(document.querySelector("#chartPeujiWilayah"), optionsPeujiWilayah);
+    chartPeujiWilayah.render();
 
   </script>
 @endsection
