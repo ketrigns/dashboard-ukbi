@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\DataUkbiController;
 use App\Http\Controllers\HasilDataMiningController;
@@ -36,7 +37,17 @@ Route::get('/wilayah', [WilayahUserController::class, 'index']);
 
 Route::get('/tahun', [TahunUserController::class, 'index']);
 
-Route::resource('/admin/data-ukbi', DataUkbiController::class);
-Route::resource('/admin/hasil-data-mining', HasilDataMiningController::class);
-Route::post('/admin/dashboard/import-data-ukbi', [DataUkbiController::class, 'handleImport'])
-     ->name('data-ukbi.import.handle');
+Route::get('/login', [LoginController::class, 'create'])->name('login')->middleware('guest');
+
+// Rute untuk memproses data login
+Route::post('/login', [LoginController::class, 'store'])->middleware('guest');
+
+// Rute untuk logout (harus diakses oleh user yang sudah login)
+Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
+
+Route::middleware(['auth', 'cek.role:admin'])->group(function () {
+    Route::resource('/admin/data-ukbi', DataUkbiController::class);
+    Route::resource('/admin/hasil-data-mining', HasilDataMiningController::class);
+    Route::post('/admin/dashboard/import-data-ukbi', [DataUkbiController::class, 'handleImport'])
+        ->name('data-ukbi.import.handle');
+});
