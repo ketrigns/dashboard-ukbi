@@ -4,10 +4,10 @@
     <div class="flex justify-between gap-2">
       <img src="{{ asset('assets/images/logo-web.png') }}" alt="Logo" class="h-10">
 
-      <a href="{{ route('data-ukbi.index') }}"
+      {{-- <a href="{{ route('data-ukbi.index') }}"
         class="inline-flex items-center px-3 py-1 bg-[#1F2859] text-white font-semibold rounded-lg shadow-md hover:bg-[#3445a1] focus:outline-none focus:ring-2 focus:ring-[#3751e6] focus:ring-offset-2 transition-all duration-200">
         Login
-      </a>
+      </a> --}}
 
     </div>
 

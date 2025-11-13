@@ -4,9 +4,9 @@
 
 @section('content')
 
-  <div class="w-full mx-auto p-6 bg-white rounded-xl shadow-lg">
+  <div class=" mx-auto p-6 bg-white rounded-xl shadow-lg">
 
-    <form method="GET">
+    {{-- <form method="GET">
       <div>
         <label for="rangePicker" class="block text-sm font-medium">
           Pilih Rentang Tanggal:
@@ -25,19 +25,20 @@
             </div>
 
             <input type="text" id="rangePicker" class="block w-full appearance-none rounded-md border border-gray-300 
-                                            px-3 py-2 pl-10 
-                                            text-gray-900 placeholder-gray-400 
-                                            focus:border-[#1F2859] focus:outline-none focus:ring-[#1F2859] 
-                                            sm:text-sm cursor-pointer" placeholder="Pilih rentang..."
+                                                px-3 py-2 pl-10 
+                                                text-gray-900 placeholder-gray-400 
+                                                focus:border-[#1F2859] focus:outline-none focus:ring-[#1F2859] 
+                                                sm:text-sm cursor-pointer" placeholder="Pilih rentang..."
               value="{{ $startDate }} - {{ $endDate }}">
           </div>
 
           <div class="flex-shrink-0">
-            <button type="submit" class="rounded-md cursor-pointer border border-transparent 
-                                             bg-[#1F2859] px-4 py-2 
-                                             text-sm font-medium text-white shadow-sm 
-                                             hover:bg-[#3c4dac] 
-                                             focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:ring-offset-2">
+            <button type="submit"
+              class="rounded-md cursor-pointer border border-transparent 
+                                                 bg-[#1F2859] px-4 py-2 
+                                                 text-sm font-medium text-white shadow-sm 
+                                                 hover:bg-[#3c4dac] 
+                                                 focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:ring-offset-2">
               Terapkan
             </button>
           </div>
@@ -47,7 +48,38 @@
 
       <input type="hidden" name="tanggal_mulai" id="hidden_tanggal_mulai" value="{{ $startDate }}">
       <input type="hidden" name="tanggal_selesai" id="hidden_tanggal_selesai" value="{{ $endDate }}">
+    </form> --}}
+
+    <form method="GET" class="space-y-3">
+      <label class="text-sm font-medium text-gray-700">
+        Pilih Rentang Tanggal:
+      </label>
+
+      <div class="flex flex-col sm:flex-row gap-3 items-end">
+        <div class="flex-1">
+          <label for="tanggal_mulai" class="block text-xs text-gray-600 mb-1">Tanggal Mulai</label>
+          <input type="date" name="tanggal_mulai" id="tanggal_mulai" value="{{ $startDate }}" class="block w-full rounded-md border border-gray-300 bg-white
+                      px-3 py-2 shadow-sm focus:border-[#1F2859] focus:ring-[#1F2859] sm:text-sm">
+        </div>
+
+        <div class="flex-1">
+          <label for="tanggal_selesai" class="block text-xs text-gray-600 mb-1">Tanggal Selesai</label>
+          <input type="date" name="tanggal_selesai" id="tanggal_selesai" value="{{ $endDate }}" class="block w-full rounded-md border border-gray-300 bg-white
+                      px-3 py-2 shadow-sm focus:border-[#1F2859] focus:ring-[#1F2859] sm:text-sm">
+        </div>
+
+        <div>
+          <button type="submit" class="cursor-pointer rounded-md border border-transparent 
+                       bg-[#1F2859] px-4 py-2 
+                       text-sm font-medium text-white shadow-sm 
+                       hover:bg-[#3c4dac] 
+                       focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:ring-offset-2">
+            Terapkan
+          </button>
+        </div>
+      </div>
     </form>
+
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
@@ -114,11 +146,11 @@
           L.marker(parts)
             .addTo(map)
             .bindPopup(`
-            <b>${item.kota}</b><br>
-            Jumlah Peserta: ${item.total_peserta}<br><br>
-            <b>Predikat:</b><br>
-            ${predikatList}
-          `);
+                <b>${item.kota}</b><br>
+                Jumlah Peserta: ${item.total_peserta}<br><br>
+                <b>Predikat:</b><br>
+                ${predikatList}
+              `);
         }
       }
     });
@@ -344,24 +376,24 @@
     var chartWilayah = new ApexCharts(document.querySelector("#chartWilayah"), optionsWilayah);
     chartWilayah.render();
 
-    flatpickr("#rangePicker", {
-      "locale": "id", // "id" adalah kode untuk Bahasa Indonesia
+    // flatpickr("#rangePicker", {
+    //   "locale": "id",
 
-      mode: "range",
-      dateFormat: "Y-m-d",
-      altInput: true,
-      altFormat: "j F Y", // "F" sekarang akan menjadi "Oktober", "November", dll.
+    //   mode: "range",
+    //   dateFormat: "Y-m-d",
+    //   altInput: true,
+    //   altFormat: "j F Y",
 
-      onClose: function (selectedDates) {
-        if (selectedDates.length === 2) {
-          const startDateInput = document.getElementById('hidden_tanggal_mulai');
-          const endDateInput = document.getElementById('hidden_tanggal_selesai');
+    //   onClose: function (selectedDates) {
+    //     if (selectedDates.length === 2) {
+    //       const startDateInput = document.getElementById('hidden_tanggal_mulai');
+    //       const endDateInput = document.getElementById('hidden_tanggal_selesai');
 
-          startDateInput.value = flatpickr.formatDate(selectedDates[0], "Y-m-d");
-          endDateInput.value = flatpickr.formatDate(selectedDates[1], "Y-m-d");
-        }
-      }
-    });
+    //       startDateInput.value = flatpickr.formatDate(selectedDates[0], "Y-m-d");
+    //       endDateInput.value = flatpickr.formatDate(selectedDates[1], "Y-m-d");
+    //     }
+    //   }
+    // });
 
   </script>
 @endsection
