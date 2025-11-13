@@ -104,29 +104,303 @@
                     <button type="submit" class="btn bg-primary text-white text-sm px-4 py-2">Import File</button>
                 </form>
             </div>
+            <form action="{{ route('data-ukbi.index') }}" method="GET" class="flex w-full p-4">
+  <input 
+    type="text" 
+    name="search"
+    value="{{ request('search') }}"
+    placeholder="Cari Nama, No Pendaftaran, Kota, atau Instansi..."
+    class="w-full rounded-l-md border border-r-0 border-gray-300 px-4 py-2 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
 
-            <div class="overflow-x-auto">
+  <button 
+    type="submit"
+    class="-ml-px rounded-r-md border border-gray-300 bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="#ffffff" d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14"/></svg>
+  </button>
+</form>
+
+
+            <div class="overflow-x-auto border">
                 <table class="min-w-full divide-y divide-default-200">
                     <thead>
                         <tr>
                             <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">No</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">No Pendaftaran</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Tanggal Ujian</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Nama Peserta</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">ٌTerdaftar Sebagai</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Jenis Kelamin</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Tempat Lahir</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Tanggal Lahir</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Kota</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Titik Koordinat</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Instansi</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Seksi 1</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Seksi 2</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Seksi 3</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Seksi 4</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Seksi 5</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Skor</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Predikat</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>No Pendaftaran</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'no_pendaftaran',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Tanggal Ujian</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'tanggal_ujian',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Nama Peserta</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'nama_peserta',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Terdaftar Sebagai</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'terdaftar_sbg',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Jenis Kelamin</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'jenis_kelamin',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Tempat Lahir</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'tempat_lahir',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Tanggal Lahir</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'tanggal_lahir',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Kota</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'kota',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Titik Koordinat</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'titik_koordinat_peta',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Instansi</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'instansi',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Seksi 1</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'seksi_1',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Seksi 2</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'seksi_2',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Seksi 3</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'seksi_3',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Seksi 4</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'seksi_4',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Seksi 5</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'seksi_5',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Skor</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'skor',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            </th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+  <h1>Predikat</h1>
+  <a href="{{ route('data-ukbi.index', [
+      'sort' => 'predikat',
+      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
+      'search' => request('search') // biar search tetap nyangkut
+  ]) }}" class="cursor-pointer">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+      viewBox="0 0 24 24"
+      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
+      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
+    </svg>
+  </a>
+</div>
+                            
+                            </tbody>
+                            </th>
                             <th class="px-6 py-3 text-end text-sm text-default-500">Aksi</th>
                         </tr>
                     </thead>
@@ -185,7 +459,8 @@
                 </table>
 
                 <div class="p-4">
-                    {{ $data->links() }}
+                    {{ $data->appends(request()->query())->links() }}
+
                 </div>
             </div>
         </div>

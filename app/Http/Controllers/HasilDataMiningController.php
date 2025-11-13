@@ -43,6 +43,7 @@ class HasilDataMiningController extends Controller
 
         HasilDataMining::create([
             'gambar' => $path,
+            'deskripsi' => $request->deskripsi
         ]);
 
         return redirect()->route('hasil-data-mining.index')->with('success', 'Gambar berhasil diupload!');
@@ -92,6 +93,11 @@ class HasilDataMiningController extends Controller
             // Update path ke database
             $hasilDataMining->update([
                 'gambar' => $path,
+                'deskripsi' => $request->deskripsi
+            ]);
+        } else {
+            $hasilDataMining->update([
+                'deskripsi' => $request->deskripsi
             ]);
         }
 

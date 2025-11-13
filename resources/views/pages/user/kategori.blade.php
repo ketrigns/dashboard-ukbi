@@ -116,7 +116,40 @@
       xaxis: {
         categories: uniqueYears
       },
-      colors: ['#94B4C1', '#547792', '#1F2859'], // warna unik tiap legend
+      colors: [
+        '#1F77B4', // biru klasik
+        '#FF7F0E', // oranye terang
+        '#2CA02C', // hijau cerah
+        '#D62728', // merah tua
+        '#9467BD', // ungu lembut
+        '#8C564B', // cokelat muda
+        '#E377C2', // pink lembut
+        '#7F7F7F', // abu-abu netral
+        '#BCBD22', // kuning zaitun
+        '#17BECF', // biru toska
+
+        '#FF6F61', // coral
+        '#6B5B95', // ungu royal
+        '#88B04B', // hijau zaitun
+        '#F7CAC9', // pink pastel
+        '#92A8D1', // biru pastel
+        '#955251', // maroon muda
+        '#B565A7', // ungu muda
+        '#009B77', // hijau zamrud
+        '#DD4124', // merah oranye
+        '#45B8AC', // turquoise
+
+        '#EFC050', // emas terang
+        '#5B5EA6', // biru keunguan
+        '#9B2335', // merah anggur
+        '#DFCFBE', // krem muda
+        '#55B4B0', // hijau kebiruan
+        '#E15D44', // merah bata
+        '#7FCDCD', // cyan lembut
+        '#BC243C', // merah crimson
+        '#C3447A', // magenta
+        '#98B4D4'  // biru muda
+      ],
       stroke: {
         curve: 'smooth',
         width: 3
@@ -159,6 +192,7 @@
     const pelajarData = @json($pelajarCounts);
     const pelajarCategories = Object.keys(pelajarData);
     const pelajarValues = Object.values(pelajarData);
+
     var optionsPelajar = {
       chart: {
         type: 'pie',
@@ -176,7 +210,7 @@
         }
       },
       subtitle: {
-        text: {{ number_format($pelajar, 0, ',', '.') }}, // 🟢 tampil di bawah title
+        text: "{{ number_format($pelajar + $mahasiswa, 0, ',', '.') }}",
         align: 'left',
         style: {
           fontSize: '20px',
@@ -185,7 +219,40 @@
       },
       series: pelajarValues,
       labels: pelajarCategories,
-      colors: ['#1F2859', '#547792', '#94B4C1'],
+      colors: [
+        '#1F77B4', // biru klasik
+        '#FF7F0E', // oranye terang
+        '#2CA02C', // hijau cerah
+        '#D62728', // merah tua
+        '#9467BD', // ungu lembut
+        '#8C564B', // cokelat muda
+        '#E377C2', // pink lembut
+        '#7F7F7F', // abu-abu netral
+        '#BCBD22', // kuning zaitun
+        '#17BECF', // biru toska
+
+        '#FF6F61', // coral
+        '#6B5B95', // ungu royal
+        '#88B04B', // hijau zaitun
+        '#F7CAC9', // pink pastel
+        '#92A8D1', // biru pastel
+        '#955251', // maroon muda
+        '#B565A7', // ungu muda
+        '#009B77', // hijau zamrud
+        '#DD4124', // merah oranye
+        '#45B8AC', // turquoise
+
+        '#EFC050', // emas terang
+        '#5B5EA6', // biru keunguan
+        '#9B2335', // merah anggur
+        '#DFCFBE', // krem muda
+        '#55B4B0', // hijau kebiruan
+        '#E15D44', // merah bata
+        '#7FCDCD', // cyan lembut
+        '#BC243C', // merah crimson
+        '#C3447A', // magenta
+        '#98B4D4'  // biru muda
+      ],
       legend: {
         position: 'bottom',
         fontSize: '14px',
@@ -267,7 +334,40 @@
       },
       series: umumValues,
       labels: umumCategories,
-      colors: ['#1F2859', '#547792', '#94B4C1'],
+      colors: [
+        '#1F77B4', // biru klasik
+        '#FF7F0E', // oranye terang
+        '#2CA02C', // hijau cerah
+        '#D62728', // merah tua
+        '#9467BD', // ungu lembut
+        '#8C564B', // cokelat muda
+        '#E377C2', // pink lembut
+        '#7F7F7F', // abu-abu netral
+        '#BCBD22', // kuning zaitun
+        '#17BECF', // biru toska
+
+        '#FF6F61', // coral
+        '#6B5B95', // ungu royal
+        '#88B04B', // hijau zaitun
+        '#F7CAC9', // pink pastel
+        '#92A8D1', // biru pastel
+        '#955251', // maroon muda
+        '#B565A7', // ungu muda
+        '#009B77', // hijau zamrud
+        '#DD4124', // merah oranye
+        '#45B8AC', // turquoise
+
+        '#EFC050', // emas terang
+        '#5B5EA6', // biru keunguan
+        '#9B2335', // merah anggur
+        '#DFCFBE', // krem muda
+        '#55B4B0', // hijau kebiruan
+        '#E15D44', // merah bata
+        '#7FCDCD', // cyan lembut
+        '#BC243C', // merah crimson
+        '#C3447A', // magenta
+        '#98B4D4'  // biru muda
+      ],
       legend: {
         position: 'bottom',
         horizontalAlign: 'center',

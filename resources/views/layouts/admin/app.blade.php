@@ -17,12 +17,16 @@
     <!-- App css  (Mandatory in All Pages) -->
     <link href="{{ asset('assets/css/app.min.css') }}" rel="stylesheet" type="text/css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href='https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css' rel='stylesheet'
+        type='text/css' />
+    <script type='text/javascript'
+        src='https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js'></script>
     <style>
-
         .combobox-container {
             position: relative;
             margin: auto;
         }
+
         /* Stylilng untuk list dropdown */
         .options-list {
             /* Sembunyikan dropdown secara default */
@@ -57,7 +61,16 @@
         .option-item:hover {
             background-color: #e9e9e9;
         }
+
+        ul {
+            all: revert;
+        }
+
+        ol {
+            all: revert;
+        }
     </style>
+
 </head>
 
 <body>

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('hasil_data_mining', function (Blueprint $table) {
             $table->id();
             $table->string('gambar');
+            $table->text('deskripsi');
             $table->timestamps();
         });
     }

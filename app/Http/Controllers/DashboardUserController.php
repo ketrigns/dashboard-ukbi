@@ -27,6 +27,25 @@ class DashboardUserController extends Controller
             ->groupBy('kota', 'titik_koordinat_peta')
             ->get();
 
+        // Ambil jumlah predikat per kota
+        $predikatPerKota = DataUkbi::select(
+            'kota',
+            'predikat',
+            DB::raw('COUNT(*) as total_predikat')
+        )
+            ->whereNotNull('kota')
+            ->groupBy('kota', 'predikat')
+            ->get()
+            ->groupBy('kota');
+
+        // Gabungkan hasilnya
+        $locations = $locations->map(function ($loc) use ($predikatPerKota) {
+            $predikat = $predikatPerKota[$loc->kota] ?? collect();
+            $loc->predikat_detail = $predikat->mapWithKeys(fn($p) => [$p->predikat => $p->total_predikat]);
+            return $loc;
+        });
+
+
         $predikatCounts = DataUkbi::select('predikat', DB::raw('COUNT(*) as total'))
             ->groupBy('predikat')
             ->pluck('total', 'predikat');

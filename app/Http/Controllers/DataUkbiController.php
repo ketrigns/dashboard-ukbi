@@ -13,17 +13,36 @@ class DataUkbiController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data = DataUkbi::latest()->paginate(10);
+        $query = DataUkbi::query();
+
+        // 🔍 Filter pencarian
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_peserta', 'like', "%{$search}%")
+                    ->orWhere('no_pendaftaran', 'like', "%{$search}%")
+                    ->orWhere('kota', 'like', "%{$search}%")
+                    ->orWhere('instansi', 'like', "%{$search}%");
+            });
+        }
+
+        // ⬆️ Sorting
+        $sort = $request->get('sort', 'created_at');
+        $direction = $request->get('direction', 'desc');
+
+        $data = $query->orderBy($sort, $direction)->paginate(20);
+
         return view('pages.admin.dashboard.index', compact('data'));
     }
+
 
     public function handleImport(Request $request)
     {
         // 1. Validasi file yang di-upload
         $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls,csv', 
+            'file' => 'required|file|mimes:xlsx,xls,csv',
         ]);
 
         try {

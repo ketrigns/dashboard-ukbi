@@ -10,6 +10,6 @@ class HasilDataMining extends Model
     use HasFactory;
 
     protected $table = 'hasil_data_mining';
-    protected $fillable = ['gambar'];
+    protected $fillable = ['gambar', 'deskripsi'];
 
 }

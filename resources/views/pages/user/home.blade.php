@@ -81,15 +81,26 @@
         const parts = item.titik_koordinat_peta.split(',').map(Number);
 
         if (parts.length === 2) {
+          // Format data predikat per kota
+          let predikatList = '';
+          if (item.predikat_detail) {
+            Object.entries(item.predikat_detail).forEach(([key, val]) => {
+              predikatList += `${key}: ${val}<br>`;
+            });
+          }
+
           L.marker(parts)
             .addTo(map)
             .bindPopup(`
-                          <b>${item.kota}</b><br>
-                          Jumlah Peserta: ${item.total_peserta}
-                        `);
+            <b>${item.kota}</b><br>
+            Jumlah Peserta: ${item.total_peserta}<br><br>
+            <b>Predikat:</b><br>
+            ${predikatList}
+          `);
         }
       }
-    })
+    });
+
 
     const predikatData = @json($predikatCounts);
     const predikatCategories = Object.keys(predikatData);
@@ -100,12 +111,17 @@
         type: 'bar',
       },
       title: {
-        text: 'Jumlah Peuji Berdasarkan Predikat', // 🟢 Judul chart
-        align: 'center', // bisa 'left', 'center', atau 'right'
+        text: 'Jumlah Peuji Berdasarkan Predikat',
+        align: 'center',
         style: {
           fontSize: '16px',
           fontWeight: 'bold',
           color: '#000'
+        }
+      },
+      plotOptions: {
+        bar: {
+          distributed: true,
         }
       },
       dataLabels: {
@@ -122,8 +138,13 @@
       xaxis: {
         categories: predikatCategories
       },
-      colors: ['#1F2859'],
+      colors: ['#8CE4FF', '#FEEE91', '#B7A3E3', '#ECEE81', '#B7E0FF', '#FC4100', '#A1EEBD', '#5272F2'],
+      legend: {
+        show: false // 🔹 Sembunyikan legend warna
+      },
+
     };
+
 
 
     var chart = new ApexCharts(document.querySelector("#chart"), options);
@@ -134,7 +155,7 @@
       chart: {
         type: 'donut',
         toolbar: {
-          show: true 
+          show: true
         }
       },
       title: {
@@ -148,7 +169,41 @@
       },
       series: @json($kategoriCounts->pluck('total')),
       labels: @json($kategoriCounts->pluck('terdaftar_sbg')),
-      colors: ['#1F2859', '#547792', '#94B4C1'], // 🔹 Warna berbeda tiap data
+      colors: [
+        '#1F77B4', // biru klasik
+        '#FF7F0E', // oranye terang
+        '#2CA02C', // hijau cerah
+        '#D62728', // merah tua
+        '#9467BD', // ungu lembut
+        '#8C564B', // cokelat muda
+        '#E377C2', // pink lembut
+        '#7F7F7F', // abu-abu netral
+        '#BCBD22', // kuning zaitun
+        '#17BECF', // biru toska
+
+        '#FF6F61', // coral
+        '#6B5B95', // ungu royal
+        '#88B04B', // hijau zaitun
+        '#F7CAC9', // pink pastel
+        '#92A8D1', // biru pastel
+        '#955251', // maroon muda
+        '#B565A7', // ungu muda
+        '#009B77', // hijau zamrud
+        '#DD4124', // merah oranye
+        '#45B8AC', // turquoise
+
+        '#EFC050', // emas terang
+        '#5B5EA6', // biru keunguan
+        '#9B2335', // merah anggur
+        '#DFCFBE', // krem muda
+        '#55B4B0', // hijau kebiruan
+        '#E15D44', // merah bata
+        '#7FCDCD', // cyan lembut
+        '#BC243C', // merah crimson
+        '#C3447A', // magenta
+        '#98B4D4'  // biru muda
+      ]
+      , // 🔹 Warna berbeda tiap data
       legend: {
         position: 'bottom'
       },
@@ -171,6 +226,12 @@
         },
         zoom: {
           enabled: true
+        }
+      },
+
+      plotOptions: {
+        bar: {
+          distributed: true,
         }
       },
       title: {
@@ -206,7 +267,43 @@
         categories: wilayahCategories,
       },
 
-      colors: ['#1F2859'],
+      colors: [
+        '#1F77B4', // biru klasik
+        '#FF7F0E', // oranye terang
+        '#2CA02C', // hijau cerah
+        '#D62728', // merah tua
+        '#9467BD', // ungu lembut
+        '#8C564B', // cokelat muda
+        '#E377C2', // pink lembut
+        '#7F7F7F', // abu-abu netral
+        '#BCBD22', // kuning zaitun
+        '#17BECF', // biru toska
+
+        '#FF6F61', // coral
+        '#6B5B95', // ungu royal
+        '#88B04B', // hijau zaitun
+        '#F7CAC9', // pink pastel
+        '#92A8D1', // biru pastel
+        '#955251', // maroon muda
+        '#B565A7', // ungu muda
+        '#009B77', // hijau zamrud
+        '#DD4124', // merah oranye
+        '#45B8AC', // turquoise
+
+        '#EFC050', // emas terang
+        '#5B5EA6', // biru keunguan
+        '#9B2335', // merah anggur
+        '#DFCFBE', // krem muda
+        '#55B4B0', // hijau kebiruan
+        '#E15D44', // merah bata
+        '#7FCDCD', // cyan lembut
+        '#BC243C', // merah crimson
+        '#C3447A', // magenta
+        '#98B4D4'  // biru muda
+      ],
+      legend: {
+        show: false // 🔹 Sembunyikan legend warna
+      },
     };
 
     var chartWilayah = new ApexCharts(

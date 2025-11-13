@@ -22,6 +22,15 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
+  <style>
+    ul {
+      all: revert;
+    }
+
+    ol {
+      all: revert;
+    }
+  </style>
 </head>
 
 <body style='font-family: "Roboto", sans-serif; background-color: rgba(148, 180, 193, 0.08);' class="bg-gray-50">

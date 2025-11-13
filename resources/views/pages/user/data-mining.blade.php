@@ -10,6 +10,9 @@
       @if($data)
         <img src="{{ asset('storage/' . $data->gambar) }}" alt="Gambar Hasil Data Mining"
           class="w-full h-auto rounded-lg shadow-md">
+        <div class="mt-5">
+          {!! $data->deskripsi !!}
+        </div>
       @else
         <div class="p-4 text-center text-gray-500 bg-gray-100 rounded-lg">
           <p>Gambar hasil data mining Belum diupload.</p>

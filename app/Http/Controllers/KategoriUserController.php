@@ -39,21 +39,14 @@ class KategoriUserController extends Controller
             ->get();
 
         $pelajarCounts = DataUkbi::when($wilayah, fn($q) => $q->where('kota', $wilayah))
-            ->where('terdaftar_sbg', 'like', '%pelajar%')
-            ->orWhere('terdaftar_sbg', 'like', '%mahasiswa%')
+            ->where(function ($q) {
+                $q->where('terdaftar_sbg', 'like', '%pelajar%')
+                    ->orWhere('terdaftar_sbg', 'like', '%mahasiswa%');
+            })
             ->select('terdaftar_sbg', DB::raw('COUNT(*) as total'))
             ->groupBy('terdaftar_sbg')
             ->pluck('total', 'terdaftar_sbg');
 
-        $mahasiswaCounts = DataUkbi::when($wilayah, fn($q) => $q->where('kota', $wilayah))
-            ->select(
-                'terdaftar_sbg',
-                DB::raw('COUNT(*) as total')
-            )
-            ->groupBy('terdaftar_sbg')
-            ->pluck('total', 'terdaftar_sbg');
-
-        // dd($mahasiswaCounts);
 
         $umumCounts = DataUkbi::when($wilayah, fn($q) => $q->where('kota', $wilayah))
             ->where('terdaftar_sbg', 'not like', '%pelajar%')

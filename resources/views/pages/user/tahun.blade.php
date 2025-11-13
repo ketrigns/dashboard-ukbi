@@ -25,19 +25,19 @@
             </div>
 
             <input type="text" id="rangePicker" class="block w-full appearance-none rounded-md border border-gray-300 
-                                          px-3 py-2 pl-10 
-                                          text-gray-900 placeholder-gray-400 
-                                          focus:border-[#1F2859] focus:outline-none focus:ring-[#1F2859] 
-                                          sm:text-sm cursor-pointer" placeholder="Pilih rentang..."
+                                            px-3 py-2 pl-10 
+                                            text-gray-900 placeholder-gray-400 
+                                            focus:border-[#1F2859] focus:outline-none focus:ring-[#1F2859] 
+                                            sm:text-sm cursor-pointer" placeholder="Pilih rentang..."
               value="{{ $startDate }} - {{ $endDate }}">
           </div>
 
           <div class="flex-shrink-0">
             <button type="submit" class="rounded-md cursor-pointer border border-transparent 
-                                           bg-[#1F2859] px-4 py-2 
-                                           text-sm font-medium text-white shadow-sm 
-                                           hover:bg-[#3c4dac] 
-                                           focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:ring-offset-2">
+                                             bg-[#1F2859] px-4 py-2 
+                                             text-sm font-medium text-white shadow-sm 
+                                             hover:bg-[#3c4dac] 
+                                             focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:ring-offset-2">
               Terapkan
             </button>
           </div>
@@ -106,9 +106,9 @@
           L.marker(parts)
             .addTo(map)
             .bindPopup(`
-                              <b>${item.kota}</b><br>
-                              Jumlah Peserta: ${item.total_peserta}
-                            `);
+                                <b>${item.kota}</b><br>
+                                Jumlah Peserta: ${item.total_peserta}
+                              `);
         }
       }
     })
@@ -137,7 +137,48 @@
       xaxis: {
         categories: @json($jmlPeujiPredikat->pluck('predikat'))
       },
-      colors: ['#1F2859'],
+      plotOptions: {
+        bar: {
+          distributed: true,
+        }
+      },
+      colors: [
+        '#1F77B4', // biru klasik
+        '#FF7F0E', // oranye terang
+        '#2CA02C', // hijau cerah
+        '#D62728', // merah tua
+        '#9467BD', // ungu lembut
+        '#8C564B', // cokelat muda
+        '#E377C2', // pink lembut
+        '#7F7F7F', // abu-abu netral
+        '#BCBD22', // kuning zaitun
+        '#17BECF', // biru toska
+
+        '#FF6F61', // coral
+        '#6B5B95', // ungu royal
+        '#88B04B', // hijau zaitun
+        '#F7CAC9', // pink pastel
+        '#92A8D1', // biru pastel
+        '#955251', // maroon muda
+        '#B565A7', // ungu muda
+        '#009B77', // hijau zamrud
+        '#DD4124', // merah oranye
+        '#45B8AC', // turquoise
+
+        '#EFC050', // emas terang
+        '#5B5EA6', // biru keunguan
+        '#9B2335', // merah anggur
+        '#DFCFBE', // krem muda
+        '#55B4B0', // hijau kebiruan
+        '#E15D44', // merah bata
+        '#7FCDCD', // cyan lembut
+        '#BC243C', // merah crimson
+        '#C3447A', // magenta
+        '#98B4D4'  // biru muda
+      ],
+      legend: {
+        show: false // 🔹 Sembunyikan legend warna
+      },
       dataLabels: {
         enabled: true,
         style: {
@@ -168,7 +209,40 @@
       },
       series: @json($kategoriCounts->pluck('total')),
       labels: @json($kategoriCounts->pluck('terdaftar_sbg')),
-      colors: ['#1F2859', '#547792', '#94B4C1'], // 🔹 Warna berbeda tiap data
+      colors: [
+        '#1F77B4', // biru klasik
+        '#FF7F0E', // oranye terang
+        '#2CA02C', // hijau cerah
+        '#D62728', // merah tua
+        '#9467BD', // ungu lembut
+        '#8C564B', // cokelat muda
+        '#E377C2', // pink lembut
+        '#7F7F7F', // abu-abu netral
+        '#BCBD22', // kuning zaitun
+        '#17BECF', // biru toska
+
+        '#FF6F61', // coral
+        '#6B5B95', // ungu royal
+        '#88B04B', // hijau zaitun
+        '#F7CAC9', // pink pastel
+        '#92A8D1', // biru pastel
+        '#955251', // maroon muda
+        '#B565A7', // ungu muda
+        '#009B77', // hijau zamrud
+        '#DD4124', // merah oranye
+        '#45B8AC', // turquoise
+
+        '#EFC050', // emas terang
+        '#5B5EA6', // biru keunguan
+        '#9B2335', // merah anggur
+        '#DFCFBE', // krem muda
+        '#55B4B0', // hijau kebiruan
+        '#E15D44', // merah bata
+        '#7FCDCD', // cyan lembut
+        '#BC243C', // merah crimson
+        '#C3447A', // magenta
+        '#98B4D4'  // biru muda
+      ],
       legend: {
         position: 'bottom'
       },
@@ -201,7 +275,48 @@
       xaxis: {
         categories: @json($jmlPeujiWilayah->pluck('kota'))
       },
-      colors: ['#1F2859'],
+      plotOptions: {
+        bar: {
+          distributed: true,
+        }
+      },
+      colors: [
+        '#1F77B4', // biru klasik
+        '#FF7F0E', // oranye terang
+        '#2CA02C', // hijau cerah
+        '#D62728', // merah tua
+        '#9467BD', // ungu lembut
+        '#8C564B', // cokelat muda
+        '#E377C2', // pink lembut
+        '#7F7F7F', // abu-abu netral
+        '#BCBD22', // kuning zaitun
+        '#17BECF', // biru toska
+
+        '#FF6F61', // coral
+        '#6B5B95', // ungu royal
+        '#88B04B', // hijau zaitun
+        '#F7CAC9', // pink pastel
+        '#92A8D1', // biru pastel
+        '#955251', // maroon muda
+        '#B565A7', // ungu muda
+        '#009B77', // hijau zamrud
+        '#DD4124', // merah oranye
+        '#45B8AC', // turquoise
+
+        '#EFC050', // emas terang
+        '#5B5EA6', // biru keunguan
+        '#9B2335', // merah anggur
+        '#DFCFBE', // krem muda
+        '#55B4B0', // hijau kebiruan
+        '#E15D44', // merah bata
+        '#7FCDCD', // cyan lembut
+        '#BC243C', // merah crimson
+        '#C3447A', // magenta
+        '#98B4D4'  // biru muda
+      ],
+      legend: {
+        show: false // 🔹 Sembunyikan legend warna
+      },
       grid: {
         padding: {
           bottom: 100,

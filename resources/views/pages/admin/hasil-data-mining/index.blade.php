@@ -101,6 +101,7 @@
                     <thead>
                         <tr>
                             <th class="px-6 py-3 text-start text-sm text-default-500">Hasil Data Mining</th>
+                            <th class="px-6 py-3 text-start text-sm text-default-500">Deskripsi</th>
                             <th class="px-6 py-3 text-end text-sm text-default-500">Aksi</th>
                         </tr>
                     </thead>
@@ -110,6 +111,7 @@
                                 <td class="px-6 py-4 text-sm text-default-800"><img
                                         src="{{ asset('storage/' . $item->gambar) }}" alt="Hasil"
                                         class="rounded-md mb-3 object-cover"></td>
+                                <td class="px-6 py-4">{!! $item->deskripsi !!}</td>
                                 <td class="px-6 py-4 text-end text-sm">
                                     <div class="flex justify-end mt-2">
                                         <a href="{{ route('hasil-data-mining.edit', $item) }}">
