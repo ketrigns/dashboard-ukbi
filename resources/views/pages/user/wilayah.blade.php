@@ -31,15 +31,25 @@
         const parts = item.titik_koordinat_peta.split(',').map(Number);
 
         if (parts.length === 2) {
+          // Format data predikat per kota
+          let predikatList = '';
+          if (item.predikat_detail) {
+            Object.entries(item.predikat_detail).forEach(([key, val]) => {
+              predikatList += `${key}: ${val}<br>`;
+            });
+          }
+
           L.marker(parts)
             .addTo(map)
             .bindPopup(`
-                            <b>${item.kota}</b><br>
-                            Jumlah Peserta: ${item.total_peserta}
-                          `);
+            <b>${item.kota}</b><br>
+            Jumlah Peserta: ${item.total_peserta}<br><br>
+            <b>Predikat:</b><br>
+            ${predikatList}
+          `);
         }
       }
-    })
+    });
 
     const rawWilayah = @json($wilayahPerTahun);
     const uniqueYears = [...new Set(rawWilayah.map(item => item.tahun))].sort((a, b) => a - b);

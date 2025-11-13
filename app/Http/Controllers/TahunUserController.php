@@ -22,14 +22,32 @@ class TahunUserController extends Controller
 
         $locations = (clone $query)
             ->select(
-                'kota',
-                'titik_koordinat_peta',
-                DB::raw('COUNT(*) as total_peserta')
-            )
+            'kota',
+            'titik_koordinat_peta',
+            DB::raw('COUNT(*) as total_peserta')
+        )
             ->whereNotNull('kota')
             ->whereNotNull('titik_koordinat_peta')
             ->groupBy('kota', 'titik_koordinat_peta')
             ->get();
+
+        // Ambil jumlah predikat per kota
+        $predikatPerKota = DataUkbi::select(
+            'kota',
+            'predikat',
+            DB::raw('COUNT(*) as total_predikat')
+        )
+            ->whereNotNull('kota')
+            ->groupBy('kota', 'predikat')
+            ->get()
+            ->groupBy('kota');
+
+        // Gabungkan hasilnya
+        $locations = $locations->map(function ($loc) use ($predikatPerKota) {
+            $predikat = $predikatPerKota[$loc->kota] ?? collect();
+            $loc->predikat_detail = $predikat->mapWithKeys(fn($p) => [$p->predikat => $p->total_predikat]);
+            return $loc;
+        });
 
         $pelajar = (clone $query)
             ->where('terdaftar_sbg', 'like', '%pelajar%')
