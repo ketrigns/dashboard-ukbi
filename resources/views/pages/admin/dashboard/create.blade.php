@@ -77,19 +77,6 @@
             <input type="text" name="titik_koordinat_peta" id="simpleinput" class="form-input" required>
           </div>
 
-          <div id="kelas-container" style="display: none;">
-            <label for="simpleinput" class="text-default-800 text-sm font-medium inline-block mb-2">Kelas</label>
-            <select name="kelas" id="simpleinput" class="form-input">
-              <option value="">Pilih Kelas</option>
-              <option value="Kelas 7">Kelas 7</option>
-              <option value="Kelas 8">Kelas 8</option>
-              <option value="Kelas 9">Kelas 9</option>
-              <option value="Kelas 10">Kelas 10</option>
-              <option value="Kelas 11">Kelas 11</option>
-              <option value="Kelas 12">Kelas 12</option>
-            </select>
-          </div>
-
           <div>
             <label for="simpleinput" class="text-default-800 text-sm font-medium inline-block mb-2">Instansi</label>
             <div class="combobox-container">
@@ -249,32 +236,6 @@
         optionsListElTerdaftarSbg.classList.remove('show');
       }, 150); // tunda 150 milidetik
     });
-
-    // --- Tampilkan/Sembunyikan field Kelas berdasarkan profesi ---
-    const kelasContainer = document.getElementById('kelas-container');
-
-    function cekProfesi() {
-      const val = inputElTerdaftarSbg.value.trim().toLowerCase();
-      const selectKelas = document.querySelector('#kelas-container select');
-
-      if (val.includes('pelajar')) {
-        kelasContainer.style.display = 'block';
-        selectKelas.setAttribute('required', 'required'); // ✅ buat jadi wajib
-      } else {
-        kelasContainer.style.display = 'none';
-        selectKelas.removeAttribute('required'); // 🚫 hapus required kalau bukan pelajar
-      }
-    }
-
-
-
-    // Jalankan saat input berubah
-    inputElTerdaftarSbg.addEventListener('input', cekProfesi);
-    inputElTerdaftarSbg.addEventListener('change', cekProfesi);
-
-    // Jalankan juga ketika user klik dari daftar opsi
-    optionsListElTerdaftarSbg.addEventListener('click', cekProfesi);
-
 
     // INPUT INSTANSI
     const DATA_INSTANSI = @json($instansi->pluck('instansi'));

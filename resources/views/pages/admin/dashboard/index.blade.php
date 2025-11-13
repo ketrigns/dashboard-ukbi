@@ -119,7 +119,6 @@
                             <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Tanggal Lahir</th>
                             <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Kota</th>
                             <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Titik Koordinat</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Kelas</th>
                             <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Instansi</th>
                             <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Seksi 1</th>
                             <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">Seksi 2</th>
@@ -144,7 +143,6 @@
                                 <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->tanggal_lahir ?? '-' }}</td>
                                 <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->kota ?? '-' }}</td>
                                 <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->titik_koordinat_peta ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->kelas ?? '-' }}</td>
                                 <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->instansi ?? '-' }}</td>
                                 <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->seksi_1 ?? '-' }}</td>
                                 <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->seksi_2 ?? '-' }}</td>

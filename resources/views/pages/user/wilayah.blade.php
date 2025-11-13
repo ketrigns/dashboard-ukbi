@@ -5,11 +5,9 @@
 @section('content')
   <div class="grid grid-cols-1 gap-4 my-4">
     <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Wilayah per Tahun</h1>
       <div id="chartWilayahPerTahun"></div>
     </div>
     <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Wilayah</h1>
       <div id="chartPeujiWilayah"></div>
     </div>
     <div id="map" class="rounded" style="height: 400px; overflow: hidden;"></div>
@@ -72,7 +70,16 @@
         type: 'line',
         height: '500px',
         toolbar: {
-          show: false
+          show: true
+        }
+      },
+      title: {
+        text: 'Jumlah Peuji berdasarkan Predikat per Tahun', // 🟢 Judul chart
+        align: 'center', // bisa 'center', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
         }
       },
       series: seriesData,
@@ -134,7 +141,16 @@
         type: 'bar',
         height: '500px',
         toolbar: {
-          show: false // 🔹 Hilangkan tombol download / export
+          show: true // 🔹 Hilangkan tombol download / export
+        }
+      },
+      title: {
+        text: 'Jumlah Peuji berdasarkan Wilayah', // 🟢 Judul chart
+        align: 'center', // bisa 'center', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
         }
       },
       series: [{

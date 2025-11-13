@@ -22,7 +22,6 @@ return new class extends Migration
             $table->date('tanggal_lahir')->nullable();
             $table->string('kota')->nullable();
             $table->string('titik_koordinat_peta')->nullable();
-            $table->string('kelas')->nullable();
             $table->string('instansi')->nullable();
             $table->integer('seksi_1')->nullable();
             $table->integer('seksi_2')->nullable();

@@ -38,27 +38,21 @@
 
   <div class="grid md:grid-cols-2 grid-cols-1 gap-4 my-4">
     <div class="bg-white p-4 rounded col-span-2">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Predikat per Tahun</h1>
       <div id="chart"></div>
     </div>
     <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji berdasarkan Predikat</h1>
       <div id="chartPeujiPredikat"></div>
     </div>
     <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Rata-Rata Skor berdasarkan Predikat</h1>
       <div id="chartSkorPredikat"></div>
     </div>
     <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Mahasiswa berdasarkan Predikat</h1>
       <div id="chartMahasiswaPredikat"></div>
     </div>
     <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Umum berdasarkan Predikat</h1>
       <div id="chartUmumPredikat"></div>
     </div>
     <div class="bg-white p-4 rounded">
-      <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori Pelajar berdasarkan Predikat</h1>
       <div id="chartPelajarPredikat"></div>
     </div>
 
@@ -68,13 +62,12 @@
       @endphp
 
       <div class="bg-white p-4 rounded">
-        <h1 class="text-[24px] font-medium leading-tight">Jumlah Peuji Kategori {{ $jenisPelajar }} berdasarkan Predikat
-        </h1>
         <div id="{{ $chartId }}" class="chart-container" data-chart-data="{{ json_encode($dataPelajar) }}"
-          data-chart-id="{{ $chartId }}">
+          data-chart-id="{{ $chartId }}" data-title="Jumlah Peuji Kategori {{ $jenisPelajar }} berdasarkan Predikat">
         </div>
       </div>
     @endforeach
+
   </div>
 
   <script>
@@ -105,7 +98,16 @@
         type: 'line',
         height: '300px',
         toolbar: {
-          show: false
+          show: true
+        }
+      },
+      title: {
+        text: 'Jumlah Peuji berdasarkan Predikat per Tahun', // 🟢 Judul chart
+        align: 'center', // bisa 'center', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
         }
       },
       series: seriesData,
@@ -167,7 +169,16 @@
         type: 'bar',
         height: '300px',
         toolbar: {
-          show: false // 🔹 Hilangkan tombol download / export
+          show: true // 🔹 Hilangkan tombol download / export
+        }
+      },
+      title: {
+        text: 'Jumlah Peuji berdasarkan Predikat', // 🟢 Judul chart
+        align: 'center', // bisa 'center', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
         }
       },
       series: [{
@@ -220,7 +231,16 @@
         type: 'bar',
         height: '300px',
         toolbar: {
-          show: false // 🔹 Hilangkan tombol download / export
+          show: true // 🔹 Hilangkan tombol download / export
+        }
+      },
+      title: {
+        text: 'Rata-Rata Skor berdasarkan Predikat', // 🟢 Judul chart
+        align: 'center', // bisa 'center', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
         }
       },
       series: [{
@@ -273,9 +293,19 @@
         type: 'bar',
         height: '300px',
         toolbar: {
-          show: false // 🔹 Hilangkan tombol download / export
+          show: true // 🔹 Hilangkan tombol download / export
         }
       },
+      title: {
+        text: 'Jumlah Peuji Kategori Mahasiswa berdasarkan Predikat',
+        align: 'center',
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
+        }
+      },
+
       series: [{
         name: 'Jumlah Peuji',
         data: @json($jmlPeujiMhs->pluck('total'))
@@ -326,7 +356,16 @@
         type: 'bar',
         height: '300px',
         toolbar: {
-          show: false // 🔹 Hilangkan tombol download / export
+          show: true // 🔹 Hilangkan tombol download / export
+        }
+      },
+      title: {
+        text: 'Jumlah Peuji Kategori Umum berdasarkan Predikat', // 🟢 Judul chart
+        align: 'center', // bisa 'center', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
         }
       },
       series: [{
@@ -379,7 +418,16 @@
         type: 'bar',
         height: '300px',
         toolbar: {
-          show: false // 🔹 Hilangkan tombol download / export
+          show: true // 🔹 Hilangkan tombol download / export
+        }
+      },
+      title: {
+        text: 'Jumlah Peuji Kategori Pelajar berdasarkan Predikat', // 🟢 Judul chart
+        align: 'center', // bisa 'center', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
         }
       },
       series: [{
@@ -427,6 +475,7 @@
     var chartPelajarPredikat = new ApexCharts(document.querySelector("#chartPelajarPredikat"), optionsPelajarPredikat);
     chartPelajarPredikat.render();
 
+
     const chartContainers = document.querySelectorAll('.chart-container');
 
     // Loop setiap div container
@@ -435,11 +484,9 @@
       // Ambil ID dan data dari data-attribute
       const chartId = container.dataset.chartId;
       const chartData = JSON.parse(container.dataset.chartData);
+      const chartTitle = container.dataset.title; // 🟢 Ambil title dari data-title
 
-      // --- Transformasi Data (untuk chart ini saja) ---
-      // Kita pisahkan antara 'predikat' (untuk label) dan 'total' (untuk data)
-
-      // Urutkan data berdasarkan predikat (opsional, tapi rapi)
+      // Urutkan data berdasarkan predikat
       chartData.sort((a, b) => a.predikat.localeCompare(b.predikat));
 
       const categories = chartData.map(item => item.predikat);
@@ -451,7 +498,16 @@
           type: 'bar',
           height: '300px',
           toolbar: {
-            show: false // 🔹 Hilangkan tombol download / export
+            show: true
+          }
+        },
+        title: {
+          text: chartTitle, // 🟢 Gunakan title dari dataset
+          align: 'center',
+          style: {
+            fontSize: '16px',
+            fontWeight: 'bold',
+            color: '#000'
           }
         },
         series: [{
@@ -497,10 +553,10 @@
       };
 
       // --- Render Chart ---
-      // Buat instance chart baru dan render ke div yang sesuai
       var chart = new ApexCharts(document.querySelector("#" + chartId), options);
       chart.render();
     });
+
 
   </script>
 @endsection

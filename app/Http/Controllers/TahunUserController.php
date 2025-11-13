@@ -58,8 +58,13 @@ class TahunUserController extends Controller
             )
             ->groupBy('kota')
             ->get();
-        
-        
+
+        $kategoriCounts = (clone $query)
+            ->select('terdaftar_sbg', DB::raw('COUNT(*) as total'))
+            ->groupBy('terdaftar_sbg')
+            ->get();
+
+
         return view('pages.user.tahun', [
             'startDate' => $startDate->format('Y-m-d'),
             'endDate'   => $endDate->format('Y-m-d'),
@@ -70,6 +75,7 @@ class TahunUserController extends Controller
             'locations'   => $locations,
             'jmlPeujiPredikat'   => $jmlPeujiPredikat,
             'jmlPeujiWilayah'   => $jmlPeujiWilayah,
+            'kategoriCounts'   => $kategoriCounts,
         ]);
     }
 }

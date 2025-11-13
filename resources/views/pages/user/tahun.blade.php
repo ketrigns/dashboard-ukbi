@@ -25,19 +25,19 @@
             </div>
 
             <input type="text" id="rangePicker" class="block w-full appearance-none rounded-md border border-gray-300 
-                                        px-3 py-2 pl-10 
-                                        text-gray-900 placeholder-gray-400 
-                                        focus:border-[#1F2859] focus:outline-none focus:ring-[#1F2859] 
-                                        sm:text-sm cursor-pointer" placeholder="Pilih rentang..."
+                                          px-3 py-2 pl-10 
+                                          text-gray-900 placeholder-gray-400 
+                                          focus:border-[#1F2859] focus:outline-none focus:ring-[#1F2859] 
+                                          sm:text-sm cursor-pointer" placeholder="Pilih rentang..."
               value="{{ $startDate }} - {{ $endDate }}">
           </div>
 
           <div class="flex-shrink-0">
             <button type="submit" class="rounded-md cursor-pointer border border-transparent 
-                                         bg-[#1F2859] px-4 py-2 
-                                         text-sm font-medium text-white shadow-sm 
-                                         hover:bg-[#3c4dac] 
-                                         focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:ring-offset-2">
+                                           bg-[#1F2859] px-4 py-2 
+                                           text-sm font-medium text-white shadow-sm 
+                                           hover:bg-[#3c4dac] 
+                                           focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:ring-offset-2">
               Terapkan
             </button>
           </div>
@@ -74,19 +74,16 @@
 
   <div class="grid grid-cols-2 gap-4 my-4">
     <div class="bg-white p-4 rounded">
-      <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Predikat</h1>
       <div id="chart"></div>
     </div>
     <div class="bg-white p-4 rounded">
-      <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Kategori</h1>
       <div id="chartKategori"></div>
     </div>
   </div>
 
   <div class="bg-white p-4 rounded">
-      <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji berdasarkan Wilayah</h1>
-      <div id="chartWilayah"></div>
-    </div>
+    <div id="chartWilayah"></div>
+  </div>
 
   <script>
     // Inisialisasi peta di pusat Provinsi Jambi
@@ -109,9 +106,9 @@
           L.marker(parts)
             .addTo(map)
             .bindPopup(`
-                            <b>${item.kota}</b><br>
-                            Jumlah Peserta: ${item.total_peserta}
-                          `);
+                              <b>${item.kota}</b><br>
+                              Jumlah Peserta: ${item.total_peserta}
+                            `);
         }
       }
     })
@@ -121,7 +118,16 @@
         type: 'bar',
         height: '300px',
         toolbar: {
-          show: false // 🔹 Hilangkan tombol download / export
+          show: true // 🔹 Hilangkan tombol download / export
+        }
+      },
+      title: {
+        text: 'Jumlah Peuji berdasarkan Predikat', // 🟢 Judul chart
+        align: 'center', // bisa 'left', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
         }
       },
       series: [{
@@ -148,14 +154,23 @@
       chart: {
         type: 'donut',
         toolbar: {
-          show: false // 🔹 Hilangkan tombol download juga di donut
+          show: true
         }
       },
-      series: [{{ $pelajar }}, {{ $mahasiswa }}, {{ $umum }}],
-      labels: ['Pelajar', 'Mahasiswa', 'Umum'],
+      title: {
+        text: 'Jumlah Peuji Berdasarkan Kategori', // 🟢 Judul chart
+        align: 'center', // bisa 'left', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
+        }
+      },
+      series: @json($kategoriCounts->pluck('total')),
+      labels: @json($kategoriCounts->pluck('terdaftar_sbg')),
       colors: ['#1F2859', '#547792', '#94B4C1'], // 🔹 Warna berbeda tiap data
       legend: {
-        position: 'right'
+        position: 'bottom'
       },
     };
 
@@ -167,7 +182,16 @@
         type: 'bar',
         height: '500px',
         toolbar: {
-          show: false // 🔹 Hilangkan tombol download / export
+          show: true // 🔹 Hilangkan tombol download / export
+        }
+      },
+      title: {
+        text: 'Jumlah Peuji berdasarkan Wilayah', // 🟢 Judul chart
+        align: 'center', // bisa 'left', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
         }
       },
       series: [{

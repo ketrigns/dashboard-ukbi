@@ -23,7 +23,7 @@ class DataUkbiController extends Controller
     {
         // 1. Validasi file yang di-upload
         $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls,csv', // Max 2MB
+            'file' => 'required|file|mimes:xlsx,xls,csv', 
         ]);
 
         try {

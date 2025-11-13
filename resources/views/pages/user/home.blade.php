@@ -146,11 +146,11 @@
           color: '#000'
         }
       },
-      series: [{{ $pelajar }}, {{ $mahasiswa }}, {{ $umum }}],
-      labels: ['Pelajar', 'Mahasiswa', 'Umum'],
+      series: @json($kategoriCounts->pluck('total')),
+      labels: @json($kategoriCounts->pluck('terdaftar_sbg')),
       colors: ['#1F2859', '#547792', '#94B4C1'], // 🔹 Warna berbeda tiap data
       legend: {
-        position: 'right'
+        position: 'bottom'
       },
     };
 
@@ -198,7 +198,7 @@
       grid: {
         padding: {
           bottom: 100,
-          left: 20
+          left: 30
         }
       },
 

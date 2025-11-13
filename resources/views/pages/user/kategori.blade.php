@@ -99,7 +99,7 @@
         text: 'Jumlah Peuji berdasarkan Kategori', // 🟢 Judul chart
         align: 'left', // bisa 'left', 'left', atau 'right'
         style: {
-          fontSize: '25px',
+          fontSize: '16px',
           fontWeight: 'bold',
           color: '#000'
         }
@@ -162,7 +162,6 @@
     var optionsPelajar = {
       chart: {
         type: 'pie',
-        height: '500px',
         toolbar: {
           show: true
         }
@@ -171,7 +170,7 @@
         text: 'Jumlah Peuji berdasarkan Kategori Pelajar', // 🟢 Judul chart
         align: 'left', // bisa 'left', 'left', atau 'right'
         style: {
-          fontSize: '25px',
+          fontSize: '16px',
           fontWeight: 'bold',
           color: '#000'
         }
@@ -188,7 +187,7 @@
       labels: pelajarCategories,
       colors: ['#1F2859', '#547792', '#94B4C1'],
       legend: {
-        position: 'right',
+        position: 'bottom',
         fontSize: '14px',
         labels: {
           colors: '#1f2937'
@@ -245,7 +244,6 @@
     var optionsUmum = {
       chart: {
         type: 'pie',
-        height: '500px',
         toolbar: {
           show: true
         }
@@ -254,7 +252,7 @@
         text: 'Jumlah Peuji berdasarkan Kategori Umum', // 🟢 Judul chart
         align: 'left', // bisa 'left', 'left', atau 'right'
         style: {
-          fontSize: '25px',
+          fontSize: '16px',
           fontWeight: 'bold',
           color: '#000'
         }
@@ -271,14 +269,10 @@
       labels: umumCategories,
       colors: ['#1F2859', '#547792', '#94B4C1'],
       legend: {
-        position: 'right',
+        position: 'bottom',
+        horizontalAlign: 'center',
         fontSize: '14px',
-        labels: {
-          colors: '#1f2937'
-        },
-        markers: {
-          radius: 12
-        }
+        markers: { radius: 12 }
       },
       plotOptions: {
         pie: {

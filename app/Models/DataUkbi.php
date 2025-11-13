@@ -19,7 +19,6 @@ class DataUkbi extends Model
         'tanggal_lahir',
         'kota',
         'titik_koordinat_peta',
-        'kelas',
         'instansi',
         'seksi_1',
         'seksi_2',

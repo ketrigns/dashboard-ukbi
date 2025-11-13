@@ -35,6 +35,10 @@ class DashboardUserController extends Controller
             ->groupBy('kota')
             ->pluck('total', 'kota');
 
-        return view('pages.user.home', compact('pelajar', 'mahasiswa', 'umum', 'total', 'locations', 'predikatCounts', 'wilayahCounts'));
+        $kategoriCounts = DataUkbi::select('terdaftar_sbg', DB::raw('COUNT(*) as total'))
+            ->groupBy('terdaftar_sbg')
+            ->get();
+
+        return view('pages.user.home', compact('pelajar', 'mahasiswa', 'umum', 'total', 'locations', 'predikatCounts', 'wilayahCounts', 'kategoriCounts'));
     }
 }
