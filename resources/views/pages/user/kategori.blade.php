@@ -201,7 +201,7 @@
         }
       },
       title: {
-        text: 'Jumlah Peuji berdasarkan Kategori Pelajar', // 🟢 Judul chart
+        text: 'Jumlah Peuji berdasarkan Kategori Mahasiswa dan Pelajar', // 🟢 Judul chart
         align: 'left', // bisa 'left', 'left', atau 'right'
         style: {
           fontSize: '16px',
