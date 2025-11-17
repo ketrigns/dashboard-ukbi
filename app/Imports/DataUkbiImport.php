@@ -3,7 +3,6 @@
 namespace App\Imports;
 
 use App\Models\DataUkbi;
-use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
@@ -17,9 +16,6 @@ class DataUkbiImport implements
     WithChunkReading,
     WithBatchInserts
 {
-    /**
-     * Setiap baris Excel akan di-mapping ke model DataUkbi
-     */
     public function model(array $row)
     {
         // Abaikan baris kosong
@@ -27,11 +23,12 @@ class DataUkbiImport implements
             return null;
         }
 
-        return DataUkbi::updateOrCreate(
-            [
-                'no_pendaftaran' => $row['no_pendaftaran'],
-            ],
-            [
+        // Cek apakah sudah ada dalam database
+        $existing = DataUkbi::where('no_pendaftaran', $row['no_pendaftaran'])->first();
+
+        // Jika data sudah ada → update saja, jangan return model!
+        if ($existing) {
+            $existing->update([
                 'tanggal_ujian'        => $row['tanggal_ujian'] ?? null,
                 'nama_peserta'         => $row['nama_peserta'] ?? null,
                 'terdaftar_sbg'        => $row['terdaftar_sebagai'] ?? null,
@@ -48,13 +45,33 @@ class DataUkbiImport implements
                 'seksi_5'              => $row['seksi_v'] ?? null,
                 'skor'                 => $row['skor'] ?? null,
                 'predikat'             => $row['predikat'] ?? null,
-            ]
-        );
+            ]);
+
+            return null; // penting! jangan return model existing
+        }
+
+        // Jika data belum ada → insert baru melalui batch insert
+        return new DataUkbi([
+            'no_pendaftaran'        => $row['no_pendaftaran'],
+            'tanggal_ujian'        => $row['tanggal_ujian'] ?? null,
+            'nama_peserta'         => $row['nama_peserta'] ?? null,
+            'terdaftar_sbg'        => $row['terdaftar_sebagai'] ?? null,
+            'jenis_kelamin'        => $row['jenis_kelamin'] ?? null,
+            'tempat_lahir'         => $row['tempat_lahir'] ?? null,
+            'tanggal_lahir'        => $row['tanggal_lahir'] ?? null,
+            'kota'                 => $row['kota'] ?? null,
+            'titik_koordinat_peta' => $row['titik_koordinat_kota'] ?? null,
+            'instansi'             => $row['instansi'] ?? null,
+            'seksi_1'              => $row['seksi_i'] ?? null,
+            'seksi_2'              => $row['seksi_ii'] ?? null,
+            'seksi_3'              => $row['seksi_iii'] ?? null,
+            'seksi_4'              => $row['seksi_iv'] ?? null,
+            'seksi_5'              => $row['seksi_v'] ?? null,
+            'skor'                 => $row['skor'] ?? null,
+            'predikat'             => $row['predikat'] ?? null,
+        ]);
     }
 
-    /**
-     * Validasi kolom Excel
-     */
     public function rules(): array
     {
         return [
@@ -78,17 +95,11 @@ class DataUkbiImport implements
         ];
     }
 
-    /**
-     * Import per 1000 baris
-     */
     public function chunkSize(): int
     {
         return 1000;
     }
 
-    /**
-     * Insert 100 row per query (lebih cepat & ringan)
-     */
     public function batchSize(): int
     {
         return 100;
