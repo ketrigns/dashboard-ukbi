@@ -22,8 +22,8 @@
 
   <!-- Navigasi -->
   <nav id="nav-menu"
-    class="flex flex-col md:flex-row md:items-center md:justify-between md:gap-0 gap-2 px-5 transition-all duration-300 ease-in-out overflow-hidden max-h-0 md:max-h-none md:opacity-100 opacity-0 md:opacity-100">
-    <a href="{{ url('/') }}" class="flex-grow border-e border-[#1F2859] text-center font-medium py-2
+    class="flex flex-col md:flex-row md:items-center md:justify-between md:gap-0 gap-2 px-5 transition-all duration-300 ease-in-out overflow-hidden max-h-0 md:max-h-none md:opacity-100 opacity-0">
+    <a id="nav-item-dashboard" href="{{ url('/') }}" class="flex-grow border-e border-[#1F2859] text-center font-medium py-2
         {{ Request::is('/') ? 'bg-[#1F2859] text-white rounded-full' : 'hover:text-[#1F2859]' }}">
       Dashboard
     </a>

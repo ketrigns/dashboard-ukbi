@@ -12,7 +12,7 @@
     </p>
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4 print-grid-4">
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji</h1>
       <p class="text-[32px] font-regular leading-tight">{{ number_format($total, 0, ',', '.') }}</p>
@@ -49,7 +49,7 @@
     </div>
   </div> --}}
 
-  <div class="grid grid-cols-2 gap-4 my-4">
+  <div class="grid sm:grid-cols-2 grid-cols-1 gap-4 my-4">
     <div class="bg-white p-4 rounded">
       <div id="chart"></div>
     </div>
@@ -59,8 +59,13 @@
 
   </div>
   <div class="bg-white p-4 rounded">
-    <div id="chartWilayah"></div>
+    <div id="chartWilayah" class="chartWilayah"></div>
   </div>
+
+  <button onclick="printChart()" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+    Print Halaman
+  </button>
+
 
 
   <script>
@@ -92,11 +97,11 @@
           L.marker(parts)
             .addTo(map)
             .bindPopup(`
-            <b>${item.kota}</b><br>
-            Jumlah Peserta: ${item.total_peserta}<br><br>
-            <b>Predikat:</b><br>
-            ${predikatList}
-          `);
+                      <b>${item.kota}</b><br>
+                      Jumlah Peserta: ${item.total_peserta}<br><br>
+                      <b>Predikat:</b><br>
+                      ${predikatList}
+                    `);
         }
       }
     });
@@ -144,8 +149,6 @@
       },
 
     };
-
-
 
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
@@ -312,6 +315,58 @@
     );
     chartWilayah.render();
 
+    function printChart() {
+      const navMenu = document.getElementById('nav-menu');
+      const menuToggle = document.getElementById('menu-toggle');
+
+      // Simpan inline-style asli
+      const originalStyle = navMenu.getAttribute('style') || '';
+      const originalToggleStyle = menuToggle.getAttribute('style') || '';
+      menuToggle.style.display = "none";
+
+      // Inject style print mode
+      navMenu.style.display = "flex";
+      navMenu.style.flexDirection = "row";
+      navMenu.style.maxHeight = "none";
+      navMenu.style.opacity = "1";
+
+      const originalWidth = document.getElementById('chartWilayah').style.width || '100%';
+      chartWilayah.updateOptions({
+        chart: { width: 900 }
+      });
+
+      const oriWidthPredikat = document.getElementById('chart').style.width || '100%';
+      chart.updateOptions({
+        chart: { width : 530 }
+      });
+
+      const oriWidthKategori = document.getElementById('chartKategori').style.width || '100%';
+      chartKategori.updateOptions({
+        chart: { width : 460 }
+      });
+
+      setTimeout(() => {
+        window.print();
+      }, 1000);
+
+      window.addEventListener('afterprint', () => {
+        // Kembalikan style asli
+        navMenu.setAttribute('style', originalStyle);
+        menuToggle.setAttribute('style', originalToggleStyle);
+
+        chart.updateOptions({
+          chart: { width: originalWidth }
+        });
+
+        chartWilayah.updateOptions({
+          chart: { width: originalWidth }
+        });
+
+        chartKategori.updateOptions({
+          chart: { width: originalWidth }
+        });
+      }, { once: true });
+    }
 
   </script>
 @endsection
