@@ -28,7 +28,7 @@ class LoginController extends Controller
     {
         // 1. Validasi input
         $credentials = $request->validate([
-            'name' => ['required'],
+            'email' => ['required'],
             'password' => ['required'],
         ]);
 
@@ -43,7 +43,7 @@ class LoginController extends Controller
 
         // 5. Jika gagal, kirim error kembali ke halaman login
         throw ValidationException::withMessages([
-            'name' => 'Username atau password yang Anda masukkan salah.',
+            'email' => 'Email atau password yang Anda masukkan salah.',
         ]);
     }
 

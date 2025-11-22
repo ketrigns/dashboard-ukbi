@@ -25,20 +25,20 @@
             </div>
 
             <input type="text" id="rangePicker" class="block w-full appearance-none rounded-md border border-gray-300 
-                                                px-3 py-2 pl-10 
-                                                text-gray-900 placeholder-gray-400 
-                                                focus:border-[#1F2859] focus:outline-none focus:ring-[#1F2859] 
-                                                sm:text-sm cursor-pointer" placeholder="Pilih rentang..."
+                                                  px-3 py-2 pl-10 
+                                                  text-gray-900 placeholder-gray-400 
+                                                  focus:border-[#1F2859] focus:outline-none focus:ring-[#1F2859] 
+                                                  sm:text-sm cursor-pointer" placeholder="Pilih rentang..."
               value="{{ $startDate }} - {{ $endDate }}">
           </div>
 
           <div class="flex-shrink-0">
             <button type="submit"
               class="rounded-md cursor-pointer border border-transparent 
-                                                 bg-[#1F2859] px-4 py-2 
-                                                 text-sm font-medium text-white shadow-sm 
-                                                 hover:bg-[#3c4dac] 
-                                                 focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:ring-offset-2">
+                                                   bg-[#1F2859] px-4 py-2 
+                                                   text-sm font-medium text-white shadow-sm 
+                                                   hover:bg-[#3c4dac] 
+                                                   focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:ring-offset-2">
               Terapkan
             </button>
           </div>
@@ -59,21 +59,21 @@
         <div class="flex-1">
           <label for="tanggal_mulai" class="block text-xs text-gray-600 mb-1">Tanggal Mulai</label>
           <input type="date" name="tanggal_mulai" id="tanggal_mulai" value="{{ $startDate }}" class="block w-full rounded-md border border-gray-300 bg-white
-                      px-3 py-2 shadow-sm focus:border-[#1F2859] focus:ring-[#1F2859] sm:text-sm">
+                        px-3 py-2 shadow-sm focus:border-[#1F2859] focus:ring-[#1F2859] sm:text-sm">
         </div>
 
         <div class="flex-1">
           <label for="tanggal_selesai" class="block text-xs text-gray-600 mb-1">Tanggal Selesai</label>
           <input type="date" name="tanggal_selesai" id="tanggal_selesai" value="{{ $endDate }}" class="block w-full rounded-md border border-gray-300 bg-white
-                      px-3 py-2 shadow-sm focus:border-[#1F2859] focus:ring-[#1F2859] sm:text-sm">
+                        px-3 py-2 shadow-sm focus:border-[#1F2859] focus:ring-[#1F2859] sm:text-sm">
         </div>
 
         <div>
           <button type="submit" class="cursor-pointer rounded-md border border-transparent 
-                       bg-[#1F2859] px-4 py-2 
-                       text-sm font-medium text-white shadow-sm 
-                       hover:bg-[#3c4dac] 
-                       focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:ring-offset-2">
+                         bg-[#1F2859] px-4 py-2 
+                         text-sm font-medium text-white shadow-sm 
+                         hover:bg-[#3c4dac] 
+                         focus:outline-none focus:ring-2 focus:ring-[#1F2859] focus:ring-offset-2">
             Terapkan
           </button>
         </div>
@@ -82,7 +82,7 @@
 
   </div>
 
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4 print:grid-cols-4">
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji</h1>
       <p class="text-[32px] font-regular leading-tight">{{ number_format($total, 0, ',', '.') }}</p>
@@ -105,11 +105,16 @@
   <div id="map" class="rounded" style="height: 400px; overflow: hidden;"></div>
 
   <div class="grid grid-cols-2 gap-4 my-4">
-    <div class="bg-white p-4 rounded">
-      <div id="chart"></div>
+    <div class="flex">
+      <div class="bg-white p-4 rounded flex-1">
+        <div id="chart"></div>
+      </div>
     </div>
-    <div class="bg-white p-4 rounded">
-      <div id="chartKategori"></div>
+    <div class="flex">
+      <div class="bg-white p-4 rounded flex-1">
+        <div id="chartKategori"></div>
+      </div>
+
     </div>
   </div>
 
@@ -117,7 +122,66 @@
     <div id="chartWilayah"></div>
   </div>
 
+  <button onclick="printChart()" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+    Print Halaman
+  </button>
+
   <script>
+    function printChart() {
+      const navMenu = document.getElementById('nav-menu');
+      const menuToggle = document.getElementById('menu-toggle');
+      const loader = document.getElementById('print-loader');
+
+      // Simpan inline-style asli
+      const originalStyle = navMenu.getAttribute('style') || '';
+      const originalToggleStyle = menuToggle.getAttribute('style') || '';
+      menuToggle.style.display = "none";
+
+      // Inject style print mode
+      navMenu.style.display = "flex";
+      navMenu.style.flexDirection = "row";
+      navMenu.style.maxHeight = "none";
+      navMenu.style.opacity = "1";
+
+      chart.updateOptions({
+        chart: { width: 400 }
+      });
+
+      chartKategori.updateOptions({
+        chart: { width: 450 }
+      });
+
+      chartWilayah.updateOptions({
+        chart: { width: 900 }
+      });
+
+      loader.classList.remove("hidden");
+
+      setTimeout(() => {
+        loader.classList.add("hidden");
+        window.print();
+      }, 3000);
+
+      window.addEventListener('afterprint', () => {
+        // Kembalikan style asli
+        navMenu.setAttribute('style', originalStyle);
+        menuToggle.setAttribute('style', originalToggleStyle);
+
+        chart.updateOptions({
+          chart: { width: '100%' }
+        });
+
+        chartKategori.updateOptions({
+          chart: { width: '100%' }
+        });
+
+        chartWilayah.updateOptions({
+          chart: { width: '100%' }
+        });
+
+      }, { once: true });
+    }
+
     // Inisialisasi peta di pusat Provinsi Jambi
     const map = L.map('map').setView([-1.6116, 103.6157], 8);
 
@@ -146,11 +210,11 @@
           L.marker(parts)
             .addTo(map)
             .bindPopup(`
-                <b>${item.kota}</b><br>
-                Jumlah Peserta: ${item.total_peserta}<br><br>
-                <b>Predikat:</b><br>
-                ${predikatList}
-              `);
+                  <b>${item.kota}</b><br>
+                  Jumlah Peserta: ${item.total_peserta}<br><br>
+                  <b>Predikat:</b><br>
+                  ${predikatList}
+                `);
         }
       }
     });

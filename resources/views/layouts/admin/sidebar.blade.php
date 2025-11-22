@@ -12,7 +12,8 @@
         <div class="p-4 h-[calc(100%-theme('spacing.topbar'))] flex-grow" data-simplebar>
             <!-- Menu -->
             <div class="admin-menu hs-accordion-group flex w-full flex-col gap-1">
-                <div class="px-3 py-2 text-xs uppercase font-medium text-default-500" style="list-style: none; margin: 0; padding: 0;">Menu</div>
+                <div class="px-3 py-2 text-xs uppercase font-medium text-default-500"
+                    style="list-style: none; margin: 0; padding: 0;">Menu</div>
 
                 <div class="menu-item " style="list-style: none; margin: 0; padding: 0;">
                     <a class="{{ request()->routeIs('data-ukbi.*')
@@ -32,6 +33,19 @@
                         Hasil Data Mining
                     </a>
                 </div>
+                @if(auth()->user()->role === 'admin')
+                            <div class="mt-4 px-3 py-2 text-xs uppercase font-medium text-default-500"
+                                style="list-style: none; margin: 0; padding: 0; margin-top: 20px;">AREA ADMINISTRATOR</div>
+                            <div class="menu-item" style="list-style: none; margin: 0; padding: 0;">
+                                <a class="group flex items-center gap-x-3.5 rounded-md px-3 py-2 text-sm font-medium text-default-400 transition-all hover:bg-default-100/5 {{ request()->routeIs('users.*')
+                    ? 'active'
+                    : '' }}" href="{{ route('users.index') }}">
+                                    <i class="i-lucide-user-circle size-5"></i>
+                                    Manajemen Pengguna
+                                </a>
+                            </div>
+
+                @endif
             </div>
         </div>
 

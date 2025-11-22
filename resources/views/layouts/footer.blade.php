@@ -4,7 +4,6 @@
     <!-- Grid Utama -->
     <!-- Mengubah layout menjadi 3 kolom (md:grid-cols-3) agar proporsional setelah 1 kolom dihapus -->
     <div class="grid grid-cols-1 md:grid-cols-3 print:grid-cols-3 gap-8 mb-12">
-
       <!-- Kolom 1: Tentang UKBI -->
       <div class="flex flex-col">
         <div class="flex items-center gap-3 mb-5">

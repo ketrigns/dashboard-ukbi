@@ -22,14 +22,22 @@
             <div class="relative">
                 <div class="hs-dropdown relative inline-flex [--placement:bottom-right]">
                     <button type="button" class="hs-dropdown-toggle">
-                        <img src="{{ asset('assets/images/gbr-admin.jpeg') }}" alt="user-image"
-                            class="rounded-full h-10">
+                        <img src="{{ auth()->user()->profile_pic
+    ? asset('storage/' . auth()->user()->profile_pic)
+    : asset('assets/images/gbr-admin.jpeg') }}" class="rounded-full h-10">
+
+
                     </button>
                     <div
                         class="hs-dropdown-menu duration mt-2 min-w-48 rounded-lg border border-default-200 bg-white p-2 opacity-0 shadow-md transition-[opacity,margin] hs-dropdown-open:opacity-100 hidden">
 
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
+
+                            <a class="flex items-center py-2 px-3 rounded-md text-sm text-default-800 hover:bg-default-100"
+                                href="{{ route('profile') }}">
+                                Profile
+                            </a>
 
                             <a class="flex items-center py-2 px-3 rounded-md text-sm text-default-800 hover:bg-default-100"
                                 href="{{ route('logout') }}" onclick="event.preventDefault();

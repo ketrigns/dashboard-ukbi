@@ -22,4 +22,40 @@
     </div>
 
   </div>
+  <button onclick="printChart()" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+    Print Halaman
+  </button>
+
+  <script>
+    function printChart() {
+      const navMenu = document.getElementById('nav-menu');
+      const menuToggle = document.getElementById('menu-toggle');
+      const loader = document.getElementById('print-loader');
+
+      // Simpan inline-style asli
+      const originalStyle = navMenu.getAttribute('style') || '';
+      const originalToggleStyle = menuToggle.getAttribute('style') || '';
+      menuToggle.style.display = "none";
+
+      // Inject style print mode
+      navMenu.style.display = "flex";
+      navMenu.style.flexDirection = "row";
+      navMenu.style.maxHeight = "none";
+      navMenu.style.opacity = "1";
+
+      loader.classList.remove("hidden");
+
+      setTimeout(() => {
+        loader.classList.add("hidden");
+        window.print();
+      }, 1000);
+
+      window.addEventListener('afterprint', () => {
+        // Kembalikan style asli
+        navMenu.setAttribute('style', originalStyle);
+        menuToggle.setAttribute('style', originalToggleStyle);
+
+      }, { once: true });
+    }
+  </script>
 @endsection

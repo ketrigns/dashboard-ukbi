@@ -7,7 +7,8 @@
         <h4 class="card-title">Input Data UKBI</h4>
       </div>
 
-      <form action="{{ route('hasil-data-mining.store') }}" method="POST" class="p-6" enctype="multipart/form-data">
+      <form id="formDataMining" action="{{ route('hasil-data-mining.store') }}" method="POST" class="p-6"
+        enctype="multipart/form-data">
         @csrf
 
         <div class="grid lg:grid-cols-1 gap-6">
@@ -16,7 +17,7 @@
               Gambar Data Mining
             </label>
             <input type="file" name="gambar" accept="image/*" id="gambar" class="form-input"
-              onchange="previewImage(event)">
+              onchange="previewImage(event)" required>
             @error('gambar')
               <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
             @enderror
@@ -39,31 +40,49 @@
   </div>
 
   <script>
-    new FroalaEditor('#example', {
-      toolbarButtons: [
-        ['fontSize'], // 🔹 Tambah menu ukuran huruf
-        ['bold', 'italic', 'underline', 'strikeThrough'],
-        ['formatOL', 'formatUL'],
-        ['align', 'undo', 'redo', 'clearFormatting'],
-        ['insertLink']
-      ],
-      quickInsertEnabled: false, // nonaktifkan quick insert (gambar, video)
-      imageUpload: false,        // nonaktifkan upload gambar
-      videoUpload: false,        // nonaktifkan upload video
-      fileUpload: false,         // nonaktifkan upload file
-      toolbarSticky: false,      // toolbar tidak lengket
-      height: 300,               // tinggi editor
+    // Simpan instance Froala agar bisa dipanggil
+    let froala;
 
-      // 🔹 Opsi tambahan untuk font size
-      fontSizeSelection: true,
-      fontSizeDefaultSelection: '14',
-      fontSize: ['10', '12', '14', '16', '18', '20', '24', '28', '32'],
+    document.addEventListener("DOMContentLoaded", function () {
+      froala = new FroalaEditor('#example', {
+        toolbarButtons: [
+          ['fontSize'],
+          ['bold', 'italic', 'underline', 'strikeThrough'],
+          ['formatOL', 'formatUL'],
+          ['align', 'undo', 'redo', 'clearFormatting'],
+          ['insertLink']
+        ],
+        quickInsertEnabled: false,
+        imageUpload: false,
+        videoUpload: false,
+        fileUpload: false,
+        toolbarSticky: false,
+        height: 300,
+        fontSizeSelection: true,
+        fontSizeDefaultSelection: '14',
+        fontSize: ['10', '12', '14', '16', '18', '20', '24', '28', '32'],
+      });
     });
-  </script>
 
 
+    // VALIDASI SWEETALERT SEBELUM SUBMIT
+    document.getElementById("formDataMining").addEventListener("submit", function (e) {
+      const content = froala.html.get().trim().replace(/<[^>]*>/g, '').trim(); // hilangkan tag HTML
 
-  <script>
+      if (content.length === 0) {
+        e.preventDefault();
+
+        Swal.fire({
+          icon: 'warning',
+          title: 'Deskripsi kosong!',
+          text: 'Silakan isi deskripsi terlebih dahulu.',
+          confirmButtonColor: '#3085d6',
+        });
+
+        return false;
+      }
+    });
+
     function previewImage(event) {
       const input = event.target;
       const preview = document.getElementById('preview');

@@ -318,6 +318,7 @@
     function printChart() {
       const navMenu = document.getElementById('nav-menu');
       const menuToggle = document.getElementById('menu-toggle');
+      const loader = document.getElementById('print-loader');
 
       // Simpan inline-style asli
       const originalStyle = navMenu.getAttribute('style') || '';
@@ -345,7 +346,10 @@
         chart: { width : 460 }
       });
 
+      loader.classList.remove("hidden");
+
       setTimeout(() => {
+        loader.classList.add("hidden");
         window.print();
       }, 1000);
 

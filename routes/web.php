@@ -7,6 +7,7 @@ use App\Http\Controllers\HasilDataMiningController;
 use App\Http\Controllers\KategoriUserController;
 use App\Http\Controllers\PredikatUserController;
 use App\Http\Controllers\TahunUserController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\WilayahUserController;
 use App\Models\HasilDataMining;
 use Illuminate\Support\Facades\Route;
@@ -45,9 +46,15 @@ Route::post('/login', [LoginController::class, 'store'])->middleware('guest');
 // Rute untuk logout (harus diakses oleh user yang sudah login)
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
 
-Route::middleware(['auth', 'cek.role:admin'])->group(function () {
+Route::middleware(['auth', 'cek.role:admin,petugas'])->group(function () {
     Route::resource('/admin/data-ukbi', DataUkbiController::class);
     Route::resource('/admin/hasil-data-mining', HasilDataMiningController::class);
     Route::post('/admin/dashboard/import-data-ukbi', [DataUkbiController::class, 'handleImport'])
         ->name('data-ukbi.import.handle');
+    Route::get('/profile', [UserController::class, 'profile'])->name('profile');
+    Route::post('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
+});
+
+Route::middleware(['auth', 'cek.role:admin'])->group(function () {
+    Route::resource('/admin/users', UserController::class);
 });

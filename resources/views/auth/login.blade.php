@@ -34,26 +34,53 @@
                 <form class="sm:min-w-[500px] w-[350px]" method="POST" action="{{ route('login') }}">
                     @csrf
                     <div class="mb-3">
-                        <label for="nameinput"
-                            class="text-default-800 text-sm font-medium inline-block mb-2">Username</label>
-                        <input type="text" class="form-input" id="nameinput" placeholder="Masukkan Username"
-                            name="name" value="{{ old('name') }}" required>
-                        @error('name')
+                        <label for="emailinput"
+                            class="text-default-800 text-sm font-medium inline-block mb-2">Email</label>
+                        <input type="email" class="form-input" id="emailinput" placeholder="Masukkan Email" name="email"
+                            value="{{ old('email') }}" required>
+                        @error('email')
                             <span style="color: red;">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="mb-3">
                         <label for="exampleInputPassword1"
                             class="text-default-800 text-sm font-medium inline-block mb-2">Password</label>
-                        <input type="password" class="form-input" id="exampleInputPassword1" placeholder="Password"
-                            name="password" required>
+
+                        <div class="relative">
+                            <input type="password" class="form-input pr-10" id="passwordInput" placeholder="Password"
+                                name="password" required>
+
+                            <!-- Icon Mata -->
+                            <span class="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                                onclick="togglePassword()">
+                                <iconify-icon id="toggleIcon" icon="mdi:eye-off" width="22"
+                                    class="text-gray-600"></iconify-icon>
+                            </span>
+                        </div>
                     </div>
+
                     <button type="submit" class="w-full btn bg-primary text-white">Login</button>
                 </form>
 
             </div>
         </div>
     </div>
+
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('passwordInput');
+            const icon = document.getElementById('toggleIcon');
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.setAttribute("icon", "mdi:eye"); // icon lihat
+            } else {
+                input.type = "password";
+                icon.setAttribute("icon", "mdi:eye-off"); // icon tutup
+            }
+        }
+    </script>
+
 
     <!-- Plugin Js (Mandatory in All Pages) -->
     <script src="{{ asset('assets/libs/jquery/jquery.min.js') }}"></script>

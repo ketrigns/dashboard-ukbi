@@ -45,6 +45,10 @@
         print-color-adjust: exact;
       }
 
+      #print-loader {
+        display: none !important;
+      }
+
     }
   </style>
 </head>
@@ -53,6 +57,13 @@
 
   {{-- Navbar --}}
   @include('layouts.navbar')
+  <div id="print-loader" class="fixed inset-0 bg-white/80 flex items-center justify-center z-[9999] hidden">
+    <div class="flex flex-col items-center gap-2">
+      <div class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-gray-700 font-semibold">Menyiapkan tampilan cetak...</p>
+    </div>
+  </div>
+
 
   {{-- Konten Halaman --}}
   <main class="px-5 py-3">
