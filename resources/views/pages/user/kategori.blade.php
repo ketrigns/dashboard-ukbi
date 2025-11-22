@@ -3,7 +3,7 @@
 @section('title', 'Dashboard UKBI')
 
 @section('content')
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
+  <div class="grid grid-cols-1 md:grid-cols-4 print:grid-cols-4 gap-4 my-4">
     <div class="bg-white p-4 rounded">
       <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji</h1>
       <p class="text-[32px] font-regular leading-tight">{{ number_format($total, 0, ',', '.') }}</p>
@@ -58,7 +58,7 @@
   <div class="bg-white p-4 rounded">
     <div id="chart"></div>
   </div>
-  <div class="grid md:grid-cols-2 grid-cols-1 gap-4 my-4">
+  <div class="grid md:grid-cols-2 print:grid-cols-2 grid-cols-1 gap-4 my-4">
     <div class="bg-white p-4 rounded">
       <div id="chartPelajar"></div>
     </div>
@@ -67,7 +67,62 @@
     </div>
   </div>
 
+  <button onclick="printChart()" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+    Print Halaman
+  </button>
+
   <script>
+
+    function printChart() {
+      const navMenu = document.getElementById('nav-menu');
+      const menuToggle = document.getElementById('menu-toggle');
+
+      // Simpan inline-style asli
+      const originalStyle = navMenu.getAttribute('style') || '';
+      const originalToggleStyle = menuToggle.getAttribute('style') || '';
+      menuToggle.style.display = "none";
+
+      // Inject style print mode
+      navMenu.style.display = "flex";
+      navMenu.style.flexDirection = "row";
+      navMenu.style.maxHeight = "none";
+      navMenu.style.opacity = "1";
+      
+      chart.updateOptions({
+        chart: { width : 900 }
+      });
+
+      chartPelajar.updateOptions({
+        chart: { width: 460 }
+      });
+
+      chartUmum.updateOptions({
+        chart: { width : 460 }
+      });
+
+      setTimeout(() => {
+        window.print();
+      }, 1000);
+
+      window.addEventListener('afterprint', () => {
+        // Kembalikan style asli
+        navMenu.setAttribute('style', originalStyle);
+        menuToggle.setAttribute('style', originalToggleStyle);
+
+        chart.updateOptions({
+          chart: { width: '100%' }
+        });
+
+        chartPelajar.updateOptions({
+          chart: { width: '100%' }
+        });
+
+        chartUmum.updateOptions({
+          chart: { width: '100%' }
+        });
+      }, { once: true });
+    }
+
     const rawKategori = @json($kategoriPerTahun);
     const uniqueYears = [...new Set(rawKategori.map(item => item.tahun))].sort((a, b) => a - b);
     const uniquePeuji = [...new Set(rawKategori.map(item => item.kategori))].sort();

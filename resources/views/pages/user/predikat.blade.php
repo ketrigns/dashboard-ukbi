@@ -36,41 +36,143 @@
     </span>
   </div>
 
-  <div class="grid md:grid-cols-2 grid-cols-1 gap-4 my-4">
-    <div class="bg-white p-4 rounded col-span-2">
-      <div id="chart"></div>
-    </div>
-    <div class="bg-white p-4 rounded">
+  <div class="bg-white p-4 rounded mt-4">
+    <div id="chart"></div>
+  </div>
+
+  <div class="flex gap-4 mt-4">
+    <div class="bg-white p-4 rounded flex-1">
       <div id="chartPeujiPredikat"></div>
     </div>
-    <div class="bg-white p-4 rounded">
+    <div class="bg-white p-4 rounded flex-1">
       <div id="chartSkorPredikat"></div>
     </div>
-    <div class="bg-white p-4 rounded">
+  </div>
+
+  <div class="flex gap-4 mt-4">
+    <div class="bg-white p-4 rounded flex-1">
       <div id="chartMahasiswaPredikat"></div>
     </div>
-    <div class="bg-white p-4 rounded">
+    <div class="bg-white p-4 rounded flex-1">
       <div id="chartUmumPredikat"></div>
     </div>
-    <div class="bg-white p-4 rounded">
-      <div id="chartPelajarPredikat"></div>
-    </div>
+  </div>
 
+  <div class="grid md:grid-cols-2 grid-cols-1 gap-4 my-4 print:grid-cols-2">
+    <div class="flex gap-4 mt-4">
+      <div class="bg-white p-4 rounded flex-1">
+        <div id="chartPelajarPredikat"></div>
+      </div>
+    </div>
     @foreach($groupedData as $jenisPelajar => $dataPelajar)
       @php
         $chartId = 'chart-' . \Illuminate\Support\Str::slug($jenisPelajar);
       @endphp
-
-      <div class="bg-white p-4 rounded">
-        <div id="{{ $chartId }}" class="chart-container" data-chart-data="{{ json_encode($dataPelajar) }}"
-          data-chart-id="{{ $chartId }}" data-title="Jumlah Peuji Kategori {{ $jenisPelajar }} berdasarkan Predikat">
+      <div class="flex">
+        <div class="bg-white p-4 rounded flex-1">
+          <div id="{{ $chartId }}" class="chart-container" data-chart-data="{{ json_encode($dataPelajar) }}"
+            data-chart-id="{{ $chartId }}" data-title="Jumlah Peuji Kategori {{ $jenisPelajar }} berdasarkan Predikat">
+          </div>
         </div>
       </div>
     @endforeach
 
   </div>
+  <button onclick="printChart()" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+    Print Halaman
+  </button>
 
   <script>
+    const allCharts = [];
+
+    function printChart() {
+      const navMenu = document.getElementById('nav-menu');
+      const menuToggle = document.getElementById('menu-toggle');
+
+      // Simpan inline-style asli
+      const originalStyle = navMenu.getAttribute('style') || '';
+      const originalToggleStyle = menuToggle.getAttribute('style') || '';
+      menuToggle.style.display = "none";
+
+      // Inject style print mode
+      navMenu.style.display = "flex";
+      navMenu.style.flexDirection = "row";
+      navMenu.style.maxHeight = "none";
+      navMenu.style.opacity = "1";
+
+      // 🔥 Update semua chart
+      allCharts.forEach(ch => {
+        ch.updateOptions({
+          chart: { width: 450 }
+        });
+      });
+
+      chart.updateOptions({
+        chart: { width: 900 }
+      });
+
+      chartPeujiPredikat.updateOptions({
+        chart: { width: 450 }
+      });
+
+      chartSkorPredikat.updateOptions({
+        chart: { width: 450 }
+      });
+
+      chartMahasiswaPredikat.updateOptions({
+        chart: { width: 450 }
+      });
+
+      chartUmumPredikat.updateOptions({
+        chart: { width: 450 }
+      });
+
+      chartPelajarPredikat.updateOptions({
+        chart: { width: 450 }
+      });
+
+      setTimeout(() => {
+        window.print();
+      }, 1000);
+
+      window.addEventListener('afterprint', () => {
+        // Kembalikan style asli
+        navMenu.setAttribute('style', originalStyle);
+        menuToggle.setAttribute('style', originalToggleStyle);
+
+        allCharts.forEach(ch => {
+          ch.updateOptions({
+            chart: { width: '100%' }
+          });
+        });
+
+        chart.updateOptions({
+          chart: { width: '100%' }
+        });
+
+        chartPeujiPredikat.updateOptions({
+          chart: { width: '100%' }
+        });
+
+        chartSkorPredikat.updateOptions({
+          chart: { width: '100%' }
+        });
+
+        chartMahasiswaPredikat.updateOptions({
+          chart: { width: '100%' }
+        });
+
+        chartUmumPredikat.updateOptions({
+          chart: { width: '100%' }
+        });
+
+        chartPelajarPredikat.updateOptions({
+          chart: { width: '100%' }
+        });
+
+      }, { once: true });
+    }
+
     const rawPredikat = @json($predikatPerTahun);
     const uniqueYears = [...new Set(rawPredikat.map(item => item.tahun))].sort((a, b) => a - b);
 
@@ -309,7 +411,7 @@
         }
       },
       title: {
-        text: 'Rata-Rata Skor berdasarkan Predikat', // 🟢 Judul chart
+        text: 'Rata-Rata Skor berdasarkan Predikat',
         align: 'center', // bisa 'center', 'center', atau 'right'
         style: {
           fontSize: '16px',
@@ -834,6 +936,7 @@
       // --- Render Chart ---
       var chart = new ApexCharts(document.querySelector("#" + chartId), options);
       chart.render();
+      allCharts.push(chart);
     });
 
 
