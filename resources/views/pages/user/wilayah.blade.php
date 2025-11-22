@@ -13,7 +13,54 @@
     <div id="map" class="rounded" style="height: 400px; overflow: hidden;"></div>
   </div>
 
+  <button onclick="printChart()" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+    Print Halaman
+  </button>
+
   <script>
+    function printChart() {
+      const navMenu = document.getElementById('nav-menu');
+      const menuToggle = document.getElementById('menu-toggle');
+
+      // Simpan inline-style asli
+      const originalStyle = navMenu.getAttribute('style') || '';
+      const originalToggleStyle = menuToggle.getAttribute('style') || '';
+      menuToggle.style.display = "none";
+
+      // Inject style print mode
+      navMenu.style.display = "flex";
+      navMenu.style.flexDirection = "row";
+      navMenu.style.maxHeight = "none";
+      navMenu.style.opacity = "1";
+
+      chartWilayahPerTahun.updateOptions({
+        chart: { width: 900 }
+      });
+
+      chartPeujiWilayah.updateOptions({
+        chart: { width: 900 }
+      });
+
+      setTimeout(() => {
+        window.print();
+      }, 2000);
+
+      window.addEventListener('afterprint', () => {
+        // Kembalikan style asli
+        navMenu.setAttribute('style', originalStyle);
+        menuToggle.setAttribute('style', originalToggleStyle);
+
+        chartWilayahPerTahun.updateOptions({
+          chart: { width: '100%' }
+        });
+
+        chartPeujiWilayah.updateOptions({
+          chart: { width: '100%' }
+        });
+
+      }, { once: true });
+    }
+
     // Inisialisasi peta di pusat Provinsi Jambi
     const map = L.map('map').setView([-1.6116, 103.6157], 8);
 
@@ -42,11 +89,11 @@
           L.marker(parts)
             .addTo(map)
             .bindPopup(`
-            <b>${item.kota}</b><br>
-            Jumlah Peserta: ${item.total_peserta}<br><br>
-            <b>Predikat:</b><br>
-            ${predikatList}
-          `);
+              <b>${item.kota}</b><br>
+              Jumlah Peserta: ${item.total_peserta}<br><br>
+              <b>Predikat:</b><br>
+              ${predikatList}
+            `);
         }
       }
     });
