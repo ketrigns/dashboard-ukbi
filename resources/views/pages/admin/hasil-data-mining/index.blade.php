@@ -127,13 +127,14 @@
                     <form action="{{ route('deskripsi.save') }}" method="POST">
                         @csrf
                         <textarea class="prosess" id="froala" name="bar_chart_jml_data_per_cluster_usia">
-                                                                                                {!! $deskripsi->bar_chart_jml_data_per_cluster_usia ?? '' !!}
-                                                                                            </textarea>
+                                                                                                                    {!! $deskripsi->bar_chart_jml_data_per_cluster_usia ?? '' !!}
+                                                                                                                </textarea>
                         <div class="flex flex-col gap-2 mt-4">
                             <button type="submit" class="btn w-full bg-primary text-white">Simpan Deskripsi</button>
                         </div>
                     </form>
                 </div>
+                
                 @php
                     $kategoriUsia = [
                         1 => 'Pelajar',
@@ -141,6 +142,7 @@
                         3 => 'Umum',
                     ];
                 @endphp
+                
                 <div id="radar-ukbi" class="mt-6"></div>
 
                 <div class="card-body overflow-auto">
@@ -177,8 +179,8 @@
                     <form action="{{ route('deskripsi.save') }}" method="POST">
                         @csrf
                         <textarea class="prosess" id="froala" name="spider_nilai_ukbi_per_cluster_usia">
-                                                                                                {!! $deskripsi->spider_nilai_ukbi_per_cluster_usia ?? '' !!}
-                                                                                            </textarea>
+                                                                                                                    {!! $deskripsi->spider_nilai_ukbi_per_cluster_usia ?? '' !!}
+                                                                                                                </textarea>
                         <div class="flex flex-col gap-2 mt-4">
                             <button type="submit" class="btn w-full bg-primary text-white">Simpan Deskripsi</button>
                         </div>
@@ -220,8 +222,8 @@
                     <form action="{{ route('deskripsi.save') }}" method="POST">
                         @csrf
                         <textarea class="prosess" id="froala" name="heatmap_nilai_ukbi_per_cluster_usia">
-                                                                                                {!! $deskripsi->heatmap_nilai_ukbi_per_cluster_usia ?? '' !!}
-                                                                                            </textarea>
+                                                                                                                    {!! $deskripsi->heatmap_nilai_ukbi_per_cluster_usia ?? '' !!}
+                                                                                                                </textarea>
                         <div class="flex flex-col gap-2 mt-4">
                             <button type="submit" class="btn w-full bg-primary text-white">Simpan Deskripsi</button>
                         </div>
@@ -257,8 +259,8 @@
                     <form action="{{ route('deskripsi.save') }}" method="POST">
                         @csrf
                         <textarea class="prosess" id="froala" name="bar_chart_jml_data_per_jk">
-                                                                                                {!! $deskripsi->bar_chart_jml_data_per_jk ?? '' !!}
-                                                                                            </textarea>
+                                                                                                                    {!! $deskripsi->bar_chart_jml_data_per_jk ?? '' !!}
+                                                                                                                </textarea>
                         <div class="flex flex-col gap-2 mt-4">
                             <button type="submit" class="btn w-full bg-primary text-white">Simpan Deskripsi</button>
                         </div>
@@ -300,8 +302,8 @@
                     <form action="{{ route('deskripsi.save') }}" method="POST">
                         @csrf
                         <textarea class="prosess" id="froala" name="spider_nilai_ukbi_per_jk">
-                                                                                                {!! $deskripsi->spider_nilai_ukbi_per_jk ?? '' !!}
-                                                                                            </textarea>
+                                                                                                                    {!! $deskripsi->spider_nilai_ukbi_per_jk ?? '' !!}
+                                                                                                                </textarea>
                         <div class="flex flex-col gap-2 mt-4">
                             <button type="submit" class="btn w-full bg-primary text-white">Simpan Deskripsi</button>
                         </div>
@@ -342,8 +344,8 @@
                     <form action="{{ route('deskripsi.save') }}" method="POST">
                         @csrf
                         <textarea class="prosess" id="froala" name="heatmap_nilai_ukbi_per_jk">
-                                                                                                {!! $deskripsi->heatmap_nilai_ukbi_per_jk ?? '' !!}
-                                                                                            </textarea>
+                                                                                                                    {!! $deskripsi->heatmap_nilai_ukbi_per_jk ?? '' !!}
+                                                                                                                </textarea>
                         <div class="flex flex-col gap-2 mt-4">
                             <button type="submit" class="btn w-full bg-primary text-white">Simpan Deskripsi</button>
                         </div>
@@ -382,8 +384,8 @@
                     <form action="{{ route('deskripsi.save') }}" method="POST">
                         @csrf
                         <textarea class="prosess" id="froala" name="centroid_kmeans">
-                                                                                                {!! $deskripsi->centroid_kmeans ?? '' !!}
-                                                                                            </textarea>
+                                                                                                                    {!! $deskripsi->centroid_kmeans ?? '' !!}
+                                                                                                                </textarea>
                         <div class="flex flex-col gap-2 mt-4">
                             <button type="submit" class="btn w-full bg-primary text-white">Simpan Deskripsi</button>
                         </div>
@@ -407,7 +409,8 @@
                         <tbody>
                             @foreach ($rataUsia as $row)
                                 <tr>
-                                    <td class="px-3 py-2 border text-center">C{{ $loop->iteration }} ({{ $kategoriUsia[$loop->iteration] }})</td>
+                                    <td class="px-3 py-2 border text-center">C{{ $loop->iteration }}
+                                        ({{ $kategoriUsia[$loop->iteration] }})</td>
                                     <td class="px-3 py-2 border text-center">{{ number_format($row->usia, 6) }}</td>
                                 </tr>
                             @endforeach
@@ -418,13 +421,76 @@
                     <form action="{{ route('deskripsi.save') }}" method="POST">
                         @csrf
                         <textarea class="prosess" id="froala" name="rata_usia">
-                                                                                                {!! $deskripsi->rata_usia ?? '' !!}
-                                                                                            </textarea>
+                                                                                                                    {!! $deskripsi->rata_usia ?? '' !!}
+                                                                                                                </textarea>
                         <div class="flex flex-col gap-2 mt-4">
                             <button type="submit" class="btn w-full bg-primary text-white">Simpan Deskripsi</button>
                         </div>
                     </form>
                 </div>
+
+                <div class="card-body overflow-auto">
+                    <form method="GET" class="mb-4 flex items-center gap-4">
+                        <label>Pilih Tahun:</label>
+                        <select name="tahun" onchange="this.form.submit()"
+                            class="border p-2 rounded form-input max-w-[300px]">
+                            @foreach($tahunList as $t)
+                                <option value="{{ $t }}" {{ $t == $tahun ? 'selected' : '' }}>
+                                    {{ $t }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+
+                    <div id="heatmap-cluster" class="mt-6"></div>
+                    <table class="table-auto w-full text-sm border">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-3 py-2 border" rowspan="2">Kota</th>
+
+                                <th class="px-3 py-2 border text-center font-semibold" colspan="5">
+                                    Cluster KMeans
+                                </th>
+                                <th class="px-3 py-2 border" rowspan="2">Total Peserta</th>
+
+                            </tr>
+                            <tr>
+                                @foreach ($clusters as $cluster)
+                                    <th class="px-3 py-2 border">{{ $cluster }}</th>
+                                @endforeach
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach ($result as $kota => $row)
+                                <tr>
+                                    <td class="px-3 py-2 border text-center">{{ $kota }}</td>
+                                    @foreach ($clusters as $cluster)
+                                        <td class="px-3 py-2 border text-center">{{ $row[$cluster] }}</td>
+                                    @endforeach
+                                    <td class="px-3 py-2 border text-center">{{ $row['total_peserta'] }}</td>
+
+
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
+                    <h1 class="my-2 !text-xl font-bold">Deskripsi</h1>
+                    <form action="{{ route('deskripsi.save') }}" method="POST">
+                        @csrf
+                        <textarea class="prosess" id="froala" name="cluster_kmeans_pertahun">
+                                                                                                                    {!! $deskripsi->cluster_kmeans_pertahun ?? '' !!}
+                                                                                                                </textarea>
+                        <div class="flex flex-col gap-2 mt-4">
+                            <button type="submit" class="btn w-full bg-primary text-white">Simpan Deskripsi</button>
+                        </div>
+                    </form>
+
+
+
+                </div>
+
 
             </div>
         </div>
@@ -853,6 +919,87 @@
                 }
             }]
         });
+
+        Highcharts.chart('heatmap-cluster', {
+
+            chart: {
+                type: 'heatmap',
+                marginTop: 40,
+                marginBottom: 80,
+                plotBorderWidth: 1
+            },
+
+            title: {
+                text: 'Heatmap Total Peserta per Kota per Cluster K-Means ({{ $tahun }})',
+                style: {
+                    fontSize: '1em'
+                }
+            },
+
+            xAxis: {
+                title: {
+                    text: "Cluster K-Means",
+                    style: {
+                        color: "#000",
+                        fontWeight: "bold"
+                    }
+                },
+                categories: @json($clusters)   // <-- daftar cluster
+            },
+
+            yAxis: {
+                title: {
+                    text: "Kota",
+                    style: {
+                        color: "#000",
+                        fontWeight: "bold"
+                    }
+                },
+                categories: @json($kotaList), // <-- daftar kota
+                reversed: true
+            },
+
+            colorAxis: {
+                min: 0,
+                minColor: '#F7E396',
+                maxColor: '#004E89'
+            },
+
+            legend: {
+                align: 'right',
+                layout: 'vertical',
+                margin: 0,
+                verticalAlign: 'top',
+                y: 25,
+                symbolHeight: 280,
+                title: { text: "Jumlah Peserta" }
+            },
+
+            tooltip: {
+                formatter: function () {
+                    return `
+                <b>Kota:</b> ${this.series.yAxis.categories[this.point.y]}<br>
+                <b>Cluster:</b> ${this.series.xAxis.categories[this.point.x]}<br>
+                <b>Total Peserta:</b> ${this.point.value}
+            `;
+                }
+            },
+
+            series: [{
+                borderColor: '#000',
+                borderWidth: 1,
+                data: @json($heatmapData),   // <-- data heatmap
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.value}',
+                    color: '#000',
+                    style: {
+                        fontWeight: 'bold'
+                    }
+                }
+            }]
+        });
+
 
         // --- LOADING SAAT IMPORT FILE ---
         const importForm = document.querySelector('form[action="{{ route('data-mining.import.handle') }}"]');

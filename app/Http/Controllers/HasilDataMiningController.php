@@ -8,10 +8,8 @@ use App\Models\CentroidKmeans;
 use App\Models\CentroidUsia;
 use App\Models\DatasetClusters;
 use App\Models\DeskripsiData;
-use App\Models\HasilDataMining;
 use App\Models\RataUsia;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
 
@@ -20,7 +18,7 @@ class HasilDataMiningController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         // Mengambil data Jumlah Data per Cluster Usia (Pelajar, Mahasiswa, Umum)
         // Ambil daftar tahun
@@ -130,6 +128,69 @@ class HasilDataMiningController extends Controller
         // Ambil Table RataUsia
         $rataUsia = RataUsia::all();
 
+        // Cluster per tahun
+        // 1. Ambil semua tahun unik dari tabel (descending)
+        $tahunList = DatasetClusters::select('tahun_ujian')
+            ->distinct()
+            ->orderByDesc('tahun_ujian')
+            ->pluck('tahun_ujian');
+
+        // 2. Tentukan tahun yang dipakai
+        //    Kalau user pilih → pakai pilihannya, 
+        //    kalau tidak → pakai tahun terbesar (default)
+        $tahun = $request->tahun ?? $tahunList->first();
+
+        // 3. Ambil data filtered berdasarkan tahun
+        $dataRaw = DatasetClusters::selectRaw('kota, cluster_kmeans, COUNT(*) as total')
+            ->where('tahun_ujian', $tahun)
+            ->groupBy('kota', 'cluster_kmeans')
+            ->orderBy('kota')
+            ->orderBy('cluster_kmeans')
+            ->get();
+
+        // 4. Ambil semua cluster yang ada (otomatis)
+        $clusters = DatasetClusters::select('cluster_kmeans')
+            ->distinct()
+            ->orderBy('cluster_kmeans')
+            ->pluck('cluster_kmeans')
+            ->toArray();
+
+        // 5. Generate pivot table
+        $result = [];
+        foreach ($dataRaw->groupBy('kota') as $kota => $rows) {
+            $rowOutput = [];
+
+            // default = 0
+            foreach ($clusters as $c) {
+                $rowOutput[$c] = 0;
+            }
+
+            // isi data cluster sebenarnya
+            foreach ($rows as $r) {
+                $rowOutput[$r->cluster_kmeans] = $r->total;
+            }
+
+            // total peserta per kota
+            $rowOutput['total_peserta'] = array_sum($rowOutput);
+
+            $result[$kota] = $rowOutput;
+        }
+
+        // --- Generate data untuk heatmap Highcharts ---
+        $heatmapData = [];
+        $kotaList = array_keys($result); // urutan kota untuk yAxis
+
+        foreach ($kotaList as $yIndex => $kota) {
+            foreach ($clusters as $xIndex => $cluster) {
+                $heatmapData[] = [
+                    $xIndex,                    // x = cluster index
+                    $yIndex,                    // y = kota index
+                    $result[$kota][$cluster] ?? 0,  // value
+                ];
+            }
+        }
+
+
 
         // Mengambil Deskripsi
         $deskripsi = DeskripsiData::first();
@@ -152,6 +213,12 @@ class HasilDataMiningController extends Controller
             'centroidJenisKelamin' => $centroidJenisKelamin,
             'centroidKmeans' => $centroidKmeans,
             'rataUsia' => $rataUsia,
+            'tahunList' => $tahunList,
+            'tahun' => $tahun,
+            'clusters' => $clusters,
+            'result' => $result,
+            'kotaList' => $kotaList,
+            'heatmapData' => $heatmapData,
         ]);
     }
 
@@ -239,6 +306,10 @@ class HasilDataMiningController extends Controller
 
         if ($request->has('rata_usia')) {
             $data['rata_usia'] = $request->rata_usia;
+        }
+
+        if ($request->has('cluster_kmeans_pertahun')) {
+            $data['cluster_kmeans_pertahun'] = $request->cluster_kmeans_pertahun;
         }
 
         // lakukan update hanya pada field yang ada di $data
