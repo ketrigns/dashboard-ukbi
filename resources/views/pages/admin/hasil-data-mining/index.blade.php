@@ -930,7 +930,7 @@
             },
 
             title: {
-                text: 'Heatmap Total Peserta per Kota per Cluster K-Means ({{ $tahun }})',
+                text: 'Peta Sebaran Cluster per Kabupaten/Kota ({{ $tahun }})',
                 style: {
                     fontSize: '1em'
                 }
