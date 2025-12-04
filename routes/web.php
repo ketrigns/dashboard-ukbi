@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\DataUkbiController;
 use App\Http\Controllers\HasilDataMiningController;
+use App\Http\Controllers\HasilDataMiningUserController;
 use App\Http\Controllers\KategoriUserController;
 use App\Http\Controllers\PredikatUserController;
 use App\Http\Controllers\TahunUserController;
@@ -23,10 +24,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/data-mining', function () {
-    $data = HasilDataMining::latest()->first(); // ✅ hanya ambil satu
-    return view('pages.user.data-mining', compact('data'));
-})->name('data-mining');
+Route::get('/data-mining', [HasilDataMiningUserController::class, 'index'])->name('data-mining');
 
 Route::get('/', [DashboardUserController::class, 'index'])->name('home');
 
@@ -49,10 +47,12 @@ Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->mid
 Route::middleware(['auth', 'cek.role:admin,petugas'])->group(function () {
     Route::resource('/admin/data-ukbi', DataUkbiController::class);
     Route::resource('/admin/hasil-data-mining', HasilDataMiningController::class);
-    Route::post('/admin/dashboard/import-data-ukbi', [DataUkbiController::class, 'handleImport'])
-        ->name('data-ukbi.import.handle');
+    Route::post('/admin/dashboard/import-data-ukbi', [DataUkbiController::class, 'handleImport'])->name('data-ukbi.import.handle');
     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
     Route::post('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/admin/dashboard/import-data-mining', [HasilDataMiningController::class, 'handleImport'])->name('data-mining.import.handle');
+    Route::post('/deskripsi/save', [HasilDataMiningController::class, 'saveDeskripsi'])->name('deskripsi.save');
+
 });
 
 Route::middleware(['auth', 'cek.role:admin'])->group(function () {
