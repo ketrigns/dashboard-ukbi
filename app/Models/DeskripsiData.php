@@ -17,7 +17,6 @@ class DeskripsiData extends Model
         'heatmap_nilai_ukbi_per_jk',
         'centroid_kmeans',
         'rata_usia',
-        'cluster_kmeans_pertahun',
         
     ];
 }

@@ -396,19 +396,6 @@
                         </tbody>
                     </table>
 
-                    <h1 class="my-2 !text-xl font-bold">Deskripsi</h1>
-                    <form action="{{ route('deskripsi.save') }}" method="POST">
-                        @csrf
-                        <textarea class="prosess" id="froala" name="cluster_kmeans_pertahun">
-                                                                                                                        {!! $deskripsi->cluster_kmeans_pertahun ?? '' !!}
-                                                                                                                    </textarea>
-                        <div class="flex flex-col gap-2 mt-4">
-                            <button type="submit" class="btn w-full bg-primary text-white">Simpan Deskripsi</button>
-                        </div>
-                    </form>
-
-
-
                 </div>
 
 

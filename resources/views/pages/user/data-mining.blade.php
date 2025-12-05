@@ -311,12 +311,6 @@
               @endforeach
             </tbody>
           </table>
-
-          <h1 class="my-2 !text-xl font-bold">Deskripsi</h1>
-          <div>
-            {!! $deskripsi->cluster_kmeans_pertahun ?? '' !!}
-          </div>
-
         </div>
 
       </div>

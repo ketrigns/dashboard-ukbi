@@ -19,7 +19,6 @@ return new class extends Migration
             $table->text('heatmap_nilai_ukbi_per_jk')->nullable();
             $table->text('centroid_kmeans')->nullable();
             $table->text('rata_usia')->nullable();
-            $table->text('cluster_kmeans_pertahun')->nullable();
             $table->timestamps();
         });
     }
