@@ -42,7 +42,6 @@
 
       </div>
     </div>
-
     @php
       $kategoriUsia = [
         1 => 'Pelajar',
@@ -50,6 +49,43 @@
         3 => 'Umum',
       ];
     @endphp
+
+    <div class="mt-8">
+      <div>
+        <div class="card-body overflow-auto">
+          <table class="table-auto w-full text-sm border">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-3 py-2 border text-center font-semibold" colspan="4">
+                  Rata-Rata Usia
+                </th>
+              </tr>
+              <tr>
+                <th class="px-3 py-2 border"></th>
+                <th class="px-3 py-2 border">Usia</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @foreach ($rataUsia as $row)
+                <tr>
+                  <td class="px-3 py-2 border text-center">C{{ $loop->iteration }}
+                    ({{ $kategoriUsia[$loop->iteration] }})</td>
+                  <td class="px-3 py-2 border text-center">{{ number_format($row->usia, 6) }}</td>
+                </tr>
+              @endforeach
+            </tbody>
+          </table>
+
+          <h1 class="my-2 !text-xl font-bold">Deskripsi</h1>
+          <div>
+            {!! $deskripsi->rata_usia ?? '' !!}
+          </div>
+
+        </div>
+
+      </div>
+    </div>
 
     <div class="mt-8">
       <div>
@@ -234,43 +270,6 @@
           <h1 class="my-2 !text-xl font-bold">Deskripsi</h1>
           <div>
             {!! $deskripsi->centroid_kmeans ?? '' !!}
-          </div>
-
-        </div>
-
-      </div>
-    </div>
-
-    <div class="mt-8">
-      <div>
-        <div class="card-body overflow-auto">
-          <table class="table-auto w-full text-sm border">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="px-3 py-2 border text-center font-semibold" colspan="4">
-                  Rata-Rata Usia
-                </th>
-              </tr>
-              <tr>
-                <th class="px-3 py-2 border"></th>
-                <th class="px-3 py-2 border">Usia</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              @foreach ($rataUsia as $row)
-                <tr>
-                  <td class="px-3 py-2 border text-center">C{{ $loop->iteration }}
-                    ({{ $kategoriUsia[$loop->iteration] }})</td>
-                  <td class="px-3 py-2 border text-center">{{ number_format($row->usia, 6) }}</td>
-                </tr>
-              @endforeach
-            </tbody>
-          </table>
-
-          <h1 class="my-2 !text-xl font-bold">Deskripsi</h1>
-          <div>
-            {!! $deskripsi->rata_usia ?? '' !!}
           </div>
 
         </div>
