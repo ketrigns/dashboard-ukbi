@@ -280,20 +280,12 @@ class HasilDataMiningController extends Controller
             $data['bar_chart_jml_data_per_cluster_usia'] = $request->bar_chart_jml_data_per_cluster_usia;
         }
 
-        if ($request->has('spider_nilai_ukbi_per_cluster_usia')) {
-            $data['spider_nilai_ukbi_per_cluster_usia'] = $request->spider_nilai_ukbi_per_cluster_usia;
-        }
-
         if ($request->has('heatmap_nilai_ukbi_per_cluster_usia')) {
             $data['heatmap_nilai_ukbi_per_cluster_usia'] = $request->heatmap_nilai_ukbi_per_cluster_usia;
         }
 
         if ($request->has('bar_chart_jml_data_per_jk')) {
             $data['bar_chart_jml_data_per_jk'] = $request->bar_chart_jml_data_per_jk;
-        }
-
-        if ($request->has('spider_nilai_ukbi_per_jk')) {
-            $data['spider_nilai_ukbi_per_jk'] = $request->spider_nilai_ukbi_per_jk;
         }
 
         if ($request->has('heatmap_nilai_ukbi_per_jk')) {
@@ -306,10 +298,6 @@ class HasilDataMiningController extends Controller
 
         if ($request->has('rata_usia')) {
             $data['rata_usia'] = $request->rata_usia;
-        }
-
-        if ($request->has('cluster_kmeans_pertahun')) {
-            $data['cluster_kmeans_pertahun'] = $request->cluster_kmeans_pertahun;
         }
 
         // lakukan update hanya pada field yang ada di $data
