@@ -90,13 +90,7 @@
     <div class="mt-8">
       <div>
         <div id="radar-ukbi" class="p-4"></div>
-        <div class="card-body overflow-auto">
-          <h1 class="my-2 !text-xl font-bold">Deskripsi</h1>
-          <div>
-            {!! $deskripsi->spider_nilai_ukbi_per_cluster_usia ?? '' !!}
-          </div>
-
-        </div>
+        
 
       </div>
     </div>
@@ -184,13 +178,7 @@
     <div class="mt-8">
       <div>
         <div id="radar-ukbi-jk" class="p-4"></div>
-        <div class="card-body overflow-auto">
-          <h1 class="my-2 !text-xl font-bold">Deskripsi</h1>
-          <div>
-            {!! $deskripsi->spider_nilai_ukbi_per_jk ?? '' !!}
-          </div>
-
-        </div>
+        
 
       </div>
     </div>

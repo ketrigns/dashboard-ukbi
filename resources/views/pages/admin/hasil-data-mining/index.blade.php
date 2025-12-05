@@ -182,19 +182,6 @@
 
                 <div id="radar-ukbi" class="mt-6"></div>
 
-                <div class="card-body overflow-auto">
-                    <h1 class="my-2 !text-xl font-bold">Deskripsi</h1>
-                    <form action="{{ route('deskripsi.save') }}" method="POST">
-                        @csrf
-                        <textarea class="prosess" id="froala" name="spider_nilai_ukbi_per_cluster_usia">
-                                                                                                                        {!! $deskripsi->spider_nilai_ukbi_per_cluster_usia ?? '' !!}
-                                                                                                                    </textarea>
-                        <div class="flex flex-col gap-2 mt-4">
-                            <button type="submit" class="btn w-full bg-primary text-white">Simpan Deskripsi</button>
-                        </div>
-                    </form>
-                </div>
-
                 <div id="heatmap-usia" class="mt-6"></div>
                 <div class="card-body overflow-auto">
                     <table class="table-auto w-full text-sm border">
@@ -277,18 +264,6 @@
 
 
                 <div id="radar-ukbi-jk" class="mt-6"></div>
-                <div class="card-body overflow-auto">
-                    <h1 class="my-2 !text-xl font-bold">Deskripsi</h1>
-                    <form action="{{ route('deskripsi.save') }}" method="POST">
-                        @csrf
-                        <textarea class="prosess" id="froala" name="spider_nilai_ukbi_per_jk">
-                                                                                                                        {!! $deskripsi->spider_nilai_ukbi_per_jk ?? '' !!}
-                                                                                                                    </textarea>
-                        <div class="flex flex-col gap-2 mt-4">
-                            <button type="submit" class="btn w-full bg-primary text-white">Simpan Deskripsi</button>
-                        </div>
-                    </form>
-                </div>
 
                 <div id="heatmap-jk" class="mt-6"></div>
                 <div class="card-body overflow-auto">

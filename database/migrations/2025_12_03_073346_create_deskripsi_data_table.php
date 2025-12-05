@@ -14,10 +14,8 @@ return new class extends Migration
         Schema::create('deskripsi_data', function (Blueprint $table) {
             $table->id();
             $table->text('bar_chart_jml_data_per_cluster_usia')->nullable();
-            $table->text('spider_nilai_ukbi_per_cluster_usia')->nullable();
             $table->text('heatmap_nilai_ukbi_per_cluster_usia')->nullable();
             $table->text('bar_chart_jml_data_per_jk')->nullable();
-            $table->text('spider_nilai_ukbi_per_jk')->nullable();
             $table->text('heatmap_nilai_ukbi_per_jk')->nullable();
             $table->text('centroid_kmeans')->nullable();
             $table->text('rata_usia')->nullable();
