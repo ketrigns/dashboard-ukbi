@@ -55,35 +55,6 @@
       <div>
         <div id="radar-ukbi" class="p-4"></div>
         <div class="card-body overflow-auto">
-          <table class="table-auto w-full text-sm border">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="px-3 py-2 border text-center font-semibold" colspan="4">
-                  Centroid Nilai UKBI (Per Cluster Usia)
-                </th>
-              </tr>
-              <tr>
-                <th class="px-3 py-2 border"></th>
-                <th class="px-3 py-2 border">Seksi I</th>
-                <th class="px-3 py-2 border">Seksi II</th>
-                <th class="px-3 py-2 border">Seksi III</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              @foreach ($tableCentroidNilaiPerClusterUsia as $row)
-                <tr>
-                  <td class="px-3 py-2 border text-center">C{{ $loop->iteration }}
-                    ({{ $kategoriUsia[$loop->iteration] }})</td>
-                  <td class="px-3 py-2 border text-center">{{ $row->seksi_i }}</td>
-                  <td class="px-3 py-2 border text-center">{{ $row->seksi_ii }}</td>
-                  <td class="px-3 py-2 border text-center">{{ $row->seksi_iii }}</td>
-                </tr>
-              @endforeach
-
-            </tbody>
-          </table>
-
           <h1 class="my-2 !text-xl font-bold">Deskripsi</h1>
           <div>
             {!! $deskripsi->spider_nilai_ukbi_per_cluster_usia ?? '' !!}
@@ -178,34 +149,6 @@
       <div>
         <div id="radar-ukbi-jk" class="p-4"></div>
         <div class="card-body overflow-auto">
-          <table class="table-auto w-full text-sm border">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="px-3 py-2 border text-center font-semibold" colspan="4">
-                  Centroid Berdasarkan Jenis Kelamin (P & L)
-                </th>
-              </tr>
-              <tr>
-                <th class="px-3 py-2 border">Jenis Kelamin</th>
-                <th class="px-3 py-2 border">Seksi I</th>
-                <th class="px-3 py-2 border">Seksi II</th>
-                <th class="px-3 py-2 border">Seksi III</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              @foreach ($centroidJenisKelamin as $row)
-                <tr>
-                  <td class="px-3 py-2 border text-center">{{ $row->jenis_kelamin }}</td>
-                  <td class="px-3 py-2 border text-center">{{ number_format($row->seksi_i, 6) }}</td>
-                  <td class="px-3 py-2 border text-center">{{ number_format($row->seksi_ii, 6) }}</td>
-                  <td class="px-3 py-2 border text-center">{{ number_format($row->seksi_iii, 6) }}</td>
-                </tr>
-              @endforeach
-
-            </tbody>
-          </table>
-
           <h1 class="my-2 !text-xl font-bold">Deskripsi</h1>
           <div>
             {!! $deskripsi->spider_nilai_ukbi_per_jk ?? '' !!}
