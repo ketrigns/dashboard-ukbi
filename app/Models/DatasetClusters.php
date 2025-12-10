@@ -18,7 +18,6 @@ class DatasetClusters extends Model
         'seksi_iii',
         'usia',
         'tahun_ujian',
-        'cluster_kmeans',
-        'cluster_usia',
+        'cluster',
     ];
 }

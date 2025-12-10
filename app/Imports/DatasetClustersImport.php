@@ -37,8 +37,7 @@ class DatasetClustersImport implements
             'seksi_iii'      => $row['seksi_iii'] ?? null,
             'usia'           => $row['usia'] ?? null,
             'tahun_ujian'    => $row['tahun_ujian'] ?? null,
-            'cluster_kmeans' => $row['cluster_kmeans'] ?? null,
-            'cluster_usia'   => $row['cluster_usia'] ?? null,
+            'cluster' => $row['cluster'] ?? null,
         ]);
     }
 

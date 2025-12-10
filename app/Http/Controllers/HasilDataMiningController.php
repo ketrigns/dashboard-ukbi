@@ -10,6 +10,7 @@ use App\Models\DatasetClusters;
 use App\Models\DeskripsiData;
 use App\Models\RataUsia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
 
@@ -20,113 +21,8 @@ class HasilDataMiningController extends Controller
      */
     public function index(Request $request)
     {
-        // Mengambil data Jumlah Data per Cluster Usia (Pelajar, Mahasiswa, Umum)
-        // Ambil daftar tahun
-        $years = DatasetClusters::select('tahun_ujian')
-            ->distinct()
-            ->orderBy('tahun_ujian')
-            ->pluck('tahun_ujian');
-
-        // Ambil data jumlah cluster usia per tahun
-        $cluster1 = DatasetClusters::where('cluster_usia', 1)
-            ->selectRaw('tahun_ujian, COUNT(*) as total')
-            ->groupBy('tahun_ujian')
-            ->pluck('total', 'tahun_ujian');
-
-        $cluster2 = DatasetClusters::where('cluster_usia', 2)
-            ->selectRaw('tahun_ujian, COUNT(*) as total')
-            ->groupBy('tahun_ujian')
-            ->pluck('total', 'tahun_ujian');
-
-        $cluster3 = DatasetClusters::where('cluster_usia', 3)
-            ->selectRaw('tahun_ujian, COUNT(*) as total')
-            ->groupBy('tahun_ujian')
-            ->pluck('total', 'tahun_ujian');
-
-        $jmlUsiaTiapCluster = DatasetClusters::selectRaw('cluster_usia, COUNT(*) as total')
-            ->groupBy('cluster_usia')
-            ->orderBy('cluster_usia')
-            ->get();
-
-
-        // Spider Chart Nilai UKBI Berdasarkan Cluster Usia
-        $clusterRadar = DatasetClusters::selectRaw("
-            cluster_usia,
-            AVG(seksi_i) as avg_seksi_i,
-            AVG(seksi_ii) as avg_seksi_ii,
-            AVG(seksi_iii) as avg_seksi_iii
-        ")
-            ->groupBy('cluster_usia')
-            ->orderBy('cluster_usia')
-            ->get();
-
-        $radarSeries = [
-            'cluster1' => $clusterRadar->firstWhere('cluster_usia', 1)
-                ? [
-                    round($clusterRadar->firstWhere('cluster_usia', 1)->avg_seksi_i, 2),
-                    round($clusterRadar->firstWhere('cluster_usia', 1)->avg_seksi_ii, 2),
-                    round($clusterRadar->firstWhere('cluster_usia', 1)->avg_seksi_iii, 2),
-                ] : [],
-
-            'cluster2' => $clusterRadar->firstWhere('cluster_usia', 2)
-                ? [
-                    round($clusterRadar->firstWhere('cluster_usia', 2)->avg_seksi_i, 2),
-                    round($clusterRadar->firstWhere('cluster_usia', 2)->avg_seksi_ii, 2),
-                    round($clusterRadar->firstWhere('cluster_usia', 2)->avg_seksi_iii, 2),
-                ] : [],
-
-            'cluster3' => $clusterRadar->firstWhere('cluster_usia', 3)
-                ? [
-                    round($clusterRadar->firstWhere('cluster_usia', 3)->avg_seksi_i, 2),
-                    round($clusterRadar->firstWhere('cluster_usia', 3)->avg_seksi_ii, 2),
-                    round($clusterRadar->firstWhere('cluster_usia', 3)->avg_seksi_iii, 2),
-                ] : [],
-        ];
-
-        $tableCentroidNilaiPerClusterUsia = CentroidUsia::all();
-
-        // Heatmap nilai rata-rata UKBI Berdasarkan Cluster Usia
-        $heatmapNilaiUkbiBerdasarkanCluster = CentroidUsia::all();
-
-        // Barchart Jumlah Peserta UKBI Berdasarkan Jenis Kelamin
-        $clusterLaki = DatasetClusters::whereRaw('LOWER(jenis_kelamin) = ?', ['laki-laki'])
-            ->selectRaw('tahun_ujian, COUNT(*) as total')
-            ->groupBy('tahun_ujian')
-            ->pluck('total', 'tahun_ujian');
-
-        $clusterPerempuan = DatasetClusters::whereRaw('LOWER(jenis_kelamin) = ?', ['perempuan'])
-            ->selectRaw('tahun_ujian, COUNT(*) as total')
-            ->groupBy('tahun_ujian')
-            ->pluck('total', 'tahun_ujian');
-
-        $jmlJKTiapCluster = DatasetClusters::selectRaw('jenis_kelamin, COUNT(*) as total')
-            ->groupBy('jenis_kelamin')
-            ->orderBy('jenis_kelamin')
-            ->get();
-
-
-        // Spiderchart Nilai UKBI berdasarkan Jenis Kelamin
-
-        // ambil semua baris
-        $centroidJenisKelamin = CentroidJenisKelamin::orderBy('jenis_kelamin')->get();
-
-        // siapkan series untuk ApexRadar: satu series per jenis_kelamin
-        $nilaiCentroidJK = $centroidJenisKelamin->map(function ($r) {
-            return [
-                'name' => $r->jenis_kelamin,
-                'data' => [
-                    (float) $r->seksi_i,
-                    (float) $r->seksi_ii,
-                    (float) $r->seksi_iii,
-                ],
-            ];
-        })->toArray();
-
         // Ambil Table centroidKmeans
         $centroidKmeans = CentroidKmeans::all();
-
-        // Ambil Table RataUsia
-        $rataUsia = RataUsia::all();
 
         // Cluster per tahun
         // 1. Ambil semua tahun unik dari tabel (descending)
@@ -139,20 +35,22 @@ class HasilDataMiningController extends Controller
         //    Kalau user pilih → pakai pilihannya, 
         //    kalau tidak → pakai tahun terbesar (default)
         $tahun = $request->tahun ?? $tahunList->first();
+        $tahunUsia = $request->tahunUsia ?? $tahunList->first();
+        $tahunJK = $request->tahunJK ?? $tahunList->first();
 
         // 3. Ambil data filtered berdasarkan tahun
-        $dataRaw = DatasetClusters::selectRaw('kota, cluster_kmeans, COUNT(*) as total')
+        $dataRaw = DatasetClusters::selectRaw('kota, cluster, COUNT(*) as total')
             ->where('tahun_ujian', $tahun)
-            ->groupBy('kota', 'cluster_kmeans')
+            ->groupBy('kota', 'cluster')
             ->orderBy('kota')
-            ->orderBy('cluster_kmeans')
+            ->orderBy('cluster')
             ->get();
 
         // 4. Ambil semua cluster yang ada (otomatis)
-        $clusters = DatasetClusters::select('cluster_kmeans')
+        $clusters = DatasetClusters::select('cluster')
             ->distinct()
-            ->orderBy('cluster_kmeans')
-            ->pluck('cluster_kmeans')
+            ->orderBy('cluster')
+            ->pluck('cluster')
             ->toArray();
 
         // 5. Generate pivot table
@@ -167,7 +65,7 @@ class HasilDataMiningController extends Controller
 
             // isi data cluster sebenarnya
             foreach ($rows as $r) {
-                $rowOutput[$r->cluster_kmeans] = $r->total;
+                $rowOutput[$r->cluster] = $r->total;
             }
 
             // total peserta per kota
@@ -190,35 +88,171 @@ class HasilDataMiningController extends Controller
             }
         }
 
-
-
         // Mengambil Deskripsi
         $deskripsi = DeskripsiData::first();
 
+        // Ambil Data Cluster Usia
+        $usiaGroups = [
+            'Mahasiswa',
+            'Pelajar',
+            'Umum',
+        ];
+
+        // Ambil daftar cluster (xAxis)
+        $clustersUsia = DatasetClusters::query()
+            ->where('tahun_ujian', $tahunUsia)
+            ->whereNotNull('cluster')
+            ->distinct()
+            ->orderBy('cluster')
+            ->pluck('cluster')
+            ->toArray();
+
+        // CASE kategori usia (yAxis)
+        $ageCase = "
+        CASE
+        WHEN usia BETWEEN 19 AND 25 THEN 'Mahasiswa'
+            WHEN usia BETWEEN 10 AND 18 THEN 'Pelajar'
+            ELSE 'Umum'
+        END
+    ";
+
+        // Hitung jumlah peserta per (kategori_usia, cluster)
+        $rowsUsia = DatasetClusters::query()
+            ->select(
+                DB::raw("$ageCase AS kategori_usia"),
+                'cluster',
+                DB::raw('COUNT(*) AS total')
+            )
+            ->where('tahun_ujian', $tahunUsia)
+            ->whereNotNull('cluster')
+            ->groupBy(DB::raw($ageCase), 'cluster')
+            ->get();
+
+        // Index mapper untuk Highcharts
+        $clusterIndex = array_flip($clustersUsia);     // clusterValue => xIndex
+        $usiaIndex    = array_flip($usiaGroups);  // usiaLabel => yIndex
+
+        // Isi default 0 untuk semua kombinasi
+        $heatmapUsiaData = [];
+        foreach ($clustersUsia as $x => $c) {
+            foreach ($usiaGroups as $y => $u) {
+                $heatmapUsiaData[] = [$x, $y, 0];
+            }
+        }
+
+        // Update nilai berdasarkan hasil query
+        // (kunci: [x,y] -> position)
+        $pos = [];
+        foreach ($heatmapUsiaData as $i => $p) {
+            $pos[$p[0] . '-' . $p[1]] = $i;
+        }
+
+        foreach ($rowsUsia as $r) {
+            $x = $clusterIndex[$r->cluster] ?? null;
+            $y = $usiaIndex[$r->kategori_usia] ?? null;
+            if ($x !== null && $y !== null) {
+                $heatmapUsiaData[$pos[$x . '-' . $y]][2] = (int) $r->total;
+            }
+        }
+
+        // Tabel cluster usia
+        $resultUsia = [];
+        foreach ($usiaGroups as $u) {
+            foreach ($clustersUsia as $c) {
+                $resultUsia[$u][$c] = 0;
+            }
+            $resultUsia[$u]['total_peserta'] = 0;
+        }
+
+        // isi dari query
+        foreach ($rowsUsia as $r) {
+            $u = $r->kategori_usia;
+            $c = $r->cluster;
+            $total = (int) $r->total;
+
+            $resultUsia[$u][$c] = $total;
+            $resultUsia[$u]['total_peserta'] += $total;
+        }
+
+        // Ambil Data Cluster Jenis Kelamin
+        $jkGroups = ['Laki-laki', 'Perempuan'];
+
+        // ambil cluster untuk tahun itu
+        $clustersJK = DatasetClusters::query()
+            ->where('tahun_ujian', $tahunJK)
+            ->whereNotNull('cluster')
+            ->distinct()
+            ->orderBy('cluster')
+            ->pluck('cluster')
+            ->toArray();
+
+        // hitung jumlah peserta per (jenis_kelamin, cluster)
+        $rowsJK = DatasetClusters::query()
+            ->select('jenis_kelamin', 'cluster', DB::raw('COUNT(*) AS total'))
+            ->where('tahun_ujian', $tahunJK)
+            ->whereNotNull('cluster')
+            ->whereIn('jenis_kelamin', $jkGroups)
+            ->groupBy('jenis_kelamin', 'cluster')
+            ->get();
+
+        // buat heatmap data [xIndex, yIndex, value]
+        $clusterIndexJK = array_flip($clustersJK);
+        $jkIndex = array_flip($jkGroups);
+
+        $heatmapJKData = [];
+        foreach ($clustersJK as $x => $c) {
+            foreach ($jkGroups as $y => $g) {
+                $heatmapJKData[] = [$x, $y, 0];
+            }
+        }
+
+        // isi nilainya
+        $pos = [];
+        foreach ($heatmapJKData as $i => $p) $pos[$p[0] . '-' . $p[1]] = $i;
+
+        foreach ($rowsJK as $r) {
+            $x = $clusterIndexJK[$r->cluster];
+            $y = $jkIndex[$r->jenis_kelamin];
+            $heatmapJKData[$pos[$x . '-' . $y]][2] = (int) $r->total;
+        }
+
+        // Tabel JK x Cluster
+        $resultJK = [];
+        foreach ($jkGroups as $jk) {
+            foreach ($clustersJK as $c) {
+                $resultJK[$jk][$c] = 0;
+            }
+            $resultJK[$jk]['total_peserta'] = 0;
+        }
+
+        foreach ($rowsJK as $r) {
+            $jk = $r->jenis_kelamin;   // 'Laki-laki' / 'Perempuan'
+            $c  = $r->cluster;
+            $total = (int) $r->total;
+
+            $resultJK[$jk][$c] = $total;
+            $resultJK[$jk]['total_peserta'] += $total;
+        }
+
         return view('pages.admin.hasil-data-mining.index', [
-            'years' => $years,
-            'cluster1' => $cluster1,
-            'cluster2' => $cluster2,
-            'cluster3' => $cluster3,
-            'jmlUsiaTiapCluster' => $jmlUsiaTiapCluster,
-            'deskripsi' => $deskripsi,
-            'clusterRadar' => $clusterRadar,
-            'radarSeries' => $radarSeries,
-            'tableCentroidNilaiPerClusterUsia' => $tableCentroidNilaiPerClusterUsia,
-            'heatmapNilaiUkbiBerdasarkanCluster' => $heatmapNilaiUkbiBerdasarkanCluster,
-            'clusterLaki' => $clusterLaki,
-            'clusterPerempuan' => $clusterPerempuan,
-            'jmlJKTiapCluster' => $jmlJKTiapCluster,
-            'nilaiCentroidJK' => $nilaiCentroidJK,
-            'centroidJenisKelamin' => $centroidJenisKelamin,
-            'centroidKmeans' => $centroidKmeans,
-            'rataUsia' => $rataUsia,
             'tahunList' => $tahunList,
             'tahun' => $tahun,
+            'tahunUsia' => $tahunUsia,
+            'centroidKmeans' => $centroidKmeans,
             'clusters' => $clusters,
+            'deskripsi' => $deskripsi,
             'result' => $result,
             'kotaList' => $kotaList,
             'heatmapData' => $heatmapData,
+            'clustersUsia' => $clustersUsia,
+            'heatmapUsiaData' => $heatmapUsiaData,
+            'usiaGroups' => $usiaGroups,
+            'resultUsia' => $resultUsia,
+            'tahunJK' => $tahunJK,
+            'clustersJK' => $clustersJK,
+            'jkGroups' => $jkGroups,
+            'heatmapJKData' => $heatmapJKData,
+            'resultJK' => $resultJK,
         ]);
     }
 

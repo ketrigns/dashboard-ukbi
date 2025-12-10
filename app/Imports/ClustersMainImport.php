@@ -12,8 +12,8 @@ class ClustersMainImport implements WithMultipleSheets
             'Dataset_Clusters' => new DatasetClustersImport(),
             'Centroid_KMeans'  => new CentroidKMeansImport(),
             'Centroid_Usia'  => new CentroidUsiaImport(),
-            'Centroid_JenisKelamin'  => new CentroidJenisKelaminImport(),
             'Rata2_Usia'  => new RataUsiaImport(),
+            'Centroid_JenisKelamin'  => new CentroidJenisKelaminImport(),
         ];
     }
 }
