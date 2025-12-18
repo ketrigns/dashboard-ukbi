@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::dropIfExists('centroid_jk');
         Schema::dropIfExists('centroid_usia');
         Schema::dropIfExists('hasil_data_mining');
+        Schema::dropIfExists('rata_usia');
 
         // Menghapus KOLOM spesifik dari deskripsi_data 
         if (Schema::hasTable('deskripsi_data')) {
