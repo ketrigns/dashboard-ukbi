@@ -307,31 +307,11 @@ class HasilDataMiningController extends Controller
             $deskripsi = DeskripsiData::create([]);
         }
 
-        // Update PARSIAL (hanya field yg dikirim form)
+        // Update data (hanya field yg dikirim form)
         $data = [];
-
-        if ($request->has('bar_chart_jml_data_per_cluster_usia')) {
-            $data['bar_chart_jml_data_per_cluster_usia'] = $request->bar_chart_jml_data_per_cluster_usia;
-        }
-
-        if ($request->has('heatmap_nilai_ukbi_per_cluster_usia')) {
-            $data['heatmap_nilai_ukbi_per_cluster_usia'] = $request->heatmap_nilai_ukbi_per_cluster_usia;
-        }
-
-        if ($request->has('bar_chart_jml_data_per_jk')) {
-            $data['bar_chart_jml_data_per_jk'] = $request->bar_chart_jml_data_per_jk;
-        }
-
-        if ($request->has('heatmap_nilai_ukbi_per_jk')) {
-            $data['heatmap_nilai_ukbi_per_jk'] = $request->heatmap_nilai_ukbi_per_jk;
-        }
 
         if ($request->has('centroid_kmeans')) {
             $data['centroid_kmeans'] = $request->centroid_kmeans;
-        }
-
-        if ($request->has('rata_usia')) {
-            $data['rata_usia'] = $request->rata_usia;
         }
 
         // lakukan update hanya pada field yang ada di $data
