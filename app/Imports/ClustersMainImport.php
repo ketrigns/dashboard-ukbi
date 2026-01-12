@@ -9,8 +9,8 @@ class ClustersMainImport implements WithMultipleSheets
     public function sheets(): array
     {
         return [
-            'Dataset_Clusters' => new DatasetClustersImport(),
-            'Centroid_KMeans'  => new CentroidKMeansImport(),
+            'Data_Cluster_All_Year' => new DatasetClustersImport(),
+            'Centroid_All_Year'  => new CentroidKMeansImport(),
         ];
     }
 }

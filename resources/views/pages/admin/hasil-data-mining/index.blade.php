@@ -101,29 +101,52 @@
                     <table class="table-auto w-full text-sm border">
                         <thead class="bg-gray-100">
                             <tr>
-                                <th class="px-3 py-2 border text-center font-semibold" colspan="4">
+                                <th class="px-3 py-2 border text-center font-semibold" colspan="5">
                                     Centroid K-Mean
                                 </th>
                             </tr>
                             <tr>
-                                <th class="px-3 py-2 border"></th>
                                 <th class="px-3 py-2 border">Seksi I</th>
                                 <th class="px-3 py-2 border">Seksi II</th>
                                 <th class="px-3 py-2 border">Seksi III</th>
+                                <th class="px-3 py-2 border">Cluster</th>
+                                <th class="px-3 py-2 border">Tahun</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             @foreach ($centroidKmeans as $row)
                                 <tr>
-                                    <td class="px-3 py-2 border text-center">C{{ $loop->iteration }}</td>
                                     <td class="px-3 py-2 border text-center">{{ number_format($row->seksi_i, 6) }}</td>
                                     <td class="px-3 py-2 border text-center">{{ number_format($row->seksi_ii, 6) }}</td>
                                     <td class="px-3 py-2 border text-center">{{ number_format($row->seksi_iii, 6) }}</td>
+                                    <td class="px-3 py-2 border text-center">{{ $row->cluster }}</td>
+                                    <td class="px-3 py-2 border text-center">{{ $row->tahun }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
+
+                    <div class="overflow-auto">
+                        <h1 class="my-2 !text-xl font-bold">Peta Tematik Persebaran Cluster</h1>
+                        <div id="map-global" class="map-wrapper"></div>
+                    </div>
+                    <div class="overflow-auto">
+                        <h1 class="my-2 !text-xl font-bold">Small Multiples Map Persebaran Cluster</h1>
+                        <div class="grid sm:grid-cols-2 grid-cols-1">
+                            @foreach($dataPerTahun as $tahun => $dataKota)
+                                <div class="card mb-4 shadow-sm">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="m-0">Tahun Ujian: {{ $tahun }}</h5>
+                                    </div>
+                                    <div class=" p-0">
+                                        {{-- ID Unik per tahun: map-2024, map-2025 --}}
+                                        <div id="map-{{ $tahun }}" class="map-wrapper"></div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
 
                     <h1 class="my-2 !text-xl font-bold">Deskripsi</h1>
                     <form action="{{ route('deskripsi.save') }}" method="POST">
@@ -136,6 +159,8 @@
                         </div>
                     </form>
                 </div>
+
+                
 
                 <div class="card-body overflow-auto" id="heatmap-card">
                     <form method="GET" class="mb-4 flex items-center gap-4">
@@ -190,6 +215,8 @@
                         </tbody>
                     </table>
                 </div>
+
+                
 
                 <div class="card-body overflow-auto" id="heatmap-usia-card">
                     <form method="GET" class="mb-4 flex items-center gap-4">
@@ -310,10 +337,105 @@
 
 @endsection
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
     let froala;
 
     document.addEventListener('DOMContentLoaded', function () {
+        // 1. Data dari Controller
+        const globalData = @json($mappedData);   // Data Lama
+        const yearData = @json($dataPerTahun);   // Data Baru
+
+        // Config Warna
+        function getColor(cluster) {
+            cluster = parseInt(cluster);
+            switch(cluster) {
+                case 1: return '#8B0000'; case 2: return '#006400'; 
+                case 3: return '#0000FF'; case 4: return '#FFA500'; 
+                case 5: return '#FFFF00'; default: return '#DDDDDD'; 
+            }
+        }
+
+        // LOAD GEOJSON (Sekali Saja)
+        fetch("{{ asset('geojson/provinsi jambi.geojson') }}")
+            .then(res => res.json())
+            .then(geoJsonData => {
+
+                // 1. RENDER PETA GLOBAL (Logic Lama)
+                createMap('map-global', globalData, geoJsonData, 'Global');
+
+                // 2. RENDER PETA PER TAHUN (Logic Baru)
+                Object.keys(yearData).forEach(tahun => {
+                    let dataTahunIni = yearData[tahun];
+                    createMap('map-' + tahun, dataTahunIni, geoJsonData, tahun);
+                });
+
+            })
+            .catch(err => console.error("Error GeoJSON:", err));
+
+
+        // --- FUNGSI GENERATOR PETA (Reusable) ---
+        function createMap(elementId, cityData, geoData, labelTahun) {
+            
+            // Init Map
+            let map = L.map(elementId, {
+                zoomControl: true, scrollWheelZoom: false, doubleClickZoom: false, 
+                touchZoom: false, attributionControl: false,
+                zoomSnap: 0.1, zoomDelta: 0.5
+            });
+
+            // Layer GeoJSON
+            let layer = L.geoJson(geoData, {
+                style: function(feature) {
+                    let dbKey = feature.properties.NAME_2.toUpperCase();
+                    let cluster = (cityData[dbKey] && cityData[dbKey]['cluster']) ? cityData[dbKey]['cluster'] : 0;
+                    return {
+                        fillColor: getColor(cluster),
+                        weight: 1, opacity: 1, color: 'white', fillOpacity: 1
+                    };
+                },
+                onEachFeature: function(feature, layer) {
+                    let dbKey = feature.properties.NAME_2.toUpperCase();
+                    let data = cityData[dbKey] || null;
+                    let cluster = data ? data['cluster'] : '-';
+                    let total = data ? data['total'] : 0;
+
+                    // Tooltip
+                    layer.bindTooltip(`
+                        <div style="text-align:left;">
+                            <strong>${dbKey}</strong><br>
+                            Cluster Dominan: <b>${cluster}</b><br>
+                            Total Data: <b>${total}</b>
+                        </div>
+                    `, { permanent: false, direction: 'top', sticky: true });
+
+                    // Label Nama Kota
+                    L.marker(layer.getBounds().getCenter(), {
+                        icon: L.divIcon({
+                            className: 'region-label', 
+                            html: dbKey, iconSize: [120, 20] 
+                        })
+                    }).addTo(map);
+                }
+            }).addTo(map);
+
+            // Zoom Pas
+            map.fitBounds(layer.getBounds(), { padding: [20, 20] });
+
+            // Legenda
+            let legend = L.control({position: 'topleft'});
+            legend.onAdd = function (map) {
+                let div = L.DomUtil.create('div', 'info legend'), grades = [1, 2, 3, 4, 5];
+                div.innerHTML += '<strong>Keterangan</strong><br>';
+                for (let i = 0; i < grades.length; i++) {
+                    div.innerHTML += '<div style="margin-bottom:3px;"><i style="background:' + getColor(grades[i]) + '; width:15px; height:15px; float:left; margin-right:5px;"></i> Cluster ' + grades[i] + '</div>';
+                }
+                return div;
+            };
+            legend.addTo(map);
+        }
+
         froala = new FroalaEditor('#froala', {
             toolbarButtons: [
                 ['fontSize'],

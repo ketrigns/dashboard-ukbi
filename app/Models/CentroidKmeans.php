@@ -13,5 +13,7 @@ class CentroidKmeans extends Model
         'seksi_i',
         'seksi_ii',
         'seksi_iii',
+        'cluster',
+        'tahun',
     ];
 }

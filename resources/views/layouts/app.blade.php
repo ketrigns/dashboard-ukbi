@@ -13,10 +13,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
     rel="stylesheet">
   {{-- Tambahkan CSS Leaflet --}}
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   {{-- Tambahkan JS Leaflet --}}
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="https://code.highcharts.com/highcharts.js"></script>
   <script src="https://code.highcharts.com/modules/heatmap.js"></script>
@@ -36,6 +36,36 @@
 
     ol {
       all: revert;
+    }
+
+    /* Background peta (Canvas) */
+    .map-wrapper {
+      height: 80vh;
+      width: 100%;
+      background-color: #f4f4f4;
+    }
+
+    /* Style Label Nama Wilayah */
+    .region-label {
+      font-size: 10px;
+      font-weight: bold;
+      color: #fff;
+      text-align: center;
+      /* Outline hitam agar tulisan putih terbaca jelas */
+      text-shadow: 1px 1px 2px black, -1px -1px 2px black, 1px -1px 2px black, -1px 1px 2px black;
+      white-space: normal;
+      line-height: 1.2;
+      margin-top: -10px;
+    }
+
+    /* Style Legenda */
+    .legend {
+      background: white;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      font-size: 12px;
+      font-family: sans-serif;
     }
 
     @media print {

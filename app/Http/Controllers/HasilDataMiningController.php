@@ -234,6 +234,57 @@ class HasilDataMiningController extends Controller
             $resultJK[$jk]['total_peserta'] += $total;
         }
 
+        // Peta Tematik Persebaran Cluster
+        // 1. Ambil data (Sama seperti sebelumnya)
+        $stats = DatasetClusters::select('kota', 'cluster', DB::raw('count(*) as total'))
+            ->groupBy('kota', 'cluster')
+            ->orderBy('kota', 'asc')
+            ->get();
+
+        $cityClusters = [];
+
+        foreach ($stats as $row) {
+            $kotaRaw = strtoupper(trim($row->kota));
+
+            // Logika cari mayoritas (Sama seperti sebelumnya)
+            if (!isset($cityClusters[$kotaRaw]) || $row->total > $cityClusters[$kotaRaw]['total']) {
+                $cityClusters[$kotaRaw] = [
+                    'cluster' => $row->cluster,
+                    'total' => $row->total // <--- KITA BUTUH INI UNTUK HOVER
+                ];
+            }
+        }
+
+        // JANGAN DI-FLATTEN/MAP LAGI. Biarkan bentuk array-nya lengkap.
+        // Hasil: ['KOTA JAMBI' => ['cluster' => 1, 'total' => 205], ...]
+        $mappedData = $cityClusters;
+
+        // SMALL MULTIPLES MAP
+        $statsTahun = DatasetClusters::select('tahun_ujian', 'kota', 'cluster', DB::raw('count(*) as total'))
+            ->groupBy('tahun_ujian', 'kota', 'cluster')
+            ->orderBy('tahun_ujian', 'desc') // Tahun terbaru di atas
+            ->get();
+
+        $dataPerTahun = [];
+
+        foreach ($statsTahun as $row) {
+            $tahun = $row->tahun_ujian;
+            $kotaRaw = strtoupper(trim($row->kota));
+
+            // Buat array tahun jika belum ada
+            if (!isset($dataPerTahun[$tahun])) {
+                $dataPerTahun[$tahun] = [];
+            }
+
+            // Voting Mayoritas (Scope per Tahun)
+            if (!isset($dataPerTahun[$tahun][$kotaRaw]) || $row->total > $dataPerTahun[$tahun][$kotaRaw]['total']) {
+                $dataPerTahun[$tahun][$kotaRaw] = [
+                    'cluster' => $row->cluster,
+                    'total' => $row->total
+                ];
+            }
+        }
+
         return view('pages.admin.hasil-data-mining.index', [
             'tahunList' => $tahunList,
             'tahun' => $tahun,
@@ -253,6 +304,8 @@ class HasilDataMiningController extends Controller
             'jkGroups' => $jkGroups,
             'heatmapJKData' => $heatmapJKData,
             'resultJK' => $resultJK,
+            'mappedData' => $mappedData,
+            'dataPerTahun' => $dataPerTahun,
         ]);
     }
 
