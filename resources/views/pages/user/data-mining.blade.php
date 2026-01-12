@@ -12,27 +12,25 @@
           <table class="table-auto w-full text-sm border">
             <thead class="bg-gray-100">
               <tr>
-                <th class="px-3 py-2 border text-center font-semibold" colspan="5">
+                <th class="px-3 py-2 border text-center font-semibold" colspan="4">
                   Centroid K-Mean
                 </th>
               </tr>
               <tr>
+                <th class="px-3 py-2 border"></th>
                 <th class="px-3 py-2 border">Seksi I</th>
                 <th class="px-3 py-2 border">Seksi II</th>
                 <th class="px-3 py-2 border">Seksi III</th>
-                <th class="px-3 py-2 border">Cluster</th>
-                <th class="px-3 py-2 border">Tahun</th>
               </tr>
             </thead>
 
             <tbody>
               @foreach ($centroidKmeans as $row)
                 <tr>
+                  <td class="px-3 py-2 border text-center">C{{ $loop->iteration }}</td>
                   <td class="px-3 py-2 border text-center">{{ number_format($row->seksi_i, 6) }}</td>
                   <td class="px-3 py-2 border text-center">{{ number_format($row->seksi_ii, 6) }}</td>
                   <td class="px-3 py-2 border text-center">{{ number_format($row->seksi_iii, 6) }}</td>
-                  <td class="px-3 py-2 border text-center">{{ $row->cluster }}</td>
-                  <td class="px-3 py-2 border text-center">{{ $row->tahun }}</td>
                 </tr>
               @endforeach
             </tbody>

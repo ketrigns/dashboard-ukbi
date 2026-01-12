@@ -32,8 +32,6 @@ class CentroidKMeansImport implements
             'seksi_i'       => $row['seksi_i'] ?? null,
             'seksi_ii'      => $row['seksi_ii'] ?? null,
             'seksi_iii'     => $row['seksi_iii'] ?? null,
-            'cluster'     => $row['cluster'] ?? null,
-            'tahun'     => $row['tahun'] ?? null,
         ]);
     }
 

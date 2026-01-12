@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class HasilDataMiningController extends Controller
 {
@@ -317,31 +318,41 @@ class HasilDataMiningController extends Controller
         ]);
 
         try {
-            // 2. Ambil file
             $file = $request->file('file');
+            $path = $file->getRealPath();
 
-            // 3. Import
-            Excel::import(new ClustersMainImport(), $file);
+            $reader = IOFactory::createReaderForFile($path);
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($path);
+            $sheetNames = $spreadsheet->getSheetNames();
 
-            return redirect()->back()->with('success', 'Data berhasil diimpor!');
-        }
+            // 2. CEK KEBERADAAN SHEET (VALIDASI)
+            $hasClusterSheet  = in_array('Data_Cluster_All_Year', $sheetNames);
+            $hasCentroidSheet = in_array('Centroid_KMeans', $sheetNames); // Pastikan nama di Excel "Centroid_KMeans"
 
-        // ERROR DARI VALIDASI EXCEL (row, kolom, dsb)
-        catch (ValidationException $e) {
-            $failures = $e->failures();
-            $errorMessages = [];
-
-            foreach ($failures as $failure) {
-                $row = $failure->row(); // baris yang salah
-                $attribute = $failure->attribute(); // kolom
-                $errors = implode(", ", $failure->errors()); // pesan error
-                $values = $failure->values();
-                $value = $values[$attribute] ?? '-';
-
-                $errorMessages[] =
-                    "Baris $row (Kolom '$attribute'): $errors (Nilai: $value)";
+            // LOGIKA: Jika TIDAK ADA sheet cluster DAN TIDAK ADA sheet centroid -> ERROR
+            if (!$hasClusterSheet && !$hasCentroidSheet) {
+                throw new \Exception("File Excel tidak valid! Tidak ditemukan sheet 'Data_Cluster_All_Year' ataupun 'Centroid_KMeans'.");
             }
 
+            Excel::import(new ClustersMainImport($sheetNames), $file);
+
+            return redirect()->back()->with('success', 'Data berhasil diimpor sesuai sheet yang ditemukan!');
+        }
+
+        // ERROR DARI VALIDASI EXCEL
+        catch (ValidationException $e) {
+            // ... (Logika error handling kamu yang lama, copy paste disini) ...
+            $failures = $e->failures();
+            $errorMessages = [];
+            foreach ($failures as $failure) {
+                $row = $failure->row();
+                $attribute = $failure->attribute();
+                $errors = implode(", ", $failure->errors());
+                $values = $failure->values();
+                $value = $values[$attribute] ?? '-';
+                $errorMessages[] = "Baris $row (Kolom '$attribute'): $errors (Nilai: $value)";
+            }
             return redirect()->back()->with('import_errors', $errorMessages);
         }
 
