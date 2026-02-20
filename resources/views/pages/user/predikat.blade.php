@@ -78,118 +78,41 @@
     @endforeach
 
   </div>
-  <button onclick="printChart()" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-    Print Halaman
-  </button>
+
+  <div class="block">
+    <a href="{{ route('predikat.export', ['wilayah' => request('wilayah')]) }}" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+      Unduh Data
+    </a>
+  </div>
 
   <script>
     const allCharts = [];
 
-    function printChart() {
-      const navMenu = document.getElementById('nav-menu');
-      const menuToggle = document.getElementById('menu-toggle');
-      const loader = document.getElementById('print-loader');
-
-      // Simpan inline-style asli
-      const originalStyle = navMenu.getAttribute('style') || '';
-      const originalToggleStyle = menuToggle.getAttribute('style') || '';
-      menuToggle.style.display = "none";
-
-      // Inject style print mode
-      navMenu.style.display = "flex";
-      navMenu.style.flexDirection = "row";
-      navMenu.style.maxHeight = "none";
-      navMenu.style.opacity = "1";
-
-      // 🔥 Update semua chart
-      allCharts.forEach(ch => {
-        ch.updateOptions({
-          chart: { width: 450 }
-        });
-      });
-
-      chart.updateOptions({
-        chart: { width: 900 }
-      });
-
-      chartPeujiPredikat.updateOptions({
-        chart: { width: 450 }
-      });
-
-      chartSkorPredikat.updateOptions({
-        chart: { width: 450 }
-      });
-
-      chartMahasiswaPredikat.updateOptions({
-        chart: { width: 450 }
-      });
-
-      chartUmumPredikat.updateOptions({
-        chart: { width: 450 }
-      });
-
-      chartPelajarPredikat.updateOptions({
-        chart: { width: 450 }
-      });
-
-      loader.classList.remove("hidden");
-
-      setTimeout(() => {
-        loader.classList.add("hidden");
-        window.print();
-      }, 1000);
-
-      window.addEventListener('afterprint', () => {
-        // Kembalikan style asli
-        navMenu.setAttribute('style', originalStyle);
-        menuToggle.setAttribute('style', originalToggleStyle);
-
-        allCharts.forEach(ch => {
-          ch.updateOptions({
-            chart: { width: '100%' }
-          });
-        });
-
-        chart.updateOptions({
-          chart: { width: '100%' }
-        });
-
-        chartPeujiPredikat.updateOptions({
-          chart: { width: '100%' }
-        });
-
-        chartSkorPredikat.updateOptions({
-          chart: { width: '100%' }
-        });
-
-        chartMahasiswaPredikat.updateOptions({
-          chart: { width: '100%' }
-        });
-
-        chartUmumPredikat.updateOptions({
-          chart: { width: '100%' }
-        });
-
-        chartPelajarPredikat.updateOptions({
-          chart: { width: '100%' }
-        });
-
-      }, { once: true });
-    }
-
     const rawPredikat = @json($predikatPerTahun);
+    
+    // Ambil tahun yang tersedia secara dinamis dan urutkan
     const uniqueYears = [...new Set(rawPredikat.map(item => item.tahun))].sort((a, b) => a - b);
 
-    // 2. Dapatkan semua predikat unik dan urutkan
-    const uniquePredikats = [...new Set(rawPredikat.map(item => item.predikat))].sort();
+    // 1. Definisikan urutan predikat secara manual (Statis)
+    // Dengan cara ini, meskipun tidak ada data di database, predikat ini akan tetap dirender dengan nilai 0
+    const uniquePredikats = [
+        'Istimewa',
+        'Sangat Unggul',
+        'Unggul',
+        'Madya',
+        'Semenjana',
+        'Marginal',
+        'Terbatas',
+        'Tidak Berpredikat'
+    ];
 
-    // 3. Buat struktur data 'series' yang dibutuhkan ApexCharts
+    // 2. Buat struktur data 'series' yang dibutuhkan ApexCharts
     const seriesData = uniquePredikats.map(predikat => {
       // Untuk setiap predikat, cari totalnya di setiap tahun
       const data = uniqueYears.map(tahun => {
-        // Cari data yang cocok
+        // Cari data yang cocok berdasarkan tahun dan predikat
         const entry = rawPredikat.find(item => item.tahun === tahun && item.predikat === predikat);
-        // Jika ditemukan, kembalikan totalnya. Jika tidak, kembalikan 0.
+        // Jika ditemukan, kembalikan totalnya. Jika tidak ada, kembalikan 0.
         return entry ? entry.total : 0;
       });
 
@@ -208,8 +131,8 @@
         }
       },
       title: {
-        text: 'Jumlah Peuji berdasarkan Predikat per Tahun', // 🟢 Judul chart
-        align: 'center', // bisa 'center', 'center', atau 'right'
+        text: 'Jumlah Peuji berdasarkan Predikat per Tahun',
+        align: 'center',
         style: {
           fontSize: '16px',
           fontWeight: 'bold',
@@ -222,7 +145,7 @@
       },
       yaxis: {
         title: {
-          text: 'Peuji', // 🔹 Judul Y-axis
+          text: 'Peuji',
           style: {
             color: '#1F2859',
             fontSize: '14px',
@@ -230,40 +153,16 @@
           }
         }
       },
+      // Sesuaikan jumlah warna dengan jumlah predikat (7 warna pertama akan dipakai berurutan)
       colors: [
-        '#1F77B4', // biru klasik
-        '#FF7F0E', // oranye terang
-        '#2CA02C', // hijau cerah
-        '#D62728', // merah tua
-        '#9467BD', // ungu lembut
-        '#8C564B', // cokelat muda
-        '#E377C2', // pink lembut
-        '#7F7F7F', // abu-abu netral
-        '#BCBD22', // kuning zaitun
-        '#17BECF', // biru toska
-
-        '#FF6F61', // coral
-        '#6B5B95', // ungu royal
-        '#88B04B', // hijau zaitun
-        '#F7CAC9', // pink pastel
-        '#92A8D1', // biru pastel
-        '#955251', // maroon muda
-        '#B565A7', // ungu muda
-        '#009B77', // hijau zamrud
-        '#DD4124', // merah oranye
-        '#45B8AC', // turquoise
-
-        '#EFC050', // emas terang
-        '#5B5EA6', // biru keunguan
-        '#9B2335', // merah anggur
-        '#DFCFBE', // krem muda
-        '#55B4B0', // hijau kebiruan
-        '#E15D44', // merah bata
-        '#7FCDCD', // cyan lembut
-        '#BC243C', // merah crimson
-        '#C3447A', // magenta
-        '#98B4D4'  // biru muda
-      ], // warna unik tiap legend
+        '#1F77B4', // Istimewa
+        '#FF7F0E', // Sangat Unggul
+        '#2CA02C', // Unggul
+        '#D62728', // Madya
+        '#9467BD', // Semenjana
+        '#8C564B', // Marginal
+        '#E377C2', // Terbatas
+      ],
       stroke: {
         curve: 'smooth',
         width: 3
@@ -300,6 +199,12 @@
       }
     };
 
+    const rawPeujiPredikat = @json($jmlPeujiPredikat);
+    const dataPeuji = uniquePredikats.map(predikat => {
+      const found = rawPeujiPredikat.find(item => item.predikat === predikat);
+      return found ? found.total : 0;
+    });
+
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
 
@@ -322,10 +227,10 @@
       },
       series: [{
         name: 'Jumlah Peuji',
-        data: @json($jmlPeujiPredikat->pluck('total'))
+        data: dataPeuji
       }],
       xaxis: {
-        categories: @json($jmlPeujiPredikat->pluck('predikat')),
+        categories: uniquePredikats,
         title: {
           style: {
             fontSize: '14px',
@@ -406,6 +311,14 @@
     var chartPeujiPredikat = new ApexCharts(document.querySelector("#chartPeujiPredikat"), optionsPeujiPredikat);
     chartPeujiPredikat.render();
 
+    const rawSkorPredikat = @json($rerataSkorPredikat);
+
+    const dataSkor = uniquePredikats.map(predikat => {
+      const found = rawSkorPredikat.find(item => item.predikat === predikat);
+      // Perhatikan di sini kita mengambil .rerata (sesuai query DB::raw Anda)
+      return found ? parseFloat(found.rerata) : 0; 
+    });
+
     var optionsSkorPredikat = {
       chart: {
         type: 'bar',
@@ -425,10 +338,10 @@
       },
       series: [{
         name: 'Rata-rata Skor',
-        data: @json($rerataSkorPredikat->pluck('rerata'))
+        data: dataSkor
       }],
       xaxis: {
-        categories: @json($rerataSkorPredikat->pluck('predikat')),
+        categories: uniquePredikats,
         title: {
           style: {
             fontSize: '14px',
@@ -509,6 +422,12 @@
     var chartSkorPredikat = new ApexCharts(document.querySelector("#chartSkorPredikat"), optionsSkorPredikat);
     chartSkorPredikat.render();
 
+    const rawMhs = @json($jmlPeujiMhs);
+    const dataMhs = uniquePredikats.map(predikat => {
+      const found = rawMhs.find(item => item.predikat === predikat);
+      return found ? found.total : 0;
+    });
+
     var optionsMahasiswaPredikat = {
       chart: {
         type: 'bar',
@@ -529,10 +448,10 @@
 
       series: [{
         name: 'Jumlah Peuji',
-        data: @json($jmlPeujiMhs->pluck('total'))
+        data: dataMhs
       }],
       xaxis: {
-        categories: @json($jmlPeujiMhs->pluck('predikat')),
+        categories: uniquePredikats,
         title: {
           style: {
             fontSize: '14px',
@@ -613,6 +532,12 @@
     var chartMahasiswaPredikat = new ApexCharts(document.querySelector("#chartMahasiswaPredikat"), optionsMahasiswaPredikat);
     chartMahasiswaPredikat.render();
 
+    const rawUmum = @json($jmlPeujiUmum);
+    const dataUmum = uniquePredikats.map(predikat => {
+      const found = rawUmum.find(item => item.predikat === predikat);
+      return found ? found.total : 0;
+    });
+
     var optionsUmumPredikat = {
       chart: {
         type: 'bar',
@@ -632,10 +557,10 @@
       },
       series: [{
         name: 'Jumlah Peuji',
-        data: @json($jmlPeujiUmum->pluck('total'))
+        data: dataUmum
       }],
       xaxis: {
-        categories: @json($jmlPeujiUmum->pluck('predikat')),
+        categories: uniquePredikats,
         title: {
           style: {
             fontSize: '14px',
@@ -716,6 +641,12 @@
     var chartUmumPredikat = new ApexCharts(document.querySelector("#chartUmumPredikat"), optionsUmumPredikat);
     chartUmumPredikat.render();
 
+    const rawPelajar = @json($jmlPeujiPelajar);
+    const dataPelajar = uniquePredikats.map(predikat => {
+      const found = rawPelajar.find(item => item.predikat === predikat);
+      return found ? found.total : 0;
+    });
+
     var optionsPelajarPredikat = {
       chart: {
         type: 'bar',
@@ -735,10 +666,10 @@
       },
       series: [{
         name: 'Jumlah Peuji',
-        data: @json($jmlPeujiPelajar->pluck('total'))
+        data: dataPelajar
       }],
       xaxis: {
-        categories: @json($jmlPeujiPelajar->pluck('predikat')),
+        categories: uniquePredikats,
         title: {
           style: {
             fontSize: '14px',
@@ -820,128 +751,111 @@
     chartPelajarPredikat.render();
 
 
-    const chartContainers = document.querySelectorAll('.chart-container');
+    // 1. Definisikan urutan dan warna baku DI LUAR loop agar efisien
+const urutanBakuPredikat = [
+  'Istimewa',
+  'Sangat Unggul',
+  'Unggul',
+  'Madya',
+  'Semenjana',
+  'Marginal',
+  'Terbatas'
+];
 
-    // Loop setiap div container
-    chartContainers.forEach(container => {
+const warnaBaku = [
+  '#1F77B4', '#FF7F0E', '#2CA02C', '#D62728', 
+  '#9467BD', '#8C564B', '#E377C2'
+];
 
-      // Ambil ID dan data dari data-attribute
-      const chartId = container.dataset.chartId;
-      const chartData = JSON.parse(container.dataset.chartData);
-      const chartTitle = container.dataset.title; // 🟢 Ambil title dari data-title
+const chartContainers = document.querySelectorAll('.chart-container');
 
-      // Urutkan data berdasarkan predikat
-      chartData.sort((a, b) => a.predikat.localeCompare(b.predikat));
+// Loop setiap div container
+chartContainers.forEach(container => {
 
-      const categories = chartData.map(item => item.predikat);
-      const seriesData = chartData.map(item => item.total);
+  // Ambil ID dan data dari data-attribute
+  const chartId = container.dataset.chartId;
+  const chartData = JSON.parse(container.dataset.chartData);
+  const chartTitle = container.dataset.title;
 
-      // --- Konfigurasi ApexCharts ---
-      var options = {
-        chart: {
-          type: 'bar',
-          height: '300px',
-          toolbar: {
-            show: true
-          }
-        },
-        title: {
-          text: chartTitle, // 🟢 Gunakan title dari dataset
-          align: 'center',
-          style: {
-            fontSize: '16px',
-            fontWeight: 'bold',
-            color: '#000'
-          }
-        },
-        series: [{
-          name: 'Jumlah Peuji',
-          data: seriesData
-        }],
-        xaxis: {
-          categories: categories,
-          title: {
-            style: {
-              fontSize: '14px',
-              fontWeight: 'bold',
-              color: '#1F2859'
-            }
-          }
-        },
-        yaxis: {
-          title: {
-            text: 'Skor',
-            style: {
-              fontSize: '14px',
-              fontWeight: 'bold',
-              color: '#1F2859'
-            }
-          },
-          labels: {
-            style: {
-              colors: '#374151'
-            }
-          }
-        },
-        plotOptions: {
-          bar: {
-            distributed: true,
-          }
-        },
-        colors: [
-          '#1F77B4', // biru klasik
-          '#FF7F0E', // oranye terang
-          '#2CA02C', // hijau cerah
-          '#D62728', // merah tua
-          '#9467BD', // ungu lembut
-          '#8C564B', // cokelat muda
-          '#E377C2', // pink lembut
-          '#7F7F7F', // abu-abu netral
-          '#BCBD22', // kuning zaitun
-          '#17BECF', // biru toska
+  // 2. Petakan data berdasarkan urutan baku (isi 0 jika data tidak ditemukan)
+  const seriesData = urutanBakuPredikat.map(predikat => {
+    const found = chartData.find(item => item.predikat === predikat);
+    return found ? found.total : 0;
+  });
 
-          '#FF6F61', // coral
-          '#6B5B95', // ungu royal
-          '#88B04B', // hijau zaitun
-          '#F7CAC9', // pink pastel
-          '#92A8D1', // biru pastel
-          '#955251', // maroon muda
-          '#B565A7', // ungu muda
-          '#009B77', // hijau zamrud
-          '#DD4124', // merah oranye
-          '#45B8AC', // turquoise
-
-          '#EFC050', // emas terang
-          '#5B5EA6', // biru keunguan
-          '#9B2335', // merah anggur
-          '#DFCFBE', // krem muda
-          '#55B4B0', // hijau kebiruan
-          '#E15D44', // merah bata
-          '#7FCDCD', // cyan lembut
-          '#BC243C', // merah crimson
-          '#C3447A', // magenta
-          '#98B4D4'  // biru muda
-        ],
-        legend: {
-          show: false // 🔹 Sembunyikan legend warna
-        },
-        grid: {
-          borderColor: '#e5e7eb',
-          strokeDashArray: 4
-        },
-        dataLabels: {
-          enabled: true,
-          style: {
-            colors: ['#000']
-          }
+  // --- Konfigurasi ApexCharts ---
+  var options = {
+    chart: {
+      type: 'bar',
+      height: '300px',
+      toolbar: {
+        show: true
+      }
+    },
+    title: {
+      text: chartTitle,
+      align: 'center',
+      style: {
+        fontSize: '16px',
+        fontWeight: 'bold',
+        color: '#000'
+      }
+    },
+    series: [{
+      name: 'Jumlah Peuji',
+      data: seriesData // 🔹 Gunakan data yang sudah dipetakan
+    }],
+    xaxis: {
+      categories: urutanBakuPredikat, // 🔹 Gunakan urutan statis
+      title: {
+        style: {
+          fontSize: '14px',
+          fontWeight: 'bold',
+          color: '#1F2859'
         }
-      };
+      }
+    },
+    yaxis: {
+      title: {
+        text: 'Peuji', // 🔹 Diubah dari 'Skor' menjadi 'Peuji'
+        style: {
+          fontSize: '14px',
+          fontWeight: 'bold',
+          color: '#1F2859'
+        }
+      },
+      labels: {
+        style: {
+          colors: '#374151'
+        }
+      }
+    },
+    plotOptions: {
+      bar: {
+        distributed: true,
+      }
+    },
+    colors: warnaBaku, // 🔹 Gunakan warna baku yang sudah dirampingkan
+    legend: {
+      show: false
+    },
+    grid: {
+      borderColor: '#e5e7eb',
+      strokeDashArray: 4
+    },
+    dataLabels: {
+      enabled: true,
+      style: {
+        colors: ['#000']
+      }
+    }
+  };
 
-      // --- Render Chart ---
-      var chart = new ApexCharts(document.querySelector("#" + chartId), options);
-      chart.render();
-      allCharts.push(chart);
-    });
+  // --- Render Chart ---
+  var chart = new ApexCharts(document.querySelector("#" + chartId), options);
+  chart.render();
+  allCharts.push(chart);
+});
 
 
   </script>

@@ -135,7 +135,7 @@
         }
       },
       title: {
-        text: 'Jumlah Peuji berdasarkan Predikat per Tahun', // 🟢 Judul chart
+        text: 'Jumlah Peuji berdasarkan Wilayah per Tahun', // 🟢 Judul chart
         align: 'center', // bisa 'center', 'center', atau 'right'
         style: {
           fontSize: '16px',

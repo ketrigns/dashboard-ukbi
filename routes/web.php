@@ -27,10 +27,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/data-mining', [HasilDataMiningUserController::class, 'index'])->name('data-mining');
 
 Route::get('/', [DashboardUserController::class, 'index'])->name('home');
+Route::get('/dashboard/export-excel', [DashboardUserController::class, 'exportExcel'])->name('dashboard.export_excel');
 
 Route::get('/kategori', [KategoriUserController::class, 'index']);
+Route::get('/kategori/export', [KategoriUserController::class, 'exportExcel'])->name('kategori.export');
 
 Route::get('/predikat', [PredikatUserController::class, 'index']);
+Route::get('/predikat/export', [PredikatUserController::class, 'exportExcel'])->name('predikat.export');
 
 Route::get('/wilayah', [WilayahUserController::class, 'index']);
 

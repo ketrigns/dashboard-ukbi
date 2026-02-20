@@ -62,9 +62,11 @@
     <div id="chartWilayah" class="chartWilayah"></div>
   </div>
 
-  <button onclick="printChart()" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-    Print Halaman
-  </button>
+  <div class="mt-5">
+    <a href="{{ route('dashboard.export_excel') }}" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+      Unduh Data
+    </a>
+  </div>
 
 
 
