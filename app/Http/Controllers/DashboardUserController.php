@@ -90,29 +90,37 @@ class DashboardUserController extends Controller
         $total = DataUkbi::count();
         $umum = $total - ($pelajar + $mahasiswa);
 
+        // 🔹 URUTAN BAKU (Pastikan 'Tidak Berpredikat' masuk)
+        $urutanBakuPredikat = [
+            'Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 
+            'Semenjana', 'Marginal', 'Terbatas', 'Tidak Berpredikat'
+        ];
+
+        // Ambil Data Predikat
         $rawPredikat = DataUkbi::select('predikat', DB::raw('COUNT(*) as total'))
             ->groupBy('predikat')
             ->pluck('total', 'predikat');
         
-        $urutanPredikat = [
-            'Istimewa'      => 1,
-            'Sangat Unggul' => 2,
-            'Unggul'        => 3,
-            'Madya'         => 4,
-            'Semenjana'     => 5,
-            'Marginal'      => 6,
-            'Terbatas'      => 7
-        ];
-
-        $predikatCounts = $rawPredikat->sortBy(function ($value, $key) use ($urutanPredikat) {
-            return $urutanPredikat[$key] ?? 99; // Jika ada predikat di luar list, taruh di paling bawah
-        });
-
+        // Ambil Data Kategori
         $kategoriCounts = DataUkbi::select('terdaftar_sbg', DB::raw('COUNT(*) as total'))
             ->groupBy('terdaftar_sbg')->pluck('total', 'terdaftar_sbg');
 
+        // Ambil Data Wilayah
         $wilayahCounts = DataUkbi::select('kota', DB::raw('COUNT(*) as total'))
+            ->whereNotNull('kota')
             ->groupBy('kota')->pluck('total', 'kota');
+
+        // 🔹 AMBIL DATA BARU: Predikat per Wilayah
+        $predikatPerWilayah = DataUkbi::select('kota', 'predikat', DB::raw('COUNT(*) as total'))
+            ->whereNotNull('kota')
+            ->groupBy('kota', 'predikat')
+            ->get();
+
+        // Buat format Pivot [Kota][Predikat] = Jumlah
+        $pivotWilayahPredikat = [];
+        foreach ($predikatPerWilayah as $item) {
+            $pivotWilayahPredikat[$item->kota][$item->predikat] = $item->total;
+        }
 
 
         // --- 2. MULAI MEMBUAT EXCEL ---
@@ -121,51 +129,41 @@ class DashboardUserController extends Controller
 
         // -- BAGIAN A: JUDUL & RINGKASAN (SUMMARY) --
         $sheet->setCellValue('A1', 'LAPORAN REKAPITULASI DATA UKBI');
-        $sheet->mergeCells('A1:C1'); // Gabungkan sel judul
+        $sheet->mergeCells('A1:C1'); 
         $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
 
-        // Header Ringkasan
         $sheet->setCellValue('A3', 'RINGKASAN TOTAL PEUJI');
         $sheet->getStyle('A3')->getFont()->setBold(true);
 
         $sheet->setCellValue('A4', 'Jumlah Peuji Pelajar');
         $sheet->setCellValue('B4', $pelajar);
-
         $sheet->setCellValue('A5', 'Jumlah Peuji Mahasiswa');
         $sheet->setCellValue('B5', $mahasiswa);
-
         $sheet->setCellValue('A6', 'Jumlah Peuji Umum');
         $sheet->setCellValue('B6', $umum);
-
         $sheet->setCellValue('A7', 'JUMLAH PEUJI');
         $sheet->setCellValue('B7', $total);
-        $sheet->getStyle('A7:B7')->getFont()->setBold(true); // Bold total
+        $sheet->getStyle('A7:B7')->getFont()->setBold(true); 
 
-
-        // -- VARIABEL UNTUK MENGATUR POSISI BARIS --
-        // Kita mulai tabel berikutnya di baris ke-10
         $currentRow = 10; 
-
 
         // -- BAGIAN B: TABEL BERDASARKAN PREDIKAT --
         $sheet->setCellValue('A' . $currentRow, 'JUMLAH PEUJI BERDASARKAN PREDIKAT');
         $sheet->getStyle('A' . $currentRow)->getFont()->setBold(true);
-        $currentRow++; // Pindah ke baris header tabel
+        $currentRow++; 
 
-        // Header Tabel
         $sheet->setCellValue('A' . $currentRow, 'Predikat');
         $sheet->setCellValue('B' . $currentRow, 'Jumlah');
         $sheet->getStyle("A$currentRow:B$currentRow")->getFont()->setBold(true);
         $currentRow++;
 
-        // Isi Data Predikat
-        foreach ($predikatCounts as $predikat => $jumlah) {
+        // 🔹 Looping menggunakan array baku agar urut dan 0 jika kosong
+        foreach ($urutanBakuPredikat as $predikat) {
             $sheet->setCellValue('A' . $currentRow, $predikat);
-            $sheet->setCellValue('B' . $currentRow, $jumlah);
+            $sheet->setCellValue('B' . $currentRow, $rawPredikat[$predikat] ?? 0);
             $currentRow++;
         }
 
-        // Beri jarak 2 baris kosong sebelum tabel berikutnya
         $currentRow += 2;
 
 
@@ -185,7 +183,7 @@ class DashboardUserController extends Controller
             $currentRow++;
         }
 
-        $currentRow += 2; // Jarak lagi
+        $currentRow += 2;
 
 
         // -- BAGIAN D: TABEL BERDASARKAN WILAYAH --
@@ -198,14 +196,50 @@ class DashboardUserController extends Controller
         $sheet->getStyle("A$currentRow:B$currentRow")->getFont()->setBold(true);
         $currentRow++;
 
-        foreach ($wilayahCounts as $kota => $jumlah) {
+        // Urutkan nama kota secara alfabetis agar rapi
+        $kotas = $wilayahCounts->keys()->sort();
+
+        foreach ($kotas as $kota) {
             $sheet->setCellValue('A' . $currentRow, $kota);
-            $sheet->setCellValue('B' . $currentRow, $jumlah);
+            $sheet->setCellValue('B' . $currentRow, $wilayahCounts[$kota]);
             $currentRow++;
         }
 
-        // -- AUTOSIZE KOLOM AGAR RAPI --
-        foreach (range('A', 'C') as $columnID) {
+        $currentRow += 2;
+
+
+        // -- 🔹 BAGIAN E (BARU): TABEL PREDIKAT PER WILAYAH --
+        $sheet->setCellValue('A' . $currentRow, 'SEBARAN PREDIKAT PER WILAYAH');
+        $sheet->getStyle('A' . $currentRow)->getFont()->setBold(true);
+        $currentRow++;
+
+        // Header Kolom Predikat
+        $sheet->setCellValue('A' . $currentRow, 'Kota / Kabupaten');
+        $colLetter = 'B';
+        foreach ($urutanBakuPredikat as $predikat) {
+            $sheet->setCellValue($colLetter . $currentRow, $predikat);
+            $sheet->getStyle($colLetter . $currentRow)->getFont()->setBold(true);
+            $colLetter++;
+        }
+        $sheet->getStyle('A' . $currentRow)->getFont()->setBold(true);
+        $currentRow++;
+
+        // Isi Data Matriks Wilayah vs Predikat
+        foreach ($kotas as $kota) {
+            $sheet->setCellValue('A' . $currentRow, $kota);
+            $colLetter = 'B';
+            foreach ($urutanBakuPredikat as $predikat) {
+                // Ambil datanya dari array Pivot. Jika tidak ada, isi 0.
+                $sheet->setCellValue($colLetter . $currentRow, $pivotWilayahPredikat[$kota][$predikat] ?? 0);
+                $colLetter++;
+            }
+            $currentRow++;
+        }
+
+
+        // -- AUTOSIZE SEMUA KOLOM AGAR RAPI --
+        $maxCol = $sheet->getHighestDataColumn();
+        foreach (range('A', $maxCol) as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 

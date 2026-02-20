@@ -157,7 +157,7 @@ class PredikatUserController extends Controller
 
 
         // --- 2. PERSIAPAN DATA PIVOT & SORTING ---
-        $urutanPredikat = ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal', 'Terbatas'];
+        $urutanPredikat = ['Istimewa', 'Sangat Unggul', 'Unggul', 'Madya', 'Semenjana', 'Marginal', 'Terbatas', 'Tidak Berpredikat'];
         
         // Pivot Tahun
         $years = $predikatPerTahun->pluck('tahun')->unique()->sort()->values()->toArray();
@@ -186,7 +186,7 @@ class PredikatUserController extends Controller
 
         // ================= TABEL 1 =================
         $currentRow = 4;
-        $sheet->setCellValue('A' . $currentRow, 'TABEL 1: RINGKASAN TOTAL & RATA-RATA SKOR');
+        $sheet->setCellValue('A' . $currentRow, 'RINGKASAN TOTAL & RATA-RATA SKOR');
         $sheet->getStyle('A' . $currentRow)->getFont()->setBold(true);
         $currentRow++;
         $sheet->setCellValue('A' . $currentRow, 'Predikat');
@@ -205,7 +205,7 @@ class PredikatUserController extends Controller
 
         // ================= TABEL 2 =================
         $currentRow += 2;
-        $sheet->setCellValue('A' . $currentRow, 'TABEL 2: JUMLAH PREDIKAT PER TAHUN');
+        $sheet->setCellValue('A' . $currentRow, 'JUMLAH PREDIKAT PER TAHUN');
         $sheet->getStyle('A' . $currentRow)->getFont()->setBold(true);
         $currentRow++;
         
@@ -232,7 +232,7 @@ class PredikatUserController extends Controller
 
         // ================= TABEL 3 =================
         $currentRow += 2;
-        $sheet->setCellValue('A' . $currentRow, 'TABEL 3: JUMLAH PREDIKAT BERDASARKAN KATEGORI UTAMA');
+        $sheet->setCellValue('A' . $currentRow, 'JUMLAH PREDIKAT BERDASARKAN KATEGORI UTAMA');
         $sheet->getStyle('A' . $currentRow)->getFont()->setBold(true);
         $currentRow++;
         
@@ -254,7 +254,7 @@ class PredikatUserController extends Controller
 
         // ================= TABEL 4 =================
         $currentRow += 2;
-        $sheet->setCellValue('A' . $currentRow, 'TABEL 4: DETAIL PREDIKAT KATEGORI PELAJAR');
+        $sheet->setCellValue('A' . $currentRow, 'DETAIL PREDIKAT KATEGORI PELAJAR');
         $sheet->getStyle('A' . $currentRow)->getFont()->setBold(true);
         $currentRow++;
         
@@ -285,7 +285,7 @@ class PredikatUserController extends Controller
         }
 
         // --- 4. OUTPUT ---
-        $fileName = 'Laporan_Predikat_UKBI_' . date('Ymd_His') . '.xlsx';
+        $fileName = 'Data_Predikat.xlsx';
         $writer = new Xlsx($spreadsheet);
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment; filename="' . urlencode($fileName) . '"');

@@ -80,6 +80,18 @@
       attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
+    // 1. Definisikan urutan baku predikat (termasuk 'Tidak Berpredikat')
+    const urutanBakuPredikat = [
+        'Istimewa',
+        'Sangat Unggul',
+        'Unggul',
+        'Madya',
+        'Semenjana',
+        'Marginal',
+        'Terbatas',
+        'Tidak Berpredikat'
+    ];
+
     // Data dari PHP → JS
     const locations = @json($locations);
 
@@ -88,22 +100,26 @@
         const parts = item.titik_koordinat_peta.split(',').map(Number);
 
         if (parts.length === 2) {
-          // Format data predikat per kota
+          // Format data predikat per kota sesuai urutan baku
           let predikatList = '';
+          
           if (item.predikat_detail) {
-            Object.entries(item.predikat_detail).forEach(([key, val]) => {
-              predikatList += `${key}: ${val}<br>`;
+            // 2. Looping menggunakan array baku, BUKAN dari object item.predikat_detail
+            urutanBakuPredikat.forEach(predikat => {
+              // Ambil nilai predikat jika ada, jika tidak ada set menjadi 0
+              const val = item.predikat_detail[predikat] || 0;
+              predikatList += `${predikat}: ${val}<br>`;
             });
           }
 
           L.marker(parts)
             .addTo(map)
             .bindPopup(`
-                      <b>${item.kota}</b><br>
-                      Jumlah Peserta: ${item.total_peserta}<br><br>
-                      <b>Predikat:</b><br>
-                      ${predikatList}
-                    `);
+                  <b>${item.kota}</b><br>
+                  Jumlah Peserta: ${item.total_peserta}<br><br>
+                  <b>Predikat:</b><br>
+                  ${predikatList}
+            `);
         }
       }
     });
@@ -316,63 +332,6 @@
       optionsWilayah
     );
     chartWilayah.render();
-
-    function printChart() {
-      const navMenu = document.getElementById('nav-menu');
-      const menuToggle = document.getElementById('menu-toggle');
-      const loader = document.getElementById('print-loader');
-
-      // Simpan inline-style asli
-      const originalStyle = navMenu.getAttribute('style') || '';
-      const originalToggleStyle = menuToggle.getAttribute('style') || '';
-      menuToggle.style.display = "none";
-
-      // Inject style print mode
-      navMenu.style.display = "flex";
-      navMenu.style.flexDirection = "row";
-      navMenu.style.maxHeight = "none";
-      navMenu.style.opacity = "1";
-
-      const originalWidth = document.getElementById('chartWilayah').style.width || '100%';
-      chartWilayah.updateOptions({
-        chart: { width: 900 }
-      });
-
-      const oriWidthPredikat = document.getElementById('chart').style.width || '100%';
-      chart.updateOptions({
-        chart: { width : 530 }
-      });
-
-      const oriWidthKategori = document.getElementById('chartKategori').style.width || '100%';
-      chartKategori.updateOptions({
-        chart: { width : 460 }
-      });
-
-      loader.classList.remove("hidden");
-
-      setTimeout(() => {
-        loader.classList.add("hidden");
-        window.print();
-      }, 1000);
-
-      window.addEventListener('afterprint', () => {
-        // Kembalikan style asli
-        navMenu.setAttribute('style', originalStyle);
-        menuToggle.setAttribute('style', originalToggleStyle);
-
-        chart.updateOptions({
-          chart: { width: originalWidth }
-        });
-
-        chartWilayah.updateOptions({
-          chart: { width: originalWidth }
-        });
-
-        chartKategori.updateOptions({
-          chart: { width: originalWidth }
-        });
-      }, { once: true });
-    }
 
   </script>
 @endsection

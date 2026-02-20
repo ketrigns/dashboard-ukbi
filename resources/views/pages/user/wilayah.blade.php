@@ -13,58 +13,13 @@
     <div id="map" class="rounded" style="height: 400px; overflow: hidden;"></div>
   </div>
 
-  <button onclick="printChart()" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-    Print Halaman
-  </button>
+  <div class="block">
+    <a href="{{ route('user.wilayah.export') }}" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+      Unduh Data
+    </a>
+  </div>
 
   <script>
-    function printChart() {
-      const navMenu = document.getElementById('nav-menu');
-      const menuToggle = document.getElementById('menu-toggle');
-      const loader = document.getElementById('print-loader');
-
-      // Simpan inline-style asli
-      const originalStyle = navMenu.getAttribute('style') || '';
-      const originalToggleStyle = menuToggle.getAttribute('style') || '';
-      menuToggle.style.display = "none";
-
-      // Inject style print mode
-      navMenu.style.display = "flex";
-      navMenu.style.flexDirection = "row";
-      navMenu.style.maxHeight = "none";
-      navMenu.style.opacity = "1";
-
-      chartWilayahPerTahun.updateOptions({
-        chart: { width: 900 }
-      });
-
-      chartPeujiWilayah.updateOptions({
-        chart: { width: 900 }
-      });
-
-      loader.classList.remove("hidden");
-
-      setTimeout(() => {
-        loader.classList.add("hidden");
-        window.print();
-      }, 2000);
-
-      window.addEventListener('afterprint', () => {
-        // Kembalikan style asli
-        navMenu.setAttribute('style', originalStyle);
-        menuToggle.setAttribute('style', originalToggleStyle);
-
-        chartWilayahPerTahun.updateOptions({
-          chart: { width: '100%' }
-        });
-
-        chartPeujiWilayah.updateOptions({
-          chart: { width: '100%' }
-        });
-
-      }, { once: true });
-    }
-
     // Inisialisasi peta di pusat Provinsi Jambi
     const map = L.map('map').setView([-1.6116, 103.6157], 8);
 
@@ -74,6 +29,18 @@
       attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
+    // 1. Definisikan urutan baku predikat
+    const urutanBakuPredikat = [
+        'Istimewa',
+        'Sangat Unggul',
+        'Unggul',
+        'Madya',
+        'Semenjana',
+        'Marginal',
+        'Terbatas',
+        'Tidak Berpredikat'
+    ];
+
     // Data dari PHP → JS
     const locations = @json($locations);
 
@@ -82,11 +49,17 @@
         const parts = item.titik_koordinat_peta.split(',').map(Number);
 
         if (parts.length === 2) {
-          // Format data predikat per kota
+          // Format data predikat per kota berdasarkan urutan baku
           let predikatList = '';
+          
           if (item.predikat_detail) {
-            Object.entries(item.predikat_detail).forEach(([key, val]) => {
-              predikatList += `${key}: ${val}<br>`;
+            // 2. Looping berdasarkan array baku, BUKAN dari object item.predikat_detail
+            urutanBakuPredikat.forEach(predikat => {
+              // Cari nilai di dalam object. Jika undefined/tidak ada, set jadi 0
+              const val = item.predikat_detail[predikat] || 0;
+              
+              // Tambahkan ke string list
+              predikatList += `${predikat}: ${val}<br>`;
             });
           }
 

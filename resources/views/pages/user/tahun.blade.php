@@ -122,76 +122,42 @@
     <div id="chartWilayah"></div>
   </div>
 
-  <button onclick="printChart()" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-    Print Halaman
-  </button>
+  <form action="{{ route('user.tahun.export') }}">
+    <input type="hidden" name="tanggal_mulai" value="{{ $startDate }}">
+    <input type="hidden" name="tanggal_selesai" value="{{ $endDate }}">
+    <button type="submit" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded inline-block">
+      Unduh Data
+    </button>
+  </form>
 
   <script>
-    function printChart() {
-      const navMenu = document.getElementById('nav-menu');
-      const menuToggle = document.getElementById('menu-toggle');
-      const loader = document.getElementById('print-loader');
+    // 1. Definisikan urutan baku dan warnanya di awal agar bisa dipakai di Peta & Chart
+    const urutanBakuPredikat = [
+        'Istimewa',
+        'Sangat Unggul',
+        'Unggul',
+        'Madya',
+        'Semenjana',
+        'Marginal',
+        'Terbatas',
+        'Tidak Berpredikat' // 🔹 Tambahan
+    ];
 
-      // Simpan inline-style asli
-      const originalStyle = navMenu.getAttribute('style') || '';
-      const originalToggleStyle = menuToggle.getAttribute('style') || '';
-      menuToggle.style.display = "none";
+    const warnaBaku = [
+        '#1F77B4', '#FF7F0E', '#2CA02C', '#D62728', 
+        '#9467BD', '#8C564B', '#E377C2', '#7F7F7F'
+    ];
 
-      // Inject style print mode
-      navMenu.style.display = "flex";
-      navMenu.style.flexDirection = "row";
-      navMenu.style.maxHeight = "none";
-      navMenu.style.opacity = "1";
-
-      chart.updateOptions({
-        chart: { width: 400 }
-      });
-
-      chartKategori.updateOptions({
-        chart: { width: 450 }
-      });
-
-      chartWilayah.updateOptions({
-        chart: { width: 900 }
-      });
-
-      loader.classList.remove("hidden");
-
-      setTimeout(() => {
-        loader.classList.add("hidden");
-        window.print();
-      }, 3000);
-
-      window.addEventListener('afterprint', () => {
-        // Kembalikan style asli
-        navMenu.setAttribute('style', originalStyle);
-        menuToggle.setAttribute('style', originalToggleStyle);
-
-        chart.updateOptions({
-          chart: { width: '100%' }
-        });
-
-        chartKategori.updateOptions({
-          chart: { width: '100%' }
-        });
-
-        chartWilayah.updateOptions({
-          chart: { width: '100%' }
-        });
-
-      }, { once: true });
-    }
-
-    // Inisialisasi peta di pusat Provinsi Jambi
+    // ==========================================
+    // BAGIAN PETA (LEAFLET)
+    // ==========================================
     const map = L.map('map').setView([-1.6116, 103.6157], 8);
 
-    // Tambahkan layer peta dari OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
 
-    // Daftar lokasi di Provinsi Jambi
     const locations = @json($locations);
 
     locations.forEach(item => {
@@ -199,11 +165,12 @@
         const parts = item.titik_koordinat_peta.split(',').map(Number);
 
         if (parts.length === 2) {
-          // Format data predikat per kota
+          // 🔹 Looping berdasarkan urutan baku, bukan object bawaan
           let predikatList = '';
           if (item.predikat_detail) {
-            Object.entries(item.predikat_detail).forEach(([key, val]) => {
-              predikatList += `${key}: ${val}<br>`;
+            urutanBakuPredikat.forEach(predikat => {
+                const val = item.predikat_detail[predikat] || 0;
+                predikatList += `${predikat}: ${val}<br>`;
             });
           }
 
@@ -219,17 +186,29 @@
       }
     });
 
+    // ==========================================
+    // BAGIAN CHART (APEXCHARTS)
+    // ==========================================
+    // Ambil data mentah dari PHP
+    const rawJmlPeuji = @json($jmlPeujiPredikat);
+
+    // 🔹 Petakan data sesuai urutan baku (isi 0 jika kosong)
+    const dataJmlPeuji = urutanBakuPredikat.map(predikat => {
+        const found = rawJmlPeuji.find(item => item.predikat === predikat);
+        return found ? found.total : 0;
+    });
+
     var options = {
       chart: {
         type: 'bar',
         height: '300px',
         toolbar: {
-          show: true // 🔹 Hilangkan tombol download / export
+          show: true
         }
       },
       title: {
-        text: 'Jumlah Peuji berdasarkan Predikat', // 🟢 Judul chart
-        align: 'center', // bisa 'left', 'center', atau 'right'
+        text: 'Jumlah Peuji berdasarkan Predikat',
+        align: 'center',
         style: {
           fontSize: '16px',
           fontWeight: 'bold',
@@ -238,52 +217,19 @@
       },
       series: [{
         name: 'Jumlah Peuji',
-        data: @json($jmlPeujiPredikat->pluck('total'))
+        data: dataJmlPeuji // 🔹 Gunakan data yang sudah urut
       }],
       xaxis: {
-        categories: @json($jmlPeujiPredikat->pluck('predikat'))
+        categories: urutanBakuPredikat // 🔹 Gunakan kategori yang sudah urut
       },
       plotOptions: {
         bar: {
           distributed: true,
         }
       },
-      colors: [
-        '#1F77B4', // biru klasik
-        '#FF7F0E', // oranye terang
-        '#2CA02C', // hijau cerah
-        '#D62728', // merah tua
-        '#9467BD', // ungu lembut
-        '#8C564B', // cokelat muda
-        '#E377C2', // pink lembut
-        '#7F7F7F', // abu-abu netral
-        '#BCBD22', // kuning zaitun
-        '#17BECF', // biru toska
-
-        '#FF6F61', // coral
-        '#6B5B95', // ungu royal
-        '#88B04B', // hijau zaitun
-        '#F7CAC9', // pink pastel
-        '#92A8D1', // biru pastel
-        '#955251', // maroon muda
-        '#B565A7', // ungu muda
-        '#009B77', // hijau zamrud
-        '#DD4124', // merah oranye
-        '#45B8AC', // turquoise
-
-        '#EFC050', // emas terang
-        '#5B5EA6', // biru keunguan
-        '#9B2335', // merah anggur
-        '#DFCFBE', // krem muda
-        '#55B4B0', // hijau kebiruan
-        '#E15D44', // merah bata
-        '#7FCDCD', // cyan lembut
-        '#BC243C', // merah crimson
-        '#C3447A', // magenta
-        '#98B4D4'  // biru muda
-      ],
+      colors: warnaBaku, // 🔹 Gunakan 8 warna yang sudah dirampingkan
       legend: {
-        show: false // 🔹 Sembunyikan legend warna
+        show: false 
       },
       dataLabels: {
         enabled: true,

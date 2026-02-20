@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/data-mining', [HasilDataMiningUserController::class, 'index'])->name('data-mining');
+Route::get('/laporan/data-mining/export', [HasilDataMiningUserController::class, 'exportExcel'])->name('user.mining.export');
 
 Route::get('/', [DashboardUserController::class, 'index'])->name('home');
 Route::get('/dashboard/export-excel', [DashboardUserController::class, 'exportExcel'])->name('dashboard.export_excel');
@@ -36,8 +37,10 @@ Route::get('/predikat', [PredikatUserController::class, 'index']);
 Route::get('/predikat/export', [PredikatUserController::class, 'exportExcel'])->name('predikat.export');
 
 Route::get('/wilayah', [WilayahUserController::class, 'index']);
+Route::get('/laporan/wilayah/export', [WilayahUserController::class, 'exportExcel'])->name('user.wilayah.export');
 
 Route::get('/tahun', [TahunUserController::class, 'index']);
+Route::get('/laporan/tahun/export', [TahunUserController::class, 'exportExcel'])->name('user.tahun.export');
 
 Route::get('/login', [LoginController::class, 'create'])->name('login')->middleware('guest');
 

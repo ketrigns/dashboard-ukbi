@@ -66,9 +66,9 @@
       </div>
     </div>
   </div>
-  <button onclick="printChart()" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
-    Print Halaman
-  </button>
+  <a href="{{ route('user.mining.export') }}" class="cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded">
+    Unduh Data
+  </a>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
