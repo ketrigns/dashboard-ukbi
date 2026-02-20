@@ -2,515 +2,304 @@
 
 @section('content')
     <div class="flex items-center md:justify-between flex-wrap gap-2 mb-5">
-        <h4 class="text-default-900 text-lg font-semibold">Data UKBI</h4>
+        <h4 class="text-default-900 text-lg font-semibold">Dashboard UKBI</h4>
+    </div>
+    <div class="grid grid-cols-1! md:grid-cols-4! gap-4 my-4 print-grid-4">
+        <div class="bg-white p-4 rounded">
+        <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji</h1>
+        <p class="text-[32px] font-regular leading-tight">{{ number_format($total, 0, ',', '.') }}</p>
+        </div>
+        <div class="bg-white p-4 rounded">
+        <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Pelajar</h1>
+        <p class="text-[32px] font-regular leading-tight">{{ number_format($pelajar, 0, ',', '.') }}</p>
+        </div>
+        <div class="bg-white p-4 rounded">
+        <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Mahasiswa</h1>
+        <p class="text-[32px] font-regular leading-tight">{{ number_format($mahasiswa, 0, ',', '.') }}</p>
+        </div>
+        <div class="bg-white p-4 rounded">
+        <h1 class="text-[16px] font-medium leading-tight">Jumlah Peuji Umum</h1>
+        <p class="text-[32px] font-regular leading-tight">{{ number_format($umum, 0, ',', '.') }}</p>
+        </div>
+    </div>    
+    <div id="map" class="rounded" style="height: 400px; overflow: hidden; z-index:0;"></div>
+    <div class="grid sm:grid-cols-2! grid-cols-1! gap-4 my-4">
+        <div class="bg-white p-4 rounded">
+            <div id="chart"></div>
+        </div>
+        <div class="bg-white p-4 rounded">
+            <div id="chartKategori"></div>
+        </div>
+    </div>
+    <div class="bg-white p-4 rounded">
+        <div id="chartWilayah" class="chartWilayah"></div>
     </div>
 
-    <!-- Toast Container -->
-    <div id="toast-container" class="fixed top-5 right-5 z-50 space-y-2">
-        @if (session('success'))
-            <div id="toast-success"
-                class="flex items-center w-72 p-4 text-sm text-green-700 bg-green-100 border border-green-400 rounded-lg shadow-lg animate-fade-in">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-green-600" viewBox="0 0 20 20"
-                    fill="currentColor">
-                    <path fill-rule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414L8.414 15l-4.121-4.121a1 1 0 111.414-1.414L8.414 12.172l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd" />
-                </svg>
-                <span>{{ session('success') }}</span>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div id="toast-error"
-                class="flex items-center w-72 p-4 text-sm text-red-700 bg-red-100 border border-red-400 rounded-lg shadow-lg animate-fade-in">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2 text-red-600" viewBox="0 0 20 20"
-                    fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-4h2v2H9v-2zm0-8h2v6H9V6z"
-                        clip-rule="evenodd" />
-                </svg>
-                <span>{{ session('error') }}</span>
-            </div>
-        @endif
-
-        @if (session('import_errors'))
-            <div id="toast-import"
-                class="w-80 p-4 text-sm text-red-700 bg-red-100 border border-red-400 rounded-lg shadow-lg animate-fade-in">
-                <p class="font-semibold mb-2">Ditemukan beberapa error pada file Anda:</p>
-                <ul class="list-disc list-inside text-xs space-y-1">
-                    @foreach (session('import_errors') as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-    </div>
-
-    <!-- Animasi Fade Out -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toasts = document.querySelectorAll('#toast-container > div');
-            toasts.forEach(toast => {
-                setTimeout(() => {
-                    toast.classList.add('opacity-0', 'translate-x-5');
-                    setTimeout(() => toast.remove(), 700);
-                }, 3000); // tampil 3 detik
+    // Inisialisasi peta di pusat Provinsi Jambi
+    const map = L.map('map').setView([-1.6116, 103.6157], 8);
+
+    // Tambahkan layer peta
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    // 1. Definisikan urutan baku predikat (termasuk 'Tidak Berpredikat')
+    const urutanBakuPredikat = [
+        'Istimewa',
+        'Sangat Unggul',
+        'Unggul',
+        'Madya',
+        'Semenjana',
+        'Marginal',
+        'Terbatas',
+        'Tidak Berpredikat'
+    ];
+
+    // Data dari PHP → JS
+    const locations = @json($locations);
+
+    locations.forEach(item => {
+      if (item.titik_koordinat_peta) {
+        const parts = item.titik_koordinat_peta.split(',').map(Number);
+
+        if (parts.length === 2) {
+          // Format data predikat per kota sesuai urutan baku
+          let predikatList = '';
+          
+          if (item.predikat_detail) {
+            // 2. Looping menggunakan array baku, BUKAN dari object item.predikat_detail
+            urutanBakuPredikat.forEach(predikat => {
+              // Ambil nilai predikat jika ada, jika tidak ada set menjadi 0
+              const val = item.predikat_detail[predikat] || 0;
+              predikatList += `${predikat}: ${val}<br>`;
             });
-        });
-    </script>
+          }
 
-    <!-- Tambahkan animasi sederhana Tailwind -->
-    <style>
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateX(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+          L.marker(parts)
+            .addTo(map)
+            .bindPopup(`
+                  <b>${item.kota}</b><br>
+                  Jumlah Peserta: ${item.total_peserta}<br><br>
+                  <b>Predikat:</b><br>
+                  ${predikatList}
+            `);
         }
+      }
+    });
 
-        .animate-fade-in {
-            animation: fadeIn 0.4s ease-out;
+
+    const predikatData = @json($predikatCounts);
+    const predikatCategories = Object.keys(predikatData);
+    const predikatValues = Object.values(predikatData);
+
+    var options = {
+      chart: {
+        type: 'bar',
+      },
+      title: {
+        text: 'Jumlah Peuji Berdasarkan Predikat',
+        align: 'center',
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
         }
-
-        .transition-opacity {
-            transition: opacity 0.7s, transform 0.7s;
+      },
+      plotOptions: {
+        bar: {
+          distributed: true,
         }
-    </style>
+      },
+      dataLabels: {
+        enabled: true,
+        style: {
+          fontSize: '12px',
+          colors: ['#000']
+        },
+      },
+      series: [{
+        name: 'Jumlah Peuji',
+        data: predikatValues
+      }],
+      xaxis: {
+        categories: predikatCategories
+      },
+      colors: ['#8CE4FF', '#FEEE91', '#B7A3E3', '#ECEE81', '#B7E0FF', '#FC4100', '#A1EEBD', '#5272F2'],
+      legend: {
+        show: false // 🔹 Sembunyikan legend warna
+      },
 
+    };
 
-    <div class="mt-8">
-        {{-- Tombol Tambah Data (opsional) --}}
-        <div class="flex justify-end">
-            <a href="{{ route('data-ukbi.create') }}" class="btn bg-primary text-white mb-4">+ Tambah Data</a>
-        </div>
-        {{-- ALERTS --}}
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
 
-        {{-- CARD DATA UKBI --}}
-        <div class="card overflow-hidden">
-            <div class="card-header flex justify-between gap-4">
-                <div>
-                    <h4 class="card-title">Data UKBI</h4>
+    // === DONUT CHART ===
+    var optionsKategori = {
+      chart: {
+        type: 'donut',
+        toolbar: {
+          show: true
+        }
+      },
+      title: {
+        text: 'Jumlah Peuji Berdasarkan Kategori', // 🟢 Judul chart
+        align: 'center', // bisa 'left', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
+        }
+      },
+      series: @json($kategoriCounts->pluck('total')),
+      labels: @json($kategoriCounts->pluck('terdaftar_sbg')),
+      colors: [
+        '#1F77B4', // biru klasik
+        '#FF7F0E', // oranye terang
+        '#2CA02C', // hijau cerah
+        '#D62728', // merah tua
+        '#9467BD', // ungu lembut
+        '#8C564B', // cokelat muda
+        '#E377C2', // pink lembut
+        '#7F7F7F', // abu-abu netral
+        '#BCBD22', // kuning zaitun
+        '#17BECF', // biru toska
 
-                </div>
-                <form action="{{ route('data-ukbi.import.handle') }}" method="POST" enctype="multipart/form-data"
-                    class="flex items-center gap-2">
-                    @csrf
-                    <input type="file" name="file" id="file" class="border rounded px-2 py-1 text-sm cursor-pointer"
-                        required>
-                    <button type="submit" class="btn bg-primary text-white text-sm px-4 py-2">Import File</button>
-                </form>
-            </div>
-            <form action="{{ route('data-ukbi.index') }}" method="GET" class="flex w-full p-4">
-  <input 
-    type="text" 
-    name="search"
-    value="{{ request('search') }}"
-    placeholder="Cari Nama, No Pendaftaran, Kota, atau Instansi..."
-    class="w-full rounded-l-md border border-r-0 border-gray-300 px-4 py-2 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-  />
+        '#FF6F61', // coral
+        '#6B5B95', // ungu royal
+        '#88B04B', // hijau zaitun
+        '#F7CAC9', // pink pastel
+        '#92A8D1', // biru pastel
+        '#955251', // maroon muda
+        '#B565A7', // ungu muda
+        '#009B77', // hijau zamrud
+        '#DD4124', // merah oranye
+        '#45B8AC', // turquoise
 
-  <button 
-    type="submit"
-    class="-ml-px rounded-r-md border border-gray-300 bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:z-10 focus:outline-none focus:ring-2 focus:ring-blue-500">
-    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="#ffffff" d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14"/></svg>
-  </button>
-</form>
+        '#EFC050', // emas terang
+        '#5B5EA6', // biru keunguan
+        '#9B2335', // merah anggur
+        '#DFCFBE', // krem muda
+        '#55B4B0', // hijau kebiruan
+        '#E15D44', // merah bata
+        '#7FCDCD', // cyan lembut
+        '#BC243C', // merah crimson
+        '#C3447A', // magenta
+        '#98B4D4'  // biru muda
+      ]
+      , // 🔹 Warna berbeda tiap data
+      legend: {
+        position: 'bottom'
+      },
+    };
 
+    var chartKategori = new ApexCharts(document.querySelector("#chartKategori"), optionsKategori);
+    chartKategori.render();
 
-            <div class="overflow-x-auto border">
-                <table class="min-w-full divide-y divide-default-200">
-                    <thead>
-                        <tr>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">No</th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>No Pendaftaran</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'no_pendaftaran',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Tanggal Ujian</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'tanggal_ujian',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Nama Peserta</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'nama_peserta',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
+    const wilayahCounts = @json($wilayahCounts);
 
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Terdaftar Sebagai</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'terdaftar_sbg',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Jenis Kelamin</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'jenis_kelamin',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Tempat Lahir</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'tempat_lahir',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Tanggal Lahir</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'tanggal_lahir',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Kota</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'kota',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Titik Koordinat</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'titik_koordinat_peta',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Instansi</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'instansi',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Seksi 1</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'seksi_1',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Seksi 2</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'seksi_2',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Seksi 3</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'seksi_3',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Seksi 4</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'seksi_4',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Seksi 5</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'seksi_5',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Skor</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'skor',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            </th>
-                            <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-  <h1>Predikat</h1>
-  <a href="{{ route('data-ukbi.index', [
-      'sort' => 'predikat',
-      'direction' => request('direction') === 'asc' ? 'desc' : 'asc',
-      'search' => request('search') // biar search tetap nyangkut
-  ]) }}" class="cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-      viewBox="0 0 24 24"
-      class="{{ request('sort') === 'nama_peserta' && request('direction') === 'asc' ? 'rotate-180' : '' }} transition-transform">
-      <path fill="#64748b" d="M6.293 4.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1-1.414 1.414L8 7.414V19a1 1 0 1 1-2 0V7.414L3.707 9.707a1 1 0 0 1-1.414-1.414zM16 16.586V5a1 1 0 1 1 2 0v11.586l2.293-2.293a1 1 0 0 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414z"/>
-    </svg>
-  </a>
-</div>
-                            
-                            </tbody>
-                            </th>
-                            <th class="px-6 py-3 text-end text-sm text-default-500">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($data as $index => $item)
-                            <tr class="odd:bg-white even:bg-default-100 hover:bg-default-100">
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $data->firstItem() + $index }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->no_pendaftaran ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->tanggal_ujian ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->nama_peserta ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->terdaftar_sbg ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->jenis_kelamin ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->tempat_lahir ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->tanggal_lahir ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->kota ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->titik_koordinat_peta ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->instansi ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->seksi_1 ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->seksi_2 ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->seksi_3 ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->seksi_4 ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->seksi_5 ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->skor ?? '-' }}</td>
-                                <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">{{ $item->predikat ?? '-' }}</td>
-                                <td class="px-6 py-4 text-end text-sm">
-                                    <div class="flex justify-end mt-2">
-                                        <a href="{{ route('data-ukbi.edit', $item) }}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24">
-                                                <g fill="none" stroke="#4f46e5" stroke-linecap="round" stroke-linejoin="round"
-                                                    stroke-width="2">
-                                                    <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
-                                                    <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
-                                                </g>
-                                            </svg>
-                                        </a>
-                                        <form action="{{ route('data-ukbi.destroy', $item->id) }}" method="POST"
-                                            class="inline delete-form">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="text-red-600 hover:text-red-800 delete-btn"><svg
-                                                    xmlns="http://www.w3.org/2000/svg" width="25" height="25"
-                                                    viewBox="0 0 24 24">
-                                                    <path fill="#e11d48"
-                                                        d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z" />
-                                                </svg></button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">Belum ada data.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+    const wilayahCategories = Object.keys(wilayahCounts);
 
-                <div class="p-4">
-                    {{ $data->appends(request()->query())->links() }}
+    const wilayahValues = Object.values(wilayahCounts);
 
-                </div>
-            </div>
-        </div>
-    </div>
+    var optionsWilayah = {
+      chart: {
+        type: 'bar',
+        toolbar: {
+          show: true
+        },
+        zoom: {
+          enabled: true
+        }
+      },
+
+      plotOptions: {
+        bar: {
+          distributed: true,
+        }
+      },
+      title: {
+        text: 'Jumlah Peuji Berdasarkan Wilayah', // 🟢 Judul chart
+        align: 'center', // bisa 'left', 'center', atau 'right'
+        style: {
+          fontSize: '16px',
+          fontWeight: 'bold',
+          color: '#000'
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        style: {
+          fontSize: '12px',
+          colors: ['#000']
+        },
+      },
+
+      series: [{
+        name: 'Jumlah Peuji',
+        data: wilayahValues
+      }],
+
+      grid: {
+        padding: {
+          bottom: 100,
+          left: 30
+        }
+      },
+
+      xaxis: {
+        categories: wilayahCategories,
+      },
+
+      colors: [
+        '#1F77B4', // biru klasik
+        '#FF7F0E', // oranye terang
+        '#2CA02C', // hijau cerah
+        '#D62728', // merah tua
+        '#9467BD', // ungu lembut
+        '#8C564B', // cokelat muda
+        '#E377C2', // pink lembut
+        '#7F7F7F', // abu-abu netral
+        '#BCBD22', // kuning zaitun
+        '#17BECF', // biru toska
+
+        '#FF6F61', // coral
+        '#6B5B95', // ungu royal
+        '#88B04B', // hijau zaitun
+        '#F7CAC9', // pink pastel
+        '#92A8D1', // biru pastel
+        '#955251', // maroon muda
+        '#B565A7', // ungu muda
+        '#009B77', // hijau zamrud
+        '#DD4124', // merah oranye
+        '#45B8AC', // turquoise
+
+        '#EFC050', // emas terang
+        '#5B5EA6', // biru keunguan
+        '#9B2335', // merah anggur
+        '#DFCFBE', // krem muda
+        '#55B4B0', // hijau kebiruan
+        '#E15D44', // merah bata
+        '#7FCDCD', // cyan lembut
+        '#BC243C', // merah crimson
+        '#C3447A', // magenta
+        '#98B4D4'  // biru muda
+      ],
+      legend: {
+        show: false // 🔹 Sembunyikan legend warna
+      },
+    };
+
+    var chartWilayah = new ApexCharts(
+      document.querySelector("#chartWilayah"),
+      optionsWilayah
+    );
+    chartWilayah.render();
+
+  </script>
+
 @endsection
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
 
-        // --- LOADING SAAT IMPORT FILE ---
-        const importForm = document.querySelector('form[action="{{ route('data-ukbi.import.handle') }}"]');
-
-        if (importForm) {
-            importForm.addEventListener('submit', function (e) {
-                // Tampilkan SweetAlert Loading
-                Swal.fire({
-                    title: 'Mengupload...',
-                    text: 'Mohon tunggu, file sedang diproses.',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    allowEnterKey: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-            });
-        }
-
-        // --- KONFIRMASI DELETE ---
-        const deleteButtons = document.querySelectorAll('.delete-btn');
-
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const form = this.closest('.delete-form');
-
-                Swal.fire({
-                    title: 'Yakin ingin menghapus?',
-                    text: "Data ini tidak bisa dikembalikan!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Ya, hapus!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit();
-                    }
-                });
-            });
-        });
-    });
-</script>

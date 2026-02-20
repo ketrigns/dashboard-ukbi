@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\DataUkbiController;
 use App\Http\Controllers\HasilDataMiningController;
@@ -51,6 +52,7 @@ Route::post('/login', [LoginController::class, 'store'])->middleware('guest');
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
 
 Route::middleware(['auth', 'cek.role:admin,petugas'])->group(function () {
+    Route::resource('/admin/dashboard', DashboardAdminController::class);
     Route::resource('/admin/data-ukbi', DataUkbiController::class);
     Route::resource('/admin/hasil-data-mining', HasilDataMiningController::class);
     Route::post('/admin/dashboard/import-data-ukbi', [DataUkbiController::class, 'handleImport'])->name('data-ukbi.import.handle');

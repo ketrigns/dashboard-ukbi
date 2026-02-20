@@ -16,7 +16,7 @@ class LoginController extends Controller
     {
         // Arahkan ke dashboard jika user sudah login
         if (Auth::check()) {
-            return redirect('/admin/data-ukbi'); 
+            return redirect('/admin/dashboard'); 
         }
         return view('auth.login');
     }
@@ -38,7 +38,7 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             // 4. Redirect ke halaman yang dituju (misal: dashboard)
-            return redirect()->intended('/admin/data-ukbi');
+            return redirect()->intended('/admin/dashboard');
         }
 
         // 5. Jika gagal, kirim error kembali ke halaman login

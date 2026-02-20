@@ -34,7 +34,7 @@ class DataUkbiController extends Controller
 
         $data = $query->orderBy($sort, $direction)->paginate(20);
 
-        return view('pages.admin.dashboard.index', compact('data'));
+        return view('pages.admin.data-ukbi.index', compact('data'));
     }
 
 
@@ -84,9 +84,30 @@ class DataUkbiController extends Controller
         $kota = DataUkbi::select('kota', 'titik_koordinat_peta')->distinct()->get();
         $terdaftarSbg = DataUkbi::select('terdaftar_sbg')->distinct()->get();
         $instansi = DataUkbi::select('instansi')->distinct()->get();
-        $predikat = DataUkbi::select('predikat')->distinct()->get();
+        // 1. Definisikan bobot urutan predikat
+        $urutanPredikat = [
+            'Istimewa'          => 1,
+            'Sangat Unggul'     => 2,
+            'Unggul'            => 3,
+            'Madya'             => 4,
+            'Semenjana'         => 5,
+            'Marginal'          => 6,
+            'Terbatas'          => 7,
+            'Tidak Berpredikat' => 8
+        ];
 
-        return view('pages.admin.dashboard.create', compact('kota', 'terdaftarSbg', 'instansi', 'predikat'));
+        // 2. Ambil data dari database, lalu urutkan berdasarkan bobot di atas
+        $predikat = DataUkbi::select('predikat')
+            ->whereNotNull('predikat') // Opsional: pastikan tidak mengambil null
+            ->distinct()
+            ->get()
+            ->sortBy(function ($item) use ($urutanPredikat) {
+                // Jika predikat ada di daftar, gunakan bobotnya. Jika tidak ada, taruh di paling bawah (99).
+                return $urutanPredikat[$item->predikat] ?? 99;
+            })
+            ->values();
+
+        return view('pages.admin.data-ukbi.create', compact('kota', 'terdaftarSbg', 'instansi', 'predikat'));
     }
 
     /**
@@ -116,7 +137,7 @@ class DataUkbiController extends Controller
         $instansi = DataUkbi::select('instansi')->distinct()->get();
         $predikat = DataUkbi::select('predikat')->distinct()->get();
 
-        return view('pages.admin.dashboard.edit', compact('dataUkbi', 'kota', 'terdaftarSbg', 'instansi', 'predikat'));
+        return view('pages.admin.data-ukbi.edit', compact('dataUkbi', 'kota', 'terdaftarSbg', 'instansi', 'predikat'));
     }
 
     /**
