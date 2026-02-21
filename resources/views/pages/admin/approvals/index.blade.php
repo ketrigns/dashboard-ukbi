@@ -25,7 +25,7 @@
                         <th class="px-6 py-3 text-start text-sm text-default-500">Nama Petugas</th>
                         <th class="px-6 py-3 text-start text-sm text-default-500">Waktu Request</th>
                         <th class="px-6 py-3 text-center text-sm text-default-500">Status</th>
-                        <th class="px-6 py-3 text-end text-sm text-default-500">Aksi</th>
+                        <th class="px-6 py-3 text-end text-sm text-default-500"></th>
                     </tr>
                 </thead>
                 <tbody>
