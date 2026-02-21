@@ -54,16 +54,16 @@
                                         {{-- Tombol Approve --}}
                                         <form action="{{ route('admin.approvals.approve', $req->id) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="btn bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded" onclick="return confirm('Setujui akses untuk petugas ini?')">
-                                                Setujui
+                                            <button type="submit" class="btn bg-green-500 hover:bg-green-600 text-white text-xs px-2 py-1 rounded" onclick="return confirm('Setujui akses untuk petugas ini?')">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512"><path fill="currentColor" d="M256 48C141.31 48 48 141.31 48 256s93.31 208 208 208s208-93.31 208-208S370.69 48 256 48m108.25 138.29l-134.4 160a16 16 0 0 1-12 5.71h-.27a16 16 0 0 1-11.89-5.3l-57.6-64a16 16 0 1 1 23.78-21.4l45.29 50.32l122.59-145.91a16 16 0 0 1 24.5 20.58"/></svg>
                                             </button>
                                         </form>
 
                                         {{-- Tombol Reject --}}
                                         <form action="{{ route('admin.approvals.reject', $req->id) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="btn bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1.5 rounded" onclick="return confirm('Tolak akses petugas ini?')">
-                                                Tolak
+                                            <button type="submit" class="btn bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded" onclick="return confirm('Tolak akses petugas ini?')">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 12 12"><path fill="currentColor" d="M6 11A5 5 0 1 0 6 1a5 5 0 0 0 0 10m1.854-6.854a.5.5 0 0 1 0 .708L6.707 6l1.147 1.146a.5.5 0 1 1-.708.708L6 6.707L4.854 7.854a.5.5 0 1 1-.708-.708L5.293 6L4.146 4.854a.5.5 0 1 1 .708-.708L6 5.293l1.146-1.147a.5.5 0 0 1 .708 0"/></svg>
                                             </button>
                                         </form>
                                     </div>
