@@ -11,11 +11,12 @@
         @csrf
 
         <div class="grid lg:grid-cols-2 gap-6">
+          
           <div>
             <label for="name" class="text-default-800 text-sm font-medium inline-block mb-2">
               Nama
             </label>
-            <input type="text" name="name" id="name" class="form-input" required>
+            <input type="text" name="name" id="name" class="form-input" value="{{ old('name') }}" required>
             @error('name')
               <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
             @enderror
@@ -25,7 +26,7 @@
             <label for="email" class="text-default-800 text-sm font-medium inline-block mb-2">
               Email
             </label>
-            <input type="email" name="email" id="email" class="form-input" required>
+            <input type="email" name="email" id="email" class="form-input" value="{{ old('email') }}" required>
             @error('email')
               <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
             @enderror
@@ -33,7 +34,7 @@
 
           <div>
             <label>NIP</label>
-            <input type="text" name="nip" class="form-input" required>
+            <input type="text" name="nip" class="form-input" value="{{ old('nip') }}" required>
             @error('nip')
               <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
             @enderror
@@ -46,7 +47,6 @@
               <input type="password" name="password" id="passwordInput" class="form-input" required
                 style="padding-right: 40px;">
 
-              <!-- Icon Mata -->
               <span onclick="togglePassword()" style="
               position: absolute;
               right: 10px;
@@ -60,19 +60,18 @@
               </span>
             </div>
 
-
-
             @error('password')
               <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
             @enderror
           </div>
 
-
           <div>
             <label>Role</label>
             <select name="role" class="form-input" required>
-              <option value="petugas">Petugas</option>
-              <option value="admin">Admin</option>
+              <option value="petugas" {{ old('role') == 'petugas' ? 'selected' : '' }}>Petugas</option>
+              @if(auth()->check() && auth()->user()->role === 'admin')
+                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+              @endif
             </select>
             @error('role')
               <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -91,12 +90,10 @@
               <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
             @enderror
 
-            <!-- Tempat preview -->
             <div class="mt-4">
               <img id="preview" class="hidden w-60 h-auto rounded-lg shadow-md border" alt="Preview gambar">
             </div>
           </div>
-
 
         </div>
 
@@ -105,7 +102,7 @@
             Tambah Data
           </button>
         </div>
-      </form>
+    </form>
     </div>
   </div>
 

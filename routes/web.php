@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AccessRequestController;
+use App\Http\Controllers\Admin\AccessApprovalController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\DashboardUserController;
@@ -60,9 +62,14 @@ Route::middleware(['auth', 'cek.role:admin,petugas'])->group(function () {
     Route::post('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
     Route::post('/admin/dashboard/import-data-mining', [HasilDataMiningController::class, 'handleImport'])->name('data-mining.import.handle');
     Route::post('/deskripsi/save', [HasilDataMiningController::class, 'saveDeskripsi'])->name('deskripsi.save');
-
-});
-
-Route::middleware(['auth', 'cek.role:admin'])->group(function () {
     Route::resource('/admin/users', UserController::class);
+    Route::post('/request-access', [AccessRequestController::class, 'store'])->name('access-requests.store')->middleware('auth');
 });
+
+// Pastikan ini di dalam middleware yang mengecek role 'admin'
+Route::middleware(['auth', 'cek.role:admin'])->prefix('admin')->group(function () {
+    Route::get('/access-requests', [AccessApprovalController::class, 'index'])->name('admin.approvals.index');
+    Route::post('/access-requests/{id}/approve', [AccessApprovalController::class, 'approve'])->name('admin.approvals.approve');
+    Route::post('/access-requests/{id}/reject', [AccessApprovalController::class, 'reject'])->name('admin.approvals.reject');
+});
+

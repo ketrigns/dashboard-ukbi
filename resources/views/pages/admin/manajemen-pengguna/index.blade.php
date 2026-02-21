@@ -3,7 +3,23 @@
 @section('content')
     <div class="flex items-center md:justify-between flex-wrap gap-2 mb-5">
         <h4 class="text-default-900 text-lg font-semibold">Manajemen Pengguna</h4>
-        <a href="{{ route('users.create') }}" class="btn bg-primary text-white">+ Tambah Pengguna</a>
+        @if(auth()->user()->canManageUsers())
+            {{-- Tampil jika Admin atau Petugas yang sudah di-ACC --}}
+            <a href="{{ route('users.create') }}" class="btn bg-primary text-white">+ Tambah Pengguna</a>
+        @elseif(auth()->user()->hasPendingAccessRequest())
+            {{-- Tampil jika Petugas sudah minta izin tapi belum di-ACC Admin --}}
+            <button disabled class="btn bg-blue-400! text-white cursor-not-allowed opacity-75">
+                Menunggu Persetujuan Admin...
+            </button>
+        @else
+            {{-- Tampil jika Petugas belum minta izin sama sekali atau request sebelumnya ditolak --}}
+            <form action="{{ route('access-requests.store') }}" method="POST" class="inline">
+                @csrf
+                <button type="submit" class="btn bg-orange-500! hover:bg-orange-600 text-white">
+                    Minta Persetujuan Input Data
+                </button>
+            </form>
+        @endif
     </div>
 
     <!-- Toast Container -->
@@ -97,7 +113,7 @@
                             <th class="px-6 py-3 text-start text-sm text-default-500">Email</th>
                             <th class="px-6 py-3 text-start text-sm text-default-500">NIP</th>
                             <th class="px-6 py-3 text-start text-sm text-default-500">Role</th>
-                            <th class="px-6 py-3 text-end text-sm text-default-500">Aksi</th>
+                            <th class="px-6 py-3 text-end text-sm text-default-500"></th>
                         </tr>
                     </thead>
 
@@ -127,7 +143,8 @@
                                 </td>
 
                                 <td class="px-6 py-4 text-end">
-                                    <div class="flex justify-end gap-3">
+                                    @if(auth()->user()->canManageUsers())
+                                        <div class="flex justify-end gap-3">
 
                                         {{-- Tombol Edit --}}
                                         <a href="{{ route('users.edit', $user->id) }}">
@@ -155,6 +172,21 @@
                                         </form>
 
                                     </div>
+                                    @elseif(auth()->user()->hasPendingAccessRequest())
+                                        {{-- Tampil jika Petugas sudah minta izin tapi belum di-ACC Admin --}}
+                                        <button disabled class="btn bg-blue-400! text-white cursor-not-allowed opacity-75">
+                                            Menunggu Persetujuan Admin...
+                                        </button>
+                                    @else
+                                        {{-- Tampil jika Petugas belum minta izin sama sekali atau request sebelumnya ditolak --}}
+                                        <form action="{{ route('access-requests.store') }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="btn bg-orange-500! hover:bg-orange-600 text-white">
+                                                Minta Persetujuan Edit Data
+                                            </button>
+                                        </form>
+                                    @endif
+                                    
                                 </td>
                             </tr>
                         @empty

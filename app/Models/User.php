@@ -45,4 +45,27 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function requests()
+    {
+        return $this->hasMany(UserRequest::class);
+    }
+
+    // Mengecek apakah user punya hak akses CRUD
+    public function canManageUsers()
+    {
+        // Jika dia admin, langsung true
+        if ($this->role === 'admin') {
+            return true;
+        }
+
+        // Jika dia petugas, cek apakah ada request yang statusnya 'approved'
+        return $this->requests()->where('status', 'approved')->exists();
+    }
+
+    // Mengecek apakah user sedang dalam status menunggu persetujuan
+    public function hasPendingAccessRequest()
+    {
+        return $this->requests()->where('status', 'pending')->exists();
+    }
 }

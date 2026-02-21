@@ -91,6 +91,7 @@
                 <form action="{{ route('data-mining.import.handle') }}" method="POST" enctype="multipart/form-data"
                     class="flex sm:!flex-row !flex-col items-center gap-2">
                     @csrf
+                    <label for="file" class="cursor-pointer">Upload File Excel</label>
                     <input type="file" name="file" id="file" class="border rounded px-2 py-1 text-sm cursor-pointer"
                         required>
                     <button type="submit" class="btn bg-primary text-white text-sm px-4 py-2">Import File</button>
