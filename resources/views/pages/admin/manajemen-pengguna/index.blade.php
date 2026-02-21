@@ -158,18 +158,20 @@
                                         </a>
 
                                         {{-- Tombol Delete --}}
-                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST"
-                                            class="delete-form inline-block">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="delete-btn">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
-                                                    viewBox="0 0 24 24">
-                                                    <path fill="#e11d48"
-                                                        d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z" />
-                                                </svg>
-                                            </button>
-                                        </form>
+                                        @if(auth()->id() !== $user->id)
+                                            <form action="{{ route('users.destroy', $user->id) }}" method="POST"
+                                                class="delete-form inline-block">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="delete-btn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                                                        viewBox="0 0 24 24">
+                                                        <path fill="#e11d48"
+                                                            d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        @endif
 
                                     </div>
                                     @elseif(auth()->user()->hasPendingAccessRequest())
