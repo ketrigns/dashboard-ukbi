@@ -247,4 +247,27 @@ class UserController extends Controller
 
         return back()->with('success', 'Profil berhasil diperbarui!');
     }
+
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+        
+        if ($ids) {
+            $idsArray = explode(',', $ids);
+            
+            // Validasi: Jangan hapus diri sendiri (Admin yg sedang login)
+            if (($key = array_search(auth()->id(), $idsArray)) !== false) {
+                unset($idsArray[$key]);
+            }
+
+            $users = User::whereIn('id', $idsArray)->get();
+            foreach($users as $user) { if($user->profile_pic) Storage::delete('public/'.$user->profile_pic); }
+
+            User::whereIn('id', $idsArray)->delete();
+            
+            return redirect()->back()->with('success', 'Pengguna terpilih berhasil dihapus.');
+        }
+        
+        return redirect()->back()->with('error', 'Tidak ada data yang dipilih.');
+    }
 }

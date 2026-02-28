@@ -56,6 +56,7 @@ Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->mid
 Route::middleware(['auth', 'cek.role:admin,petugas'])->group(function () {
     Route::resource('/admin/dashboard', DashboardAdminController::class);
     Route::resource('/admin/data-ukbi', DataUkbiController::class);
+    Route::delete('/data-ukbi/bulk-delete', [DataUkbiController::class, 'bulkDelete'])->name('data-ukbi.bulk_delete');
     Route::resource('/admin/hasil-data-mining', HasilDataMiningController::class);
     Route::post('/admin/dashboard/import-data-ukbi', [DataUkbiController::class, 'handleImport'])->name('data-ukbi.import.handle');
     Route::get('/profile', [UserController::class, 'profile'])->name('profile');
@@ -63,6 +64,7 @@ Route::middleware(['auth', 'cek.role:admin,petugas'])->group(function () {
     Route::post('/admin/dashboard/import-data-mining', [HasilDataMiningController::class, 'handleImport'])->name('data-mining.import.handle');
     Route::post('/deskripsi/save', [HasilDataMiningController::class, 'saveDeskripsi'])->name('deskripsi.save');
     Route::resource('/admin/users', UserController::class);
+    Route::delete('/users/bulk-delete', [UserController::class, 'bulkDelete'])->name('users.bulk_delete');
     Route::post('/request-access', [AccessRequestController::class, 'store'])->name('access-requests.store')->middleware('auth');
 });
 

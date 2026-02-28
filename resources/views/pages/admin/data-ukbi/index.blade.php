@@ -1,8 +1,8 @@
 @extends('layouts.admin.app')
 
 @section('content')
-    <div class="flex items-center md:justify-between flex-wrap gap-2 mb-5">
-        <h4 class="text-default-900 text-lg font-semibold">Data UKBI</h4>
+    <div class="flex items-center gap-3 text-sm font-semibold mb-5">
+        <p class="text-sm font-bold text-default-900">Data UKBI</p>
     </div>
 
     <!-- Toast Container -->
@@ -107,6 +107,13 @@
             </div>
 
             <div class="flex items-center">
+                <button type="button" id="btn-bulk-delete" style="display: none;"
+                        class="ms-2 btn bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded-md flex items-center gap-2 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                            d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z" />
+                    </svg>
+                </button>
                 <div class="relative inline-block text-left ms-2">
                     <button id="columnDropdownBtn" type="button"
                         class="inline-flex justify-center items-center rounded-md border border-default-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-default-700 hover:bg-default-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
@@ -127,103 +134,103 @@
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="2"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="3"
                                         checked> No Pendaftaran
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="3"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="4"
                                         checked> Tanggal Ujian
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="4"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="5"
                                         checked> Nama Peserta
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="5"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="6"
                                         checked> Terdaftar Sbg
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="6"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="7"
                                         checked> Jenis Kelamin
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="7"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="8"
                                         checked> Tempat Lahir
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="8"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="9"
                                         checked> Tanggal Lahir
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="9"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="10"
                                         checked> Kota
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="10"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="11"
                                         checked> Titik Koordinat
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="11"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="12"
                                         checked> Instansi
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="12"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="13"
                                         checked> Seksi 1
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="13"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="14"
                                         checked> Seksi 2
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="14"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="15"
                                         checked> Seksi 3
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="15"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="16"
                                         checked> Seksi 4
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="16"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="17"
                                         checked> Seksi 5
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="17"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="18"
                                         checked> Skor
                                 </label>
                                 <label
                                     class="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-default-100 rounded text-sm text-default-700 transition-colors">
                                     <input type="checkbox"
-                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="18"
+                                        class="toggle-column rounded text-indigo-600 focus:ring-indigo-500" data-col="19"
                                         checked> Predikat
                                 </label>
                             </div>
@@ -249,6 +256,9 @@
                 <table id="myTable" class="min-w-full divide-y divide-default-200">
                     <thead>
                         <tr>
+                            <th class="px-6 py-3 text-start whitespace-nowrap w-10">
+                                <input type="checkbox" id="select_all_ids" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                            </th>
                             <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">No</th>
                             <th class="px-6 py-3 text-start text-sm text-default-500 whitespace-nowrap">
                                 <div class="flex items-center gap-2">
@@ -564,6 +574,9 @@
                     <tbody>
                         @forelse ($data as $index => $item)
                             <tr class="odd:bg-white even:bg-default-100 hover:bg-default-100">
+                                <td class="px-6 py-4">
+                                    <input type="checkbox" name="ids" class="checkbox_ids rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="{{ $item->id }}">
+                                </td>
                                 <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">
                                     {{ $data->firstItem() + $index }}</td>
                                 <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">
@@ -641,7 +654,12 @@
             </div>
         </div>
     </div>
-@endsection
+    <form id="form-bulk-delete" action="{{ route('data-ukbi.bulk_delete') }}" method="POST" class="hidden">
+        @csrf
+        @method('DELETE')
+        <input type="hidden" name="ids" id="bulk_delete_ids">
+    </form>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -689,6 +707,66 @@
             });
         });
 
+        // --- LOGIKA BULK DELETE ---
+        const selectAllCheckbox = document.getElementById('select_all_ids');
+        const allCheckboxes = document.querySelectorAll('.checkbox_ids');
+        const bulkDeleteBtn = document.getElementById('btn-bulk-delete');
+        const countSelectedSpan = document.getElementById('count-selected');
+
+        function updateBulkDeleteButton() {
+            const checkedCount = document.querySelectorAll('.checkbox_ids:checked').length;
+            if (checkedCount > 0) {
+                bulkDeleteBtn.style.display = 'block';
+            } else {
+                bulkDeleteBtn.style.display = 'none';
+            }
+        }
+
+        selectAllCheckbox.addEventListener('change', function() {
+            allCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateBulkDeleteButton();
+        });
+
+        allCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (!this.checked) {
+                    selectAllCheckbox.checked = false;
+                }
+                if (document.querySelectorAll('.checkbox_ids:checked').length === allCheckboxes.length) {
+                    selectAllCheckbox.checked = true;
+                }
+                updateBulkDeleteButton();
+            });
+        });
+
+        bulkDeleteBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const allIds = [];
+            document.querySelectorAll('.checkbox_ids:checked').forEach(checkbox => {
+                allIds.push(checkbox.value);
+            });
+
+            if (allIds.length === 0) return;
+
+            Swal.fire({
+                title: 'Hapus data terpilih?',
+                text: `Anda akan menghapus ${allIds.length} data. Data tidak bisa dikembalikan!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus Semua!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('bulk_delete_ids').value = allIds.join(',');
+                    document.getElementById('form-bulk-delete').submit();
+                }
+            });
+        });
+
         // --- LOADING SAAT IMPORT FILE ---
         const importForm = document.querySelector('form[action="{{ route('data-ukbi.import.handle') }}"]');
 
@@ -733,3 +811,6 @@
         });
     });
 </script>
+@endsection
+
+
