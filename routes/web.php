@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AccessRequestController;
 use App\Http\Controllers\Admin\AccessApprovalController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\DataUkbiController;
@@ -75,3 +77,21 @@ Route::middleware(['auth', 'cek.role:admin'])->prefix('admin')->group(function (
     Route::post('/access-requests/{id}/reject', [AccessApprovalController::class, 'reject'])->name('admin.approvals.reject');
 });
 
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])
+    ->middleware('guest')
+    ->name('password.request');
+
+// 2. Memproses pengiriman link ke email
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])
+    ->middleware('guest')
+    ->name('password.email');
+
+// 3. Menampilkan form input password baru (berdasarkan token dari email)
+Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])
+    ->middleware('guest')
+    ->name('password.reset');
+
+// 4. Memproses penyimpanan password baru ke database
+Route::post('/reset-password', [ResetPasswordController::class, 'reset'])
+    ->middleware('guest')
+    ->name('password.update');

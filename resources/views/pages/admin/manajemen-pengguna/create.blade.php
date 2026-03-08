@@ -71,6 +71,20 @@
           </div>
 
           <div>
+            <label>Konfirmasi Password</label>
+            <div style="position: relative; width: 100%;">
+              <input type="password" name="password_confirmation" id="passwordConfirmInput" class="form-input" required
+                style="padding-right: 40px;">
+
+              <span onclick="togglePasswordConfirm()" style="
+              position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+              cursor: pointer; display: flex; align-items: center;">
+                <iconify-icon id="toggleConfirmIcon" icon="mdi:eye-off" width="20"></iconify-icon>
+              </span>
+            </div>
+          </div>
+
+          <div>
             <label>Role</label>
             <select name="role" class="form-input" required>
               <option value="petugas" {{ old('role') == 'petugas' ? 'selected' : '' }}>Petugas</option>
@@ -112,6 +126,19 @@
   </div>
 
   <script>
+    function togglePasswordConfirm() {
+        const input = document.getElementById('passwordConfirmInput');
+        const icon = document.getElementById('toggleConfirmIcon');
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.setAttribute("icon", "mdi:eye");
+        } else {
+            input.type = "password";
+            icon.setAttribute("icon", "mdi:eye-off");
+        }
+    }
+
     function previewImage(event) {
       const input = event.target;
       const preview = document.getElementById('preview');

@@ -45,7 +45,8 @@ class UserController extends Controller
                 'string', 
                 'min:6', 
                 // Regex ini memastikan ada minimal 1 huruf, 1 angka, dan 1 simbol
-                'regex:/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).+$/' 
+                'regex:/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).+$/',
+                'confirmed' 
             ],
             'role'        => 'required|in:admin,petugas',
             'profile_pic' => 'nullable|image'
@@ -54,7 +55,7 @@ class UserController extends Controller
             'password.required' => 'Password wajib diisi.',
             'password.min'      => 'Password minimal harus 6 karakter.',
             'password.regex'    => 'Password harus mengandung kombinasi huruf, angka, dan simbol (contoh: @, #, !).',
-            
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
             'name.required'     => 'Nama pengguna wajib diisi.',
             'email.required'    => 'Email wajib diisi.',
             'email.unique'      => 'Email ini sudah terdaftar, silakan gunakan email lain.',
@@ -123,7 +124,8 @@ class UserController extends Controller
                 'nullable', 
                 'string', 
                 'min:6', 
-                'regex:/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).+$/'
+                'regex:/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\W_]).+$/',
+                'confirmed'
             ],
             'role'        => 'required|in:admin,petugas',
             'profile_pic' => 'nullable|image|mimes:jpg,jpeg,png|max:4096'
@@ -131,6 +133,7 @@ class UserController extends Controller
             // --- Pesan Error Bahasa Indonesia ---
             'password.min'      => 'Password minimal harus 6 karakter.',
             'password.regex'    => 'Password baru harus mengandung kombinasi huruf, angka, dan simbol (contoh: @, #, !).',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
             
             'name.required'     => 'Nama pengguna wajib diisi.',
             'email.required'    => 'Email wajib diisi.',

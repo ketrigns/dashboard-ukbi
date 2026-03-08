@@ -43,8 +43,10 @@
                         @enderror
                     </div>
                     <div class="mb-3">
-                        <label for="exampleInputPassword1"
-                            class="text-default-800 text-sm font-medium inline-block mb-2">Password</label>
+                        <div class="flex items-center justify-between mb-2">
+                            <label for="exampleInputPassword1" class="text-default-800 text-sm font-medium inline-block">Password</label>
+                            <a href="{{ route('password.request') }}" class="text-sm text-blue-600 hover:text-blue-800 hover:underline">Lupa Password?</a>
+                        </div>
 
                         <div class="relative">
                             <input type="password" class="form-input pr-10" id="passwordInput" placeholder="Password"
