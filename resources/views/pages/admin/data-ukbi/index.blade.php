@@ -575,7 +575,21 @@
                         @forelse ($data as $index => $item)
                             <tr class="odd:bg-white even:bg-default-100 hover:bg-default-100">
                                 <td class="px-6 py-4">
-                                    <input type="checkbox" name="ids" class="checkbox_ids rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="{{ $item->id }}">
+                                    @php
+                                        // Cek apakah ada pengajuan pending untuk data ini
+                                        // Catatan: Jika memungkinkan, lebih baik gunakan relasi (eager loading) dari controller agar tidak terjadi N+1 query issue
+                                        $isPending = \App\Models\PengajuanPerubahanUkbi::where('data_ukbi_id', $item->id)
+                                                        ->where('status', 'pending')
+                                                        ->exists();
+                                    @endphp
+
+                                    {{-- Logika: Tampilkan jika user adalah Admin, ATAU jika user Petugas DAN data tidak pending --}}
+                                    @if(!$isPending)
+                                        <input type="checkbox" name="ids" class="checkbox_ids rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="{{ $item->id }}">
+                                    @elseif($isPending)
+                                        {{-- Opsional: Tampilkan indikator visual agar Petugas tahu kenapa tidak ada checkbox --}}
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" class="text-yellow-700"><path fill="currentColor" d="M6.607 14c.183.357.4.693.654 1H3.5a.5.5 0 0 1 0-1H5v-2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4.261a5.6 5.6 0 0 0-1-.654V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h3.025a6 6 0 0 0-.025.5q.001.253.025.5H6v2zM16 11.5a4.5 4.5 0 1 1-9 0a4.5 4.5 0 0 1 9 0m-2 0a.5.5 0 0 0-.5-.5H12V9a.5.5 0 0 0-1 0v2.5a.5.5 0 0 0 .5.5h2a.5.5 0 0 0 .5-.5"/></svg>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">
                                     {{ $data->firstItem() + $index }}</td>
@@ -624,7 +638,7 @@
                                         @endphp
 
                                         {{-- Jika yang login petugas DAN status datanya masih pending --}}
-                                        @if(auth()->user()->role === 'petugas' && $isPending)
+                                        @if($isPending)
                                             <span class="px-2 py-1 text-xs font-semibold text-yellow-700 bg-yellow-100 border border-yellow-300 rounded-md shadow-sm">
                                                 Menunggu Persetujuan
                                             </span>
@@ -682,14 +696,24 @@
             </div>
         </div>
     </div>
-    <form id="form-bulk-delete" action="{{ route('data-ukbi.bulk_delete') }}" method="POST" class="hidden">
-        @csrf
-        @method('DELETE')
-        <input type="hidden" name="ids" id="bulk_delete_ids">
-    </form>
+    
+
+    @if(auth()->user()->role == 'admin')
+        <form id="form-bulk-delete" action="{{ route('data-ukbi.bulk_delete') }}" method="POST" class="hidden">
+            @csrf
+            @method('DELETE')
+            <input type="hidden" name="ids" id="bulk_delete_ids">
+        </form>
+    @elseif(auth()->user()->role == 'petugas')
+        <form id="form-bulk-ajukan" action="{{ route('data-ukbi.bulk_ajukan') }}" method="POST" class="hidden">
+            @csrf
+            <input type="hidden" name="ids" id="bulk_ajukan_ids">
+        </form>
+    @endif
 
 
 <script>
+    const userRole = '{{ auth()->user()->role }}';
     document.addEventListener('DOMContentLoaded', function() {
         const dropdownBtn = document.getElementById('columnDropdownBtn');
         const dropdownMenu = document.getElementById('columnDropdownMenu');
@@ -739,7 +763,6 @@
         const selectAllCheckbox = document.getElementById('select_all_ids');
         const allCheckboxes = document.querySelectorAll('.checkbox_ids');
         const bulkDeleteBtn = document.getElementById('btn-bulk-delete');
-        const countSelectedSpan = document.getElementById('count-selected');
 
         function updateBulkDeleteButton() {
             const checkedCount = document.querySelectorAll('.checkbox_ids:checked').length;
@@ -778,19 +801,52 @@
 
             if (allIds.length === 0) return;
 
-            Swal.fire({
-                title: 'Hapus data terpilih?',
-                text: `Anda akan menghapus ${allIds.length} data. Data tidak bisa dikembalikan!`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Hapus Semua!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
+            // Siapkan variabel untuk menampung konfigurasi SweetAlert dan ID Form
+            let swalConfig = {};
+            let formId = '';
+            let inputId = '';
+
+            // Logika jika Admin (Hapus)
+            if (userRole === 'admin') {
+                swalConfig = {
+                    title: 'Hapus data terpilih?',
+                    text: `Anda akan menghapus ${allIds.length} data. Data tidak bisa dikembalikan!`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Hapus Semua!',
+                    cancelButtonText: 'Batal'
+                };
+                formId = 'form-bulk-delete';
+                inputId = 'bulk_delete_ids';
+            } 
+            // Logika jika Petugas (Ajukan)
+            else if (userRole === 'petugas') {
+                swalConfig = {
+                    title: 'Ajukan hapus data terpilih?',
+                    text: `Anda akan mengajukan ${allIds.length} data ke admin.`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#2563eb', // Biru
+                    cancelButtonColor: '#6b7280',  // Abu-abu
+                    confirmButtonText: 'Ya, Ajukan!',
+                    cancelButtonText: 'Batal'
+                };
+                formId = 'form-bulk-ajukan'; // Pastikan form ini ada di HTML
+                inputId = 'bulk_ajukan_ids'; // Pastikan input hidden ini ada di dalam form
+            } 
+            // Jika role tidak dikenali, hentikan eksekusi
+            else {
+                console.error('Role tidak diizinkan melakukan aksi ini.');
+                return;
+            }
+
+            // Eksekusi SweetAlert dengan konfigurasi yang sudah diset
+            Swal.fire(swalConfig).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('bulk_delete_ids').value = allIds.join(',');
-                    document.getElementById('form-bulk-delete').submit();
+                    document.getElementById(inputId).value = allIds.join(',');
+                    document.getElementById(formId).submit();
                 }
             });
         });

@@ -163,6 +163,44 @@ class DataUkbiController extends Controller
         return redirect()->route('data-ukbi.index')->with('success', 'Data berhasil dihapus');
     }
 
+    public function bulkAjukan(Request $request)
+    {
+        // 1. Validasi input IDs
+        $request->validate([
+            'ids' => 'required|string',
+        ]);
+
+        // 2. Pecah string ID menjadi array
+        $ids = explode(',', $request->ids);
+        $petugasId = auth()->id();
+
+        try {
+            // 3. Looping untuk setiap ID dan buat pengajuan
+            foreach ($ids as $id) {
+                // Pastikan tidak ada pengajuan pending yang sama untuk ID ini (Opsional, tapi disarankan)
+                $cekPending = PengajuanPerubahanUkbi::where('data_ukbi_id', $id)
+                    ->where('status', 'pending')
+                    ->where('data_usulan->jenis_pengajuan', 'HAPUS DATA')
+                    ->exists();
+
+                if (!$cekPending) {
+                    PengajuanPerubahanUkbi::create([
+                        'data_ukbi_id' => $id,
+                        'petugas_id'   => $petugasId,
+                        'data_usulan'  => ['jenis_pengajuan' => 'HAPUS DATA'],
+                        'status'       => 'pending'
+                    ]);
+                }
+            }
+
+            // 4. Return success
+            return redirect()->back()->with('success', count($ids) . ' permintaan hapus data berhasil dikirim ke Admin.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengirim pengajuan: ' . $e->getMessage());
+        }
+    }
+
     public function bulkDelete(Request $request)
     {
         $ids = $request->input('ids');

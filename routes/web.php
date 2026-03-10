@@ -74,6 +74,7 @@ Route::middleware(['auth', 'cek.role:petugas'])->prefix('admin')->group(function
     Route::post('/data-ukbi/{dataUkbi}/propose-update', [DataUkbiController::class, 'proposeUpdate'])->name('data-ukbi.propose-update');
     Route::get('/riwayat-pengajuan-ukbi', [DataUkbiController::class, 'riwayatPengajuan'])->name('petugas.riwayat-pengajuan');
     Route::post('/data-ukbi/{dataUkbi}/propose-delete', [DataUkbiController::class, 'proposeDelete'])->name('data-ukbi.propose-delete');
+    Route::post('/data-ukbi/bulk-ajukan', [DataUkbiController::class, 'bulkAjukan'])->name('data-ukbi.bulk_ajukan');
 });
 
 // Pastikan ini di dalam middleware yang mengecek role 'admin'
