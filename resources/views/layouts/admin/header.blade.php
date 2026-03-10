@@ -10,7 +10,7 @@
 
             <!-- Topbar Brand Logo -->
             <a href="index.html" class="md:hidden flex">
-                <img src="{{ asset('assets/images/logo-sm.png') }}" class="h-5" alt="Small logo">
+                <img src="{{ asset('assets/images/logo-ukbi.png') }}" class="h-5" alt="Small logo">
             </a>
 
             <!-- Topbar Search -->
