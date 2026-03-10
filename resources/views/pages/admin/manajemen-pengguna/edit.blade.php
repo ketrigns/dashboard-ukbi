@@ -92,16 +92,22 @@
 
 
         {{-- Role --}}
-        <div>
-          <label>Role</label>
-          <select name="role" class="form-input" required>
-            <option value="petugas" {{ $user->role == 'petugas' ? 'selected' : '' }}>Petugas</option>
-            <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
-          </select>
-          @error('role')
-            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-          @enderror
-        </div>
+        @if(auth()->id() !== $user->id)
+            {{-- Tampilkan pilihan role jika yang diedit adalah orang lain --}}
+            <div>
+                <label>Role</label>
+                <select name="role" class="form-input" required>
+                    <option value="petugas" {{ $user->role == 'petugas' ? 'selected' : '' }}>Petugas</option>
+                    <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                </select>
+                @error('role')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+        @else
+            {{-- Jika yang diedit adalah dirinya sendiri, sembunyikan dropdown tapi tetap kirim datanya --}}
+            <input type="hidden" name="role" value="{{ $user->role }}">
+        @endif
 
         {{-- Foto Profile --}}
         <div>

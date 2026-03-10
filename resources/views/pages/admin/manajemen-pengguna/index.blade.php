@@ -7,21 +7,7 @@
         </div>
 
         @if(auth()->user()->canManageUsers())
-            {{-- Tampil jika Admin atau Petugas yang sudah di-ACC --}}
             <a href="{{ route('users.create') }}" class="btn bg-primary text-white">+ Tambah Pengguna</a>
-        @elseif(auth()->user()->hasPendingAccessRequest())
-            {{-- Tampil jika Petugas sudah minta izin tapi belum di-ACC Admin --}}
-            <button disabled class="btn bg-blue-400! text-white cursor-not-allowed opacity-75">
-                Menunggu Persetujuan Admin...
-            </button>
-        @else
-            {{-- Tampil jika Petugas belum minta izin sama sekali --}}
-            <form action="{{ route('access-requests.store') }}" method="POST" class="inline">
-                @csrf
-                <button type="submit" class="btn bg-orange-500! hover:bg-orange-600 text-white">
-                    Minta Persetujuan Input Data
-                </button>
-            </form>
         @endif
     </div>
 
@@ -128,7 +114,6 @@
                                 </td>
 
                                 <td class="px-6 py-4 text-end">
-                                    @if(auth()->user()->canManageUsers())
                                         <div class="flex justify-end gap-3">
                                             {{-- Tombol Edit --}}
                                             <a href="{{ route('users.edit', $user->id) }}">
@@ -153,18 +138,6 @@
                                                 </form>
                                             @endif
                                         </div>
-                                    @elseif(auth()->user()->hasPendingAccessRequest())
-                                        <button disabled class="btn bg-blue-400! text-white cursor-not-allowed opacity-75">
-                                            Menunggu Persetujuan Admin...
-                                        </button>
-                                    @else
-                                        <form action="{{ route('access-requests.store') }}" method="POST" class="inline">
-                                            @csrf
-                                            <button type="submit" class="btn bg-orange-500! hover:bg-orange-600 text-white">
-                                                Minta Persetujuan Edit Data
-                                            </button>
-                                        </form>
-                                    @endif
                                 </td>
                             </tr>
                         @empty

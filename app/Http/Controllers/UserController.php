@@ -13,7 +13,8 @@ class UserController extends Controller
     public function index()
     {
         $users = User::when(auth()->user()->role === 'petugas', function ($query) {
-            $query->where('role', '!=', 'admin');
+            // Jika petugas, ambil data yang ID-nya sama dengan ID miliknya sendiri
+            $query->where('id', auth()->id());
         })->get();
 
         return view('pages.admin.manajemen-pengguna.index', compact('users'));
@@ -101,9 +102,6 @@ class UserController extends Controller
     // TAMPILKAN FORM EDIT
     public function edit($id)
     {
-        if (!auth()->user()->canManageUsers()) {
-            return redirect()->route('users.index')->with('error', 'Akses ditolak! Anda belum mendapat izin.');
-        }
 
         $user = User::findOrFail($id);
         return view('pages.admin.manajemen-pengguna.edit', compact('user'));
@@ -112,9 +110,6 @@ class UserController extends Controller
     // UPDATE USER
     public function update(Request $request, User $user)
     {
-        if (!auth()->user()->canManageUsers()) {
-            abort(403, 'Akses Ditolak');
-        }
 
         $validated = $request->validate([
             'name'        => 'required|string|max:255',

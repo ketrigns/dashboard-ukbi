@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Imports\DataUkbiImport;
 use App\Models\DataUkbi;
+use App\Models\PengajuanPerubahanUkbi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
 
@@ -162,16 +164,104 @@ class DataUkbiController extends Controller
     }
 
     public function bulkDelete(Request $request)
-{
-    $ids = $request->input('ids');
-    
-    if ($ids) {
-        $idsArray = explode(',', $ids);
-        DataUkbi::whereIn('id', $idsArray)->delete();
+    {
+        $ids = $request->input('ids');
         
-        return redirect()->back()->with('success', 'Data terpilih berhasil dihapus.');
+        if ($ids) {
+            $idsArray = explode(',', $ids);
+            DataUkbi::whereIn('id', $idsArray)->delete();
+            
+            return redirect()->back()->with('success', 'Data terpilih berhasil dihapus.');
+        }
+        
+        return redirect()->back()->with('error', 'Tidak ada data yang dipilih.');
+    }
+
+    /**
+     * UNTUK PETUGAS: Menyimpan usulan perubahan sebagai draft
+     */
+    public function proposeUpdate(Request $request, DataUkbi $dataUkbi)
+    {
+        // 1. Ambil semua data inputan form KECUALI token CSRF dan Method PUT/PATCH
+        $dataInput = $request->except(['_token', '_method']);
+
+        // (Opsional tapi disarankan) Kamu bisa lakukan validasi form di sini
+        // $request->validate([...]);
+
+        // 2. Simpan ke tabel sementara
+        PengajuanPerubahanUkbi::create([
+            'data_ukbi_id' => $dataUkbi->id,
+            'petugas_id'   => auth()->id(), // ID user yang sedang login
+            'data_usulan'  => $dataInput,   // Otomatis jadi JSON karena ada $casts di Model
+            'status'       => 'pending'
+        ]);
+
+        return redirect()->route('data-ukbi.index')->with('success', 'Usulan perubahan berhasil dikirim. Menunggu persetujuan Admin.');
+    }
+
+    public function proposeDelete(DataUkbi $dataUkbi)
+    {
+        // Simpan ke tabel sementara, dengan JSON yang menandakan ini adalah aksi HAPUS
+        PengajuanPerubahanUkbi::create([
+            'data_ukbi_id' => $dataUkbi->id,
+            'petugas_id'   => auth()->id(),
+            'data_usulan'  => ['jenis_pengajuan' => 'HAPUS DATA'], // Penanda khusus
+            'status'       => 'pending'
+        ]);
+
+        return redirect()->back()->with('success', 'Permintaan hapus data berhasil dikirim ke Admin.');
+    }
+
+    public function riwayatPengajuan()
+    {
+        // Ambil data pengajuan HANYA milik petugas yang sedang login
+        $data = PengajuanPerubahanUkbi::with('dataUkbi')
+            ->where('petugas_id', Auth::id())
+            ->latest() // Urutkan dari yang paling baru
+            ->paginate(10);
+
+        // Pastikan path view disesuaikan dengan folder kamu
+        return view('pages.petugas.approvals.index', compact('data'));
+    }
+
+    public function approvalIndex(Request $request)
+    {
+        // Mengambil data pengajuan beserta relasinya (Eager Loading)
+        // with() digunakan agar query lebih efisien dan tidak terjadi N+1 problem
+        $data = PengajuanPerubahanUkbi::with(['petugas', 'dataUkbi'])
+            ->latest() // Mengurutkan dari yang terbaru (berdasarkan created_at)
+            ->paginate(10); // Menampilkan 10 data per halaman
+
+        // Pastikan path view disesuaikan dengan folder tempat kamu menyimpan file Blade-nya
+        return view('pages.admin.approvals.index', compact('data'));
+    }
+
+    /**
+     * UNTUK ADMIN: Menyetujui usulan dan menimpa data utama
+     */
+    public function approveUpdate($idPengajuan)
+    {
+        $pengajuan = PengajuanPerubahanUkbi::findOrFail($idPengajuan);
+        $dataUkbi = DataUkbi::findOrFail($pengajuan->data_ukbi_id);
+        // Cek apakah ini pengajuan hapus
+        if (isset($pengajuan->data_usulan['jenis_pengajuan']) && $pengajuan->data_usulan['jenis_pengajuan'] === 'HAPUS DATA') {
+            $dataUkbi->delete(); 
+            return redirect()->back()->with('success', 'Usulan penghapusan disetujui. Data telah dihapus permanen.');
+        } 
+        // Jika bukan hapus, berarti ini pengajuan EDIT (seperti biasa)
+        $dataUkbi->update($pengajuan->data_usulan);
+        $pengajuan->update(['status' => 'disetujui']);
+        return redirect()->back()->with('success', 'Perubahan data berhasil disetujui!');
     }
     
-    return redirect()->back()->with('error', 'Tidak ada data yang dipilih.');
-}
+    /**
+     * UNTUK ADMIN: Menolak usulan
+     */
+    public function rejectUpdate($idPengajuan)
+    {
+        $pengajuan = PengajuanPerubahanUkbi::findOrFail($idPengajuan);
+        $pengajuan->update(['status' => 'ditolak']);
+
+        return redirect()->back()->with('success', 'Usulan perubahan berhasil ditolak.');
+    }
 }

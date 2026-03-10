@@ -613,29 +613,57 @@
                                 </td>
                                 <td class="px-6 py-4 text-sm text-default-800 whitespace-nowrap">
                                     {{ $item->predikat ?? '-' }}</td>
-                                <td class="px-6 py-4 text-end text-sm">
-                                    <div class="flex justify-end mt-2">
-                                        <a href="{{ route('data-ukbi.edit', $item) }}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
-                                                viewBox="0 0 24 24">
-                                                <g fill="none" stroke="#4f46e5" stroke-linecap="round"
-                                                    stroke-linejoin="round" stroke-width="2">
-                                                    <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
-                                                    <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
-                                                </g>
-                                            </svg>
-                                        </a>
-                                        <form action="{{ route('data-ukbi.destroy', $item->id) }}" method="POST"
-                                            class="inline delete-form">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="text-red-600 hover:text-red-800 delete-btn"><svg
-                                                    xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                <td class="px-6 py-4 text-end text-sm whitespace-nowrap">
+                                    <div class="flex justify-end mt-2 items-center gap-2">
+                                        
+                                        @php
+                                            // Mengecek apakah data ini sedang diajukan dan masih pending
+                                            $isPending = \App\Models\PengajuanPerubahanUkbi::where('data_ukbi_id', $item->id)
+                                                            ->where('status', 'pending')
+                                                            ->exists();
+                                        @endphp
+
+                                        {{-- Jika yang login petugas DAN status datanya masih pending --}}
+                                        @if(auth()->user()->role === 'petugas' && $isPending)
+                                            <span class="px-2 py-1 text-xs font-semibold text-yellow-700 bg-yellow-100 border border-yellow-300 rounded-md shadow-sm">
+                                                Menunggu Persetujuan
+                                            </span>
+                                        @else
+                                            {{-- Tampilkan tombol aslinya kalau bukan petugas, ATAU kalau datanya tidak pending --}}
+                                            <a href="{{ route('data-ukbi.edit', $item) }}" class="text-indigo-600 hover:text-indigo-800 transition">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
                                                     viewBox="0 0 24 24">
-                                                    <path fill="#e11d48"
-                                                        d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z" />
-                                                </svg></button>
-                                        </form>
+                                                    <g fill="none" stroke="currentColor" stroke-linecap="round"
+                                                        stroke-linejoin="round" stroke-width="2">
+                                                        <path d="M7 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-1" />
+                                                        <path d="M20.385 6.585a2.1 2.1 0 0 0-2.97-2.97L9 12v3h3zM16 5l3 3" />
+                                                    </g>
+                                                </svg>
+                                            </a>
+                                            @if(auth()->user()->role === 'petugas')
+                                                {{-- Form Ajukan Hapus (Untuk Petugas) --}}
+                                                <form action="{{ route('data-ukbi.propose-delete', $item->id) }}" method="POST" class="inline propose-delete-form">
+                                                    @csrf
+                                                    <button type="button" class="text-red-600 hover:text-orange-700 transition propose-delete-btn" title="Ajukan Hapus Data">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24">
+                                                            <path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z" />
+                                                        </svg>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                {{-- Form Langsung Hapus (Untuk Admin) --}}
+                                                <form action="{{ route('data-ukbi.destroy', $item->id) }}" method="POST" class="inline delete-form">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="text-red-600 hover:text-red-800 transition delete-btn" title="Hapus Permanen">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24">
+                                                            <path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z" />
+                                                        </svg>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        @endif
+
                                     </div>
                                 </td>
                             </tr>
@@ -801,6 +829,28 @@
                     confirmButtonColor: '#d33',
                     cancelButtonColor: '#3085d6',
                     confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+        // Konfirmasi Ajukan Hapus (Petugas)
+        const proposeDeleteButtons = document.querySelectorAll('.propose-delete-btn');
+        proposeDeleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const form = this.closest('.propose-delete-form');
+                Swal.fire({
+                    title: 'Ajukan Penghapusan?',
+                    text: "Data ini akan dikirim ke Admin untuk meminta izin penghapusan.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6', // Warna orange
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'Ya, Ajukan Hapus!',
                     cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.isConfirmed) {

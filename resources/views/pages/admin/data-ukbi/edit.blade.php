@@ -12,9 +12,18 @@
         <h4 class="card-title">Edit Data UKBI</h4>
       </div>
 
-      <form action="{{ route('data-ukbi.update', $dataUkbi) }}" method="POST" class="p-6">
+      @if(auth()->user()->role === 'petugas')
+        {{-- Arahkan ke route khusus untuk mengajukan perubahan --}}
+        <form action="{{ route('data-ukbi.propose-update', $dataUkbi) }}" method="POST" class="p-6">
+      @else
+        {{-- Admin bisa langsung update datanya --}}
+        <form action="{{ route('data-ukbi.update', $dataUkbi) }}" method="POST" class="p-6">
+      @endif
         @csrf
-        @method('PUT')
+
+        @if(auth()->user()->role === 'admin')
+          @method('PUT') {{-- Biasanya update utama pakai PUT/PATCH --}}
+        @endif
 
         <div class="grid lg:grid-cols-2 gap-6">
           <div>
@@ -123,7 +132,7 @@
           </div>
 
           <div class="flex items-end">
-            <button type="submit" class="btn border-primary text-primary hover:bg-primary hover:text-white">Simpan Perubahan</button>
+            <button type="submit" class="btn border-primary text-primary hover:bg-primary hover:text-white">{{ auth()->user()->role === 'petugas' ? 'Ajukan Perubahan' : 'Simpan Perubahan' }}</button>
           </div>
         </div>
       </form>

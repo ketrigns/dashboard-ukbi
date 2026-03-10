@@ -166,7 +166,7 @@
         }
       },
       subtitle: {
-        text: {{ number_format($total, 0, ',', '.') }}, // 🟢 tampil di bawah title
+        text: {{ $total }}, // 🟢 tampil di bawah title
         align: 'left',
         style: {
           fontSize: '20px',
@@ -271,7 +271,7 @@
         }
       },
       subtitle: {
-        text: "{{ number_format($pelajar + $mahasiswa, 0, ',', '.') }}",
+        text: "{{ ($pelajar + $mahasiswa) }}",
         align: 'left',
         style: {
           fontSize: '20px',
@@ -386,7 +386,7 @@
         }
       },
       subtitle: {
-        text: {{ number_format($umum, 0, ',', '.') }}, // 🟢 tampil di bawah title
+        text: {{ $umum }}, // 🟢 tampil di bawah title
         align: 'left',
         style: {
           fontSize: '20px',

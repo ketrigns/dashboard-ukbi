@@ -70,11 +70,22 @@ Route::middleware(['auth', 'cek.role:admin,petugas'])->group(function () {
     Route::post('/request-access', [AccessRequestController::class, 'store'])->name('access-requests.store')->middleware('auth');
 });
 
+Route::middleware(['auth', 'cek.role:petugas'])->prefix('admin')->group(function () {
+    Route::post('/data-ukbi/{dataUkbi}/propose-update', [DataUkbiController::class, 'proposeUpdate'])->name('data-ukbi.propose-update');
+    Route::get('/riwayat-pengajuan-ukbi', [DataUkbiController::class, 'riwayatPengajuan'])->name('petugas.riwayat-pengajuan');
+    Route::post('/data-ukbi/{dataUkbi}/propose-delete', [DataUkbiController::class, 'proposeDelete'])->name('data-ukbi.propose-delete');
+});
+
 // Pastikan ini di dalam middleware yang mengecek role 'admin'
 Route::middleware(['auth', 'cek.role:admin'])->prefix('admin')->group(function () {
-    Route::get('/access-requests', [AccessApprovalController::class, 'index'])->name('admin.approvals.index');
+    Route::get('/pengajuan-ukbi', [DataUkbiController::class, 'approvalIndex'])->name('admin.pengajuan-ukbi.index');
+    
     Route::post('/access-requests/{id}/approve', [AccessApprovalController::class, 'approve'])->name('admin.approvals.approve');
     Route::post('/access-requests/{id}/reject', [AccessApprovalController::class, 'reject'])->name('admin.approvals.reject');
+
+    // Route untuk admin menyetujui/menolak usulan
+    Route::post('/pengajuan-ukbi/{id}/approve', [DataUkbiController::class, 'approveUpdate'])->name('pengajuan-ukbi.approve');
+    Route::post('/pengajuan-ukbi/{id}/reject', [DataUkbiController::class, 'rejectUpdate'])->name('pengajuan-ukbi.reject');
 });
 
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])
